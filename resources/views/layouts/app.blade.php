@@ -98,10 +98,10 @@
                     <!-- TRANSAKSI & STOK -->
                     <div class="sidebar-heading">Transaksi & Stok</div>
                     <a href="#">
-                        📥 Stok Masuk (Stock In)
+                        📥 Stock In
                     </a>
                     <a href="#">
-                        🧾 Pembelian & Nota (Stock Out)
+                        🧾 Stock Out
                     </a>
 
                     <!-- LAPORAN -->
