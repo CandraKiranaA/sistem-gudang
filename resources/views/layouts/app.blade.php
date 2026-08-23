@@ -30,6 +30,9 @@
             min-height: 100vh;
             background-color: #ffffff;
             border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .sidebar .brand {
@@ -38,19 +41,31 @@
             padding: 20px;
         }
 
+        .sidebar-heading {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #9ca3af;
+            font-weight: 700;
+            padding: 14px 20px 4px 20px;
+        }
+
         .sidebar a {
             display: block;
-            padding: 12px 20px;
-            color: #555;
+            padding: 10px 20px;
+            color: #4b5563;
             text-decoration: none;
             border-radius: 8px;
-            margin: 4px 12px;
+            margin: 2px 12px;
+            font-size: 0.925rem;
+            transition: all 0.2s ease-in-out;
         }
 
         .sidebar a:hover,
         .sidebar a.active {
             background-color: #eef2ff;
             color: #4f46e5;
+            font-weight: 600;
         }
 
         .sidebar .submenu a {
@@ -148,19 +163,17 @@
 
             <div
                 class="collapse submenu
-                {{ request()->routeIs('barangs.index') ? 'show' : '' }}"
+                {{ request()->routeIs('barangs.*') ? 'show' : '' }}"
                 id="dataBarangMenu"
             >
 
                 {{-- Daftar Barang --}}
                 <a
                     href="{{ route('barangs.index') }}"
-                    class="{{ request()->routeIs('barangs.create') ? 'active' : '' }}"
+                    class="{{ request()->routeIs('barangs.index') ? 'active' : '' }}"
                 >
                     Barang
                 </a>
-
-
 
             </div>
 
