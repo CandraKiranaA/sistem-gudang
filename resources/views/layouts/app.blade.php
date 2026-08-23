@@ -18,6 +18,9 @@
             min-height: 100vh;
             background-color: #ffffff;
             border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .sidebar .brand {
@@ -26,19 +29,31 @@
             padding: 20px;
         }
 
+        .sidebar-heading {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #9ca3af;
+            font-weight: 700;
+            padding: 14px 20px 4px 20px;
+        }
+
         .sidebar a {
             display: block;
-            padding: 12px 20px;
-            color: #555;
+            padding: 10px 20px;
+            color: #4b5563;
             text-decoration: none;
             border-radius: 8px;
-            margin: 4px 12px;
+            margin: 2px 12px;
+            font-size: 0.925rem;
+            transition: all 0.2s ease-in-out;
         }
 
         .sidebar a:hover,
         .sidebar a.active {
             background-color: #eef2ff;
             color: #4f46e5;
+            font-weight: 600;
         }
 
         .content {
@@ -58,67 +73,72 @@
         <div class="row">
 
             <!-- SIDEBAR -->
-            <div class="col-md-2 sidebar p-0">
+            <div class="col-md-2 sidebar p-0 pb-3">
 
-                <div class="brand">
-                    📦 Sistem Gudang
-                </div>
-
-                <a href="/dashboard">
-                    🏠 Dashboard
-                </a>
-
-                <a href="#">
-                    📦 Data Barang
-                </a>
-
-                <a href="#">
-                    📥 Barang Masuk
-                </a>
-
-                <a href="#">
-                    🧾 Buat Nota
-                </a>
-
-                <a href="#">
-                    📤 Barang Keluar
-                </a>
-
-                <hr>
-
-                <div class="px-3 mb-3">
-
-                    <div class="d-flex align-items-center mb-3">
-
-                        <div class="me-2">
-                            👤
-                        </div>
-
-                        <div>
-                            <div class="fw-semibold">
-                                {{ Auth::user()->name }}
-                            </div>
-
-                            <small class="text-muted">
-                                Admin Gudang
-                            </small>
-                        </div>
-
+                <div>
+                    <!-- BRAND -->
+                    <div class="brand">
+                        📦 Sistem Gudang
                     </div>
 
-                    <a href="/change-password" class="m-0 mb-2">
-                        🔑 Ganti Password
+                    <!-- MENU UTAMA -->
+                    <a href="#" class="active">
+                        🏠 Dashboard
                     </a>
 
+                    <!-- MASTER DATA -->
+                    <div class="sidebar-heading">Master Data</div>
+                    <a href="#">
+                        📦 Data Barang
+                    </a>
+                    <a href="#">
+                        👥 Data Customer
+                    </a>
+
+                    <!-- TRANSAKSI & STOK -->
+                    <div class="sidebar-heading">Transaksi & Stok</div>
+                    <a href="#">
+                        📥 Stok Masuk (Stock In)
+                    </a>
+                    <a href="#">
+                        🧾 Pembelian & Nota (Stock Out)
+                    </a>
+
+                    <!-- LAPORAN -->
+                    <div class="sidebar-heading">Laporan</div>
+                    <a href="#">
+                        📊 Laporan Stok Gudang
+                    </a>
+                    <a href="#">
+                        📋 Laporan Barang Keluar
+                    </a>
                 </div>
 
-                <form action="/logout" method="POST" class="px-3">
-                    @csrf
+                <!-- USER PROFILE & LOGOUT -->
+                <div>
+                    <hr class="mx-3">
+                    <div class="px-3 mb-2">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-2 fs-5">👤</div>
+                            <div>
+                                <div class="fw-semibold text-truncate" style="max-width: 120px;">
+                                    Admin Gudang
+                                </div>
+                                <small class="text-muted">Administrator</small>
+                            </div>
+                        </div>
 
-                    <button type="submit" class="btn btn-outline-danger w-100">
-                        🚪 Logout
-                    </button>
-                </form>
+                        <a href="#" class="p-0 text-muted small text-decoration-none">
+                            🔑 Ganti Password
+                        </a>
+                    </div>
+
+                    <form action="#" method="POST" class="px-3 mt-2">
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                            🚪 Logout
+                        </button>
+                    </form>
+                </div>
 
             </div>
 
