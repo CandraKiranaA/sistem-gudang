@@ -5,23 +5,16 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
         @yield('title', 'Sistem Gudang')
     </title>
 
     {{-- Bootstrap --}}
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
         body {
             background-color: #f5f6fa;
         }
@@ -121,7 +114,6 @@
             border: none;
             border-radius: 12px;
         }
-
     </style>
 
 </head>
@@ -129,227 +121,198 @@
 
 <body>
 
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <div class="row">
-
-
-        {{-- =====================================================
-             SIDEBAR
-        ====================================================== --}}
-
-        <div class="col-md-2 sidebar p-0">
+        <div class="row">
 
 
-            {{-- =================================================
-                 BAGIAN MENU
-            ================================================== --}}
+            {{-- =====================================================
+            SIDEBAR
+            ====================================================== --}}
 
-            <div class="sidebar-content">
-
-
-                {{-- BRAND --}}
-
-                <div class="brand">
-                    📦 Sistem Gudang
-                </div>
+            <div class="col-md-2 sidebar p-0">
 
 
                 {{-- =================================================
-                     DASHBOARD
+                BAGIAN MENU
                 ================================================== --}}
 
-                <a
-                    href="/dashboard"
-                    class="{{ request()->is('dashboard') ? 'active' : '' }}"
-                >
-                    🏠 Dashboard
-                </a>
+                <div class="sidebar-content">
 
 
-                {{-- =================================================
-                     MASTER DATA
-                ================================================== --}}
+                    {{-- BRAND --}}
 
-                <div class="sidebar-heading">
-                    Master Data
+                    <div class="brand">
+                        📦 Sistem Gudang
+                    </div>
+
+
+                    {{-- =================================================
+                    DASHBOARD
+                    ================================================== --}}
+
+                    <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
+                        🏠 Dashboard
+                    </a>
+
+
+                    {{-- =================================================
+                    MASTER DATA
+                    ================================================== --}}
+
+                    <div class="sidebar-heading">
+                        Master Data
+                    </div>
+
+
+                    <a href="{{ route('barangs.index') }}"
+                        class="{{ request()->routeIs('barangs.*') ? 'active' : '' }}">
+                        📦 Data Barang
+                    </a>
+
+
+                    {{-- =================================================
+                    TRANSAKSI
+                    ================================================== --}}
+
+                    <div class="sidebar-heading">
+                        Transaksi
+                    </div>
+
+
+                    {{-- STOCK IN --}}
+
+                    <a href="{{ route('barang-masuk.index') }}"
+                        class="{{ request()->routeIs('barang-masuk.*') ? 'active' : '' }}">
+                        📥 Stock In
+                    </a>
+
+
+                    {{-- BUAT NOTA --}}
+
+                    <a href="{{ route('penjualan.create') }}"
+                        class="{{ request()->routeIs('penjualan.create') ? 'active' : '' }}">
+                        🧾 Buat Nota
+                    </a>
+
+
+                    {{-- STOCK OUT --}}
+
+                    <a href="{{ route('penjualan.index') }}"
+                        class="{{ request()->routeIs('penjualan.*') ? 'active' : '' }}">
+                        📤 Stock Out
+                    </a>
+
+
+                    {{-- =================================================
+                    LAPORAN
+                    ================================================== --}}
+
+                    <div class="sidebar-heading">
+                        Laporan
+                    </div>
+
+
+                    {{-- LAPORAN BARANG KELUAR --}}
+
+                    <a href="#" class="{{ request()->is('laporan/barang-keluar*') ? 'active' : '' }}">
+                        📊 Barang Keluar
+                    </a>
+
+
+                    {{-- LAPORAN CUSTOMER --}}
+
+                    <a href="#" class="{{ request()->is('laporan/customer*') ? 'active' : '' }}">
+                        👥 Customer
+                    </a>
+
+
                 </div>
 
 
-                <a
-                    href="{{ route('barangs.index') }}"
-                    class="{{ request()->routeIs('barangs.*') ? 'active' : '' }}"
-                >
-                    📦 Data Barang
-                </a>
+                {{-- =====================================================
+                USER AREA
+                ====================================================== --}}
+
+                <div class="user-area">
 
 
-                {{-- =================================================
-                     TRANSAKSI
-                ================================================== --}}
+                    {{-- USER INFO --}}
 
-                <div class="sidebar-heading">
-                    Transaksi
+                    <div class="user-info d-flex align-items-center mb-2">
+
+                        <div class="me-2 fs-5">
+                            👤
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold">
+                                {{ Auth::user()?->name ?? 'Admin Gudang' }}
+                            </div>
+
+                            <small class="text-muted">
+                                Admin Gudang
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- GANTI PASSWORD --}}
+
+                    <a href="/change-password" class="m-0 mb-2">
+                        🔑 Ganti Password
+                    </a>
+
+
+                    {{-- LOGOUT --}}
+
+                    @auth
+
+                        <form action="/logout" method="POST" class="px-0">
+
+                            @csrf
+
+                            <button type="submit" class="btn btn-outline-danger w-100 logout-btn">
+                                🚪 Logout
+                            </button>
+
+                        </form>
+
+                    @endauth
+
+
                 </div>
-
-
-                {{-- STOCK IN --}}
-
-                <a
-                    href="{{ route('barang-masuk.index') }}"
-                    class="{{ request()->routeIs('barang-masuk.*') ? 'active' : '' }}"
-                >
-                    📥 Stock In
-                </a>
-
-
-                {{-- BUAT NOTA --}}
-
-                <a
-                    href="#"
-                    class="{{ request()->is('nota*') ? 'active' : '' }}"
-                >
-                    🧾 Buat Nota
-                </a>
-
-
-                {{-- STOCK OUT --}}
-
-                <a
-                    href="#"
-                    class="{{ request()->is('stock-out*') ? 'active' : '' }}"
-                >
-                    📤 Stock Out
-                </a>
-
-
-                {{-- =================================================
-                     LAPORAN
-                ================================================== --}}
-
-                <div class="sidebar-heading">
-                    Laporan
-                </div>
-
-
-                {{-- LAPORAN BARANG KELUAR --}}
-
-                <a
-                    href="#"
-                    class="{{ request()->is('laporan/barang-keluar*') ? 'active' : '' }}"
-                >
-                    📊 Barang Keluar
-                </a>
-
-
-                {{-- LAPORAN CUSTOMER --}}
-
-                <a
-                    href="#"
-                    class="{{ request()->is('laporan/customer*') ? 'active' : '' }}"
-                >
-                    👥 Customer
-                </a>
 
 
             </div>
 
 
             {{-- =====================================================
-                 USER AREA
+            CONTENT
             ====================================================== --}}
 
-            <div class="user-area">
+            <div class="col-md-10">
 
+                <div class="content">
 
-                {{-- USER INFO --}}
-
-                <div class="user-info d-flex align-items-center mb-2">
-
-                    <div class="me-2 fs-5">
-                        👤
-                    </div>
-
-                    <div>
-
-                        <div class="fw-semibold">
-                            {{ Auth::user()?->name ?? 'Admin Gudang' }}
-                        </div>
-
-                        <small class="text-muted">
-                            Admin Gudang
-                        </small>
-
-                    </div>
+                    @yield('content')
 
                 </div>
 
-
-                {{-- GANTI PASSWORD --}}
-
-                <a
-                    href="/change-password"
-                    class="m-0 mb-2"
-                >
-                    🔑 Ganti Password
-                </a>
-
-
-                {{-- LOGOUT --}}
-
-                @auth
-
-                    <form
-                        action="/logout"
-                        method="POST"
-                        class="px-0"
-                    >
-
-                        @csrf
-
-                        <button
-                            type="submit"
-                            class="btn btn-outline-danger w-100 logout-btn"
-                        >
-                            🚪 Logout
-                        </button>
-
-                    </form>
-
-                @endauth
-
-
             </div>
 
 
         </div>
-
-
-        {{-- =====================================================
-             CONTENT
-        ====================================================== --}}
-
-        <div class="col-md-10">
-
-            <div class="content">
-
-                @yield('content')
-
-            </div>
-
-        </div>
-
 
     </div>
 
-</div>
 
+    {{-- Bootstrap JS --}}
 
-{{-- Bootstrap JS --}}
-
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </body>

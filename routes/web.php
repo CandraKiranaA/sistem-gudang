@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\PenjualanController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -35,3 +36,19 @@ Route::get('/', function () {
 Route::resource('barangs', BarangController::class);
 
 Route::resource('barang-masuk', BarangMasukController::class);
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/stock-out', [PenjualanController::class, 'index'])
+        ->name('penjualan.index');
+
+    Route::get('/stock-out/create', [PenjualanController::class, 'create'])
+        ->name('penjualan.create');
+
+    Route::post('/stock-out', [PenjualanController::class, 'store'])
+        ->name('penjualan.store');
+
+    Route::get('/stock-out/{penjualan}', [PenjualanController::class, 'show'])
+        ->name('penjualan.show');
+
+});

@@ -22,4 +22,17 @@ class Barang extends Model
         'jumlah_koli' => 'integer',
         'pcs_per_koli' => 'integer',
     ];
+
+    public function penjualanDetails()
+    {
+        return $this->hasMany(PenjualanDetail::class);
+    }
+
+    public function barangMasuks()
+    {
+        return $this->hasMany(
+            BarangMasuk::class,
+            'barang_id'
+        );
+    }
 }
