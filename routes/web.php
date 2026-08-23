@@ -24,3 +24,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\BarangMasukController;
+
+Route::get('/', function () {
+    return redirect()->route('barang-masuk.index');
+});
+
+Route::resource('barangs', BarangController::class);
+
+Route::resource('barang-masuk', BarangMasukController::class);
