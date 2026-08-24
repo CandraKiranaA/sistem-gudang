@@ -271,11 +271,10 @@
 
                     @auth
 
-                        <form action="/logout" method="POST" class="px-0">
-
+                        <form action="{{ route('logout') }}" method="POST" class="px-3">
                             @csrf
 
-                            <button type="submit" class="btn btn-outline-danger w-100 logout-btn">
+                            <button type="submit" class="btn btn-outline-danger w-100">
                                 🚪 Logout
                             </button>
 
