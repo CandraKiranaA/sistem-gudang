@@ -2,13 +2,15 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="container-fluid px-2 px-md-3">
 
+    {{-- ===================================================== --}}
     {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- ===================================================== --}}
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
         <div>
-
             <h3 class="fw-bold mb-1">
                 Tambah Barang Masuk
             </h3>
@@ -16,13 +18,11 @@
             <p class="text-muted mb-0">
                 Input data barang yang masuk ke gudang.
             </p>
-
         </div>
-
 
         <a
             href="{{ route('barang-masuk.index') }}"
-            class="btn btn-outline-secondary"
+            class="btn btn-outline-secondary mt-2 mt-md-0"
         >
             ← Kembali
         </a>
@@ -30,10 +30,13 @@
     </div>
 
 
+    {{-- ===================================================== --}}
     {{-- ERROR --}}
+    {{-- ===================================================== --}}
+
     @if($errors->any())
 
-        <div class="alert alert-danger">
+        <div class="alert alert-danger shadow-sm">
 
             <strong>
                 Data belum dapat disimpan.
@@ -56,19 +59,23 @@
     @endif
 
 
+    {{-- ===================================================== --}}
     {{-- SUCCESS --}}
+    {{-- ===================================================== --}}
+
     @if(session('success'))
 
-        <div class="alert alert-success">
-
+        <div class="alert alert-success shadow-sm">
             {{ session('success') }}
-
         </div>
 
     @endif
 
 
+    {{-- ===================================================== --}}
     {{-- FORM --}}
+    {{-- ===================================================== --}}
+
     <form
         action="{{ route('barang-masuk.store') }}"
         method="POST"
@@ -81,9 +88,9 @@
         {{-- INFORMASI BARANG --}}
         {{-- ================================================= --}}
 
-        <div class="card shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4">
 
-            <div class="card-header bg-white py-3">
+            <div class="card-header bg-white border-bottom py-3">
 
                 <h5 class="mb-0 fw-bold">
                     📦 Informasi Barang
@@ -97,7 +104,7 @@
                 <div class="row g-4">
 
 
-                    {{-- TANGGAL --}}
+                    {{-- TANGGAL INPUT --}}
                     <div class="col-md-4">
 
                         <label class="form-label fw-semibold">
@@ -136,20 +143,16 @@
                                 -- Pilih Barang --
                             </option>
 
-
                             @forelse($barangs as $barang)
 
                                 <option
                                     value="{{ $barang->id }}"
-                                    data-pcs="{{ $barang->pcs_per_koli }}"
                                     data-satuan="{{ $barang->satuan }}"
                                     {{ old('barang_id') == $barang->id
                                         ? 'selected'
                                         : '' }}
                                 >
-
                                     {{ $barang->nama_barang }}
-
                                 </option>
 
                             @empty
@@ -168,21 +171,16 @@
 
                         @if($barangs->isEmpty())
 
-                            <small class="text-danger">
-
+                            <small class="text-danger d-block mt-1">
                                 Belum ada master barang.
                                 Silakan tambahkan barang terlebih dahulu
                                 melalui menu Data Barang.
-
                             </small>
 
                         @else
 
-                            <small class="text-muted">
-
-                                Data barang diambil otomatis dari
-                                Master Barang.
-
+                            <small class="text-muted d-block mt-1">
+                                Data barang diambil dari Master Barang.
                             </small>
 
                         @endif
@@ -190,30 +188,31 @@
                     </div>
 
 
-                    {{-- PCS PER KOLI --}}
-                    <div class="col-md-4">
+                    {{-- EDISI --}}
+                    <div class="col-md-6">
 
                         <label class="form-label fw-semibold">
-                            PCS / Koli
+                            Edisi
                         </label>
 
                         <input
-                            type="number"
-                            id="pcs_per_koli"
-                            class="form-control bg-light"
-                            value="0"
-                            readonly
+                            type="text"
+                            name="edisi"
+                            class="form-control"
+                            maxlength="100"
+                            value="{{ old('edisi') }}"
+                            placeholder="Masukkan edisi barang"
                         >
 
                         <small class="text-muted">
-                            Diambil dari Master Barang.
+                            Edisi bersifat opsional.
                         </small>
 
                     </div>
 
 
                     {{-- SATUAN --}}
-                    <div class="col-md-4">
+                    <div class="col-md-6">
 
                         <label class="form-label fw-semibold">
                             Satuan
@@ -227,11 +226,15 @@
                             readonly
                         >
 
+                        <small class="text-muted">
+                            Diambil otomatis dari Master Barang.
+                        </small>
+
                     </div>
 
 
                     {{-- JUMLAH KOLI --}}
-                    <div class="col-md-4">
+                    <div class="col-md-6">
 
                         <label class="form-label fw-semibold">
                             Jumlah Koli
@@ -247,11 +250,15 @@
                             required
                         >
 
+                        <small class="text-muted">
+                            Masukkan jumlah koli barang yang masuk.
+                        </small>
+
                     </div>
 
 
                     {{-- JUMLAH PCS --}}
-                    <div class="col-md-4">
+                    <div class="col-md-6">
 
                         <label class="form-label fw-semibold">
                             Jumlah PCS
@@ -261,15 +268,12 @@
                             type="number"
                             id="jumlah_pcs"
                             class="form-control bg-light fw-bold"
-                            value="0"
+                            value="{{ old('jumlah_koli', 1) * 2 }}"
                             readonly
                         >
 
                         <small class="text-muted">
-
-                            PCS dihitung otomatis berdasarkan
-                            PCS / Koli.
-
+                            Otomatis dihitung 2 PCS × jumlah koli.
                         </small>
 
                     </div>
@@ -285,9 +289,9 @@
         {{-- INFORMASI HARGA --}}
         {{-- ================================================= --}}
 
-        <div class="card shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4">
 
-            <div class="card-header bg-white py-3">
+            <div class="card-header bg-white border-bottom py-3">
 
                 <h5 class="mb-0 fw-bold">
                     💰 Informasi Harga
@@ -401,7 +405,7 @@
         {{-- BUTTON --}}
         {{-- ================================================= --}}
 
-        <div class="d-flex justify-content-end gap-2">
+        <div class="d-flex justify-content-end gap-2 mb-4">
 
             <a
                 href="{{ route('barang-masuk.index') }}"
@@ -410,52 +414,44 @@
                 Batal
             </a>
 
-
             <button
                 type="submit"
                 class="btn btn-primary px-4"
                 {{ $barangs->isEmpty() ? 'disabled' : '' }}
             >
-
                 💾 Simpan Barang Masuk
-
             </button>
 
         </div>
-
 
     </form>
 
 </div>
 
 
-{{-- ================================================= --}}
+{{-- ========================================================= --}}
 {{-- JAVASCRIPT --}}
-{{-- ================================================= --}}
+{{-- ========================================================= --}}
 
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    const barangSelect =
-        document.getElementById('barang_id');
+    const barangSelect = document.getElementById('barang_id');
 
-    const pcsPerKoli =
-        document.getElementById('pcs_per_koli');
+    const satuan = document.getElementById('satuan');
 
-    const satuan =
-        document.getElementById('satuan');
+    const jumlahKoli = document.getElementById('jumlah_koli');
 
-    const jumlahKoli =
-        document.getElementById('jumlah_koli');
-
-    const jumlahPcs =
-        document.getElementById('jumlah_pcs');
+    const jumlahPcs = document.getElementById('jumlah_pcs');
 
 
     /*
-     * Update informasi barang
-     */
+    |--------------------------------------------------------------------------
+    | Update Satuan
+    |--------------------------------------------------------------------------
+    */
+
     function updateBarang() {
 
         const selected =
@@ -463,48 +459,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 barangSelect.selectedIndex
             ];
 
-
         if (!selected || !selected.value) {
 
-            pcsPerKoli.value = 0;
             satuan.value = '';
-            jumlahPcs.value = 0;
 
             return;
         }
 
-
-        const pcs =
-            parseInt(
-                selected.dataset.pcs
-            ) || 0;
-
-
-        const satuanBarang =
+        satuan.value =
             selected.dataset.satuan || '';
-
-
-        pcsPerKoli.value = pcs;
-
-        satuan.value = satuanBarang;
-
-
-        hitungPcs();
 
     }
 
 
     /*
-     * Hitung jumlah PCS
-     *
-     * Contoh:
-     *
-     * Kipas = 2 PCS/Koli
-     *
-     * 1 Koli = 2 PCS
-     * 2 Koli = 4 PCS
-     * 5 Koli = 10 PCS
-     */
+    |--------------------------------------------------------------------------
+    | Hitung Jumlah PCS
+    |--------------------------------------------------------------------------
+    |
+    | 1 Koli = 2 PCS
+    |
+    | Contoh:
+    |
+    | 1 Koli = 2 PCS
+    | 2 Koli = 4 PCS
+    | 3 Koli = 6 PCS
+    | 5 Koli = 10 PCS
+    |
+    */
+
     function hitungPcs() {
 
         const koli =
@@ -512,22 +495,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 jumlahKoli.value
             ) || 0;
 
-
         const pcs =
-            parseInt(
-                pcsPerKoli.value
-            ) || 0;
+            koli * 2;
 
-
-        jumlahPcs.value =
-            koli * pcs;
+        jumlahPcs.value = pcs;
 
     }
 
 
     /*
-     * Ketika barang diganti
-     */
+    |--------------------------------------------------------------------------
+    | Event pilih barang
+    |--------------------------------------------------------------------------
+    */
+
     barangSelect.addEventListener(
         'change',
         updateBarang
@@ -535,8 +516,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /*
-     * Ketika jumlah koli diganti
-     */
+    |--------------------------------------------------------------------------
+    | Event jumlah koli berubah
+    |--------------------------------------------------------------------------
+    */
+
     jumlahKoli.addEventListener(
         'input',
         hitungPcs
@@ -544,9 +528,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /*
-     * Jalankan ketika halaman pertama kali dibuka
-     */
+    |--------------------------------------------------------------------------
+    | Jalankan saat halaman dibuka
+    |--------------------------------------------------------------------------
+    */
+
     updateBarang();
+
+    hitungPcs();
 
 });
 

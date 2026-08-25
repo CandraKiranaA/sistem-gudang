@@ -200,7 +200,7 @@
             <div class="card-footer text-end">
 
                 <a
-                    href="{{ route('barang-masuk.create') }}"
+                    href="{{ route('barang-masuk.index') }}"
                     class="btn btn-light"
                 >
                     Batal

@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BarangMasukRequest;
 use App\Models\Barang;
 use App\Models\BarangMasuk;
+use App\Imports\BarangMasukImport;
+use App\Exports\BarangMasukExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BarangMasukController extends Controller
 {
@@ -29,7 +32,6 @@ class BarangMasukController extends Controller
                     'like',
                     "%{$search}%"
                 );
-
             });
         }
 
@@ -69,18 +71,6 @@ class BarangMasukController extends Controller
      */
     public function create()
     {
-        /*
-         * Ambil semua barang dari tabel barangs.
-         *
-         * Jadi barang yang sudah dimasukkan di
-         * Master Barang seperti:
-         *
-         * Kipas
-         * Lemari
-         * Meja
-         *
-         * otomatis muncul di dropdown.
-         */
         $barangs = Barang::orderBy(
             'nama_barang',
             'asc'
@@ -98,30 +88,19 @@ class BarangMasukController extends Controller
      */
     public function store(BarangMasukRequest $request)
     {
-        /*
-         * Ambil barang yang dipilih.
-         */
         $barang = Barang::findOrFail(
             $request->barang_id
         );
 
-
         /*
-         * Hitung PCS otomatis.
+         * Hitung jumlah PCS.
          *
          * Contoh:
-         *
-         * pcs_per_koli = 2
-         * jumlah_koli = 5
-         *
-         * maka:
-         *
-         * 5 x 2 = 10 PCS
+         * 5 koli x 2 pcs/koli = 10 pcs
          */
         $jumlahPcs =
             $request->jumlah_koli
             * $barang->pcs_per_koli;
-
 
         BarangMasuk::create([
 
@@ -130,6 +109,9 @@ class BarangMasukController extends Controller
 
             'barang_id' =>
                 $request->barang_id,
+
+            'edisi' =>
+                $request->edisi,
 
             'jumlah_koli' =>
                 $request->jumlah_koli,
@@ -147,7 +129,6 @@ class BarangMasukController extends Controller
                 $request->harga_jual_pcs,
 
         ]);
-
 
         return redirect()
             ->route('barang-masuk.index')
@@ -201,21 +182,19 @@ class BarangMasukController extends Controller
         BarangMasukRequest $request,
         BarangMasuk $barangMasuk
     ) {
-        /*
-         * Ambil barang terbaru.
-         */
         $barang = Barang::findOrFail(
             $request->barang_id
         );
 
-
         /*
-         * Hitung ulang PCS.
+         * Hitung ulang jumlah PCS.
+         *
+         * Contoh:
+         * 5 koli x 2 pcs/koli = 10 pcs
          */
         $jumlahPcs =
             $request->jumlah_koli
             * $barang->pcs_per_koli;
-
 
         $barangMasuk->update([
 
@@ -224,6 +203,9 @@ class BarangMasukController extends Controller
 
             'barang_id' =>
                 $request->barang_id,
+
+            'edisi' =>
+                $request->edisi,
 
             'jumlah_koli' =>
                 $request->jumlah_koli,
@@ -241,7 +223,6 @@ class BarangMasukController extends Controller
                 $request->harga_jual_pcs,
 
         ]);
-
 
         return redirect()
             ->route('barang-masuk.index')
@@ -266,5 +247,101 @@ class BarangMasukController extends Controller
                 'success',
                 'Data barang masuk berhasil dihapus.'
             );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | IMPORT EXCEL
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Menampilkan halaman import Excel
+     */
+    public function importForm()
+    {
+        return view(
+            'barang-masuk.import'
+        );
+    }
+
+
+    /**
+     * Proses import Excel
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+
+            'file' => [
+                'required',
+                'file',
+                'mimes:xlsx,xls,csv',
+                'max:20480',
+            ],
+
+        ], [
+
+            'file.required' =>
+                'Silakan pilih file Excel terlebih dahulu.',
+
+            'file.file' =>
+                'File yang dikirim tidak valid.',
+
+            'file.mimes' =>
+                'Format file harus XLSX, XLS, atau CSV.',
+
+            'file.max' =>
+                'Ukuran file maksimal 20 MB.',
+
+        ]);
+
+        try {
+
+            Excel::import(
+                new BarangMasukImport,
+                $request->file('file')
+            );
+
+            return redirect()
+                ->route('barang-masuk.index')
+                ->with(
+                    'success',
+                    'Data barang masuk berhasil diimport.'
+                );
+
+        } catch (\Throwable $e) {
+
+            return back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Import gagal: ' .
+                    $e->getMessage()
+                );
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | EXPORT EXCEL
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Export data barang masuk ke Excel
+     */
+    public function export()
+    {
+        return Excel::download(
+            new BarangMasukExport,
+            'barang-masuk-' .
+            now()->format('Y-m-d-His') .
+            '.xlsx'
+        );
     }
 }

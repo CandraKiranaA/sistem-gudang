@@ -8,20 +8,22 @@
     {{-- HEADER --}}
     {{-- ===================================================== --}}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
         <div>
-            <h3 class="mb-1">
-                Tambah Barang
+
+            <h3 class="fw-bold mb-1">
+                Tambah Customer
             </h3>
 
             <p class="text-muted mb-0">
-                Tambahkan data barang baru ke master barang.
+                Tambahkan customer baru ke dalam sistem.
             </p>
+
         </div>
 
         <a
-            href="{{ route('barangs.index') }}"
+            href="{{ route('customers.index') }}"
             class="btn btn-outline-secondary"
         >
             ← Kembali
@@ -31,7 +33,7 @@
 
 
     {{-- ===================================================== --}}
-    {{-- PESAN ERROR --}}
+    {{-- ERROR --}}
     {{-- ===================================================== --}}
 
     @if($errors->any())
@@ -64,33 +66,33 @@
     {{-- ===================================================== --}}
 
     <form
-        action="{{ route('barangs.store') }}"
+        action="{{ route('customers.store') }}"
         method="POST"
     >
 
         @csrf
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm border-0">
 
             {{-- ================================================= --}}
-            {{-- HEADER CARD --}}
+            {{-- CARD HEADER --}}
             {{-- ================================================= --}}
 
-            <div class="card-header bg-white">
+            <div class="card-header bg-white py-3">
 
-                <h5 class="mb-1">
-                    Informasi Barang
+                <h5 class="fw-bold mb-1">
+                    Informasi Customer
                 </h5>
 
                 <small class="text-muted">
-                    Semua data dapat diinput secara manual.
+                    Semua informasi customer dapat diinput secara manual.
                 </small>
 
             </div>
 
 
             {{-- ================================================= --}}
-            {{-- BODY --}}
+            {{-- CARD BODY --}}
             {{-- ================================================= --}}
 
             <div class="card-body">
@@ -99,31 +101,31 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- NAMA BARANG --}}
+                    {{-- NAMA CUSTOMER --}}
                     {{-- ================================================= --}}
 
                     <div class="col-md-6">
 
                         <label
-                            for="nama_barang"
+                            for="nama_customer"
                             class="form-label fw-semibold"
                         >
-                            Nama Barang
+                            Nama Customer
                             <span class="text-danger">*</span>
                         </label>
 
                         <input
                             type="text"
-                            id="nama_barang"
-                            name="nama_barang"
-                            class="form-control @error('nama_barang') is-invalid @enderror"
-                            placeholder="Contoh: Kipas Angin"
-                            value="{{ old('nama_barang') }}"
+                            id="nama_customer"
+                            name="nama_customer"
+                            class="form-control @error('nama_customer') is-invalid @enderror"
+                            placeholder="Contoh: Ahmad"
+                            value="{{ old('nama_customer') }}"
                             maxlength="255"
                             required
                         >
 
-                        @error('nama_barang')
+                        @error('nama_customer')
 
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -132,39 +134,36 @@
                         @enderror
 
                         <small class="text-muted">
-                            Masukkan nama barang yang akan disimpan.
+                            Masukkan nama lengkap customer.
                         </small>
 
                     </div>
 
 
                     {{-- ================================================= --}}
-                    {{-- SATUAN --}}
+                    {{-- NOMOR TELEPON --}}
                     {{-- ================================================= --}}
 
                     <div class="col-md-6">
 
                         <label
-                            for="satuan"
+                            for="no_telepon"
                             class="form-label fw-semibold"
                         >
-                            Satuan
-                            <span class="text-danger">*</span>
+                            Nomor Telepon
                         </label>
 
-                        {{-- Input manual satuan --}}
                         <input
                             type="text"
-                            id="satuan"
-                            name="satuan"
-                            class="form-control @error('satuan') is-invalid @enderror"
-                            placeholder="Contoh: PCS, Unit, Box"
-                            value="{{ old('satuan') }}"
-                            maxlength="50"
-                            required
+                            id="no_telepon"
+                            name="no_telepon"
+                            class="form-control @error('no_telepon') is-invalid @enderror"
+                            placeholder="Contoh: 081234567890"
+                            value="{{ old('no_telepon') }}"
+                            maxlength="30"
                         >
 
-                        @error('satuan')
+                        @error('no_telepon')
 
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -173,39 +172,34 @@
                         @enderror
 
                         <small class="text-muted">
-                            Satuan dapat diisi secara manual.
+                            Nomor telepon customer, jika tersedia.
                         </small>
 
                     </div>
 
 
                     {{-- ================================================= --}}
-                    {{-- JUMLAH KOLI --}}
+                    {{-- ALAMAT --}}
                     {{-- ================================================= --}}
 
-                    <div class="col-md-6">
+                    <div class="col-12">
 
                         <label
-                            for="jumlah_koli"
+                            for="alamat"
                             class="form-label fw-semibold"
                         >
-                            Jumlah Koli
-                            <span class="text-danger">*</span>
+                            Alamat
                         </label>
 
-                        <input
-                            type="number"
-                            id="jumlah_koli"
-                            name="jumlah_koli"
-                            class="form-control @error('jumlah_koli') is-invalid @enderror"
-                            placeholder="Contoh: 10"
-                            value="{{ old('jumlah_koli', 1) }}"
-                            min="1"
-                            step="1"
-                            required
-                        >
+                        <textarea
+                            id="alamat"
+                            name="alamat"
+                            class="form-control @error('alamat') is-invalid @enderror"
+                            rows="4"
+                            placeholder="Masukkan alamat customer..."
+                        >{{ old('alamat') }}</textarea>
 
-                        @error('jumlah_koli')
+                        @error('alamat')
 
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -214,48 +208,7 @@
                         @enderror
 
                         <small class="text-muted">
-                            Masukkan jumlah koli secara manual.
-                        </small>
-
-                    </div>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PCS PER KOLI --}}
-                    {{-- ================================================= --}}
-
-                    <div class="col-md-6">
-
-                        <label
-                            for="pcs_per_koli"
-                            class="form-label fw-semibold"
-                        >
-                            PCS per Koli
-                            <span class="text-danger">*</span>
-                        </label>
-
-                        <input
-                            type="number"
-                            id="pcs_per_koli"
-                            name="pcs_per_koli"
-                            class="form-control @error('pcs_per_koli') is-invalid @enderror"
-                            placeholder="Contoh: 2"
-                            value="{{ old('pcs_per_koli') }}"
-                            min="1"
-                            step="1"
-                            required
-                        >
-
-                        @error('pcs_per_koli')
-
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-
-                        @enderror
-
-                        <small class="text-muted">
-                            Masukkan jumlah PCS dalam setiap koli.
+                            Masukkan alamat lengkap customer jika tersedia.
                         </small>
 
                     </div>
@@ -269,19 +222,26 @@
 
                 <div class="alert alert-info mt-4 mb-0">
 
-                    <div class="d-flex">
+                    <div class="d-flex align-items-start">
 
-                        <div class="me-2">
+                        <div
+                            class="me-2"
+                            style="font-size: 18px;"
+                        >
                             ℹ️
                         </div>
 
                         <div>
-                            <strong>Input Manual</strong>
+
+                            <strong>
+                                Informasi
+                            </strong>
 
                             <div class="small mt-1">
-                                Nama barang, satuan, jumlah koli, dan PCS per koli
-                                semuanya dapat diisi secara manual.
+                                Pastikan nama customer sudah benar
+                                sebelum menyimpan data.
                             </div>
+
                         </div>
 
                     </div>
@@ -295,12 +255,12 @@
             {{-- FOOTER --}}
             {{-- ================================================= --}}
 
-            <div class="card-footer bg-white">
+            <div class="card-footer bg-white py-3">
 
                 <div class="d-flex justify-content-end gap-2">
 
                     <a
-                        href="{{ route('barangs.index') }}"
+                        href="{{ route('customers.index') }}"
                         class="btn btn-light border"
                     >
                         Batal
@@ -310,7 +270,7 @@
                         type="submit"
                         class="btn btn-primary px-4"
                     >
-                        Simpan Barang
+                        Simpan Customer
                     </button>
 
                 </div>

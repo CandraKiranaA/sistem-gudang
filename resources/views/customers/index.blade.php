@@ -15,55 +15,37 @@
             <div class="d-flex align-items-center gap-2 mb-1">
 
                 <div class="page-icon">
-                    📦
+                    👥
                 </div>
 
                 <h3 class="fw-bold mb-0 text-dark">
-                    Master Barang
+                    Laporan Customer
                 </h3>
 
             </div>
 
             <p class="text-muted mb-0 ms-1">
-                Kelola data barang yang tersedia di gudang.
+                Kelola dan pantau data customer serta jumlah transaksi.
             </p>
 
         </div>
 
 
         {{-- ================================================= --}}
-        {{-- BUTTON HEADER --}}
+        {{-- BUTTON --}}
         {{-- ================================================= --}}
 
-        <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+        <div class="d-flex gap-2 mt-3 mt-md-0">
 
-            {{-- IMPORT --}}
             <a
-                href="{{ route('barangs.import.form') }}"
-                class="btn btn-outline-success btn-header"
-            >
-                <span class="me-1">📥</span>
-                Import
-            </a>
-
-
-            {{-- EXPORT --}}
-            <a
-                href="{{ route('barangs.export') }}"
-                class="btn btn-outline-primary btn-header"
-            >
-                <span class="me-1">📤</span>
-                Export
-            </a>
-
-
-            {{-- TAMBAH BARANG --}}
-            <a
-                href="{{ route('barangs.create') }}"
+                href="{{ route('customers.create') }}"
                 class="btn btn-primary btn-add"
             >
-                <span class="me-1">＋</span>
-                Tambah Barang
+                <span class="me-1">
+                    ＋
+                </span>
+
+                Tambah Customer
             </a>
 
         </div>
@@ -72,7 +54,7 @@
 
 
     {{-- ===================================================== --}}
-    {{-- NOTIFIKASI SUCCESS --}}
+    {{-- SUCCESS --}}
     {{-- ===================================================== --}}
 
     @if(session('success'))
@@ -114,7 +96,7 @@
 
 
     {{-- ===================================================== --}}
-    {{-- NOTIFIKASI ERROR --}}
+    {{-- ERROR --}}
     {{-- ===================================================== --}}
 
     @if(session('error'))
@@ -163,33 +145,21 @@
 
         <div class="alert alert-danger custom-alert">
 
-            <div class="d-flex">
+            <strong>
+                Terjadi kesalahan.
+            </strong>
 
-                <div class="alert-icon danger-icon me-3">
-                    !
-                </div>
+            <ul class="mb-0 mt-2">
 
-                <div>
+                @foreach($errors->all() as $error)
 
-                    <strong>
-                        Terjadi kesalahan
-                    </strong>
+                    <li>
+                        {{ $error }}
+                    </li>
 
-                    <ul class="mb-0 mt-2">
+                @endforeach
 
-                        @foreach($errors->all() as $error)
-
-                            <li>
-                                {{ $error }}
-                            </li>
-
-                        @endforeach
-
-                    </ul>
-
-                </div>
-
-            </div>
+            </ul>
 
         </div>
 
@@ -205,7 +175,7 @@
         <div class="card-body p-3">
 
             <form
-                action="{{ route('barangs.index') }}"
+                action="{{ route('customers.index') }}"
                 method="GET"
             >
 
@@ -223,7 +193,7 @@
                                 type="text"
                                 name="search"
                                 class="form-control search-input"
-                                placeholder="Cari berdasarkan nama barang..."
+                                placeholder="Cari nama customer..."
                                 value="{{ request('search') }}"
                             >
 
@@ -249,7 +219,7 @@
                         <div class="col-auto">
 
                             <a
-                                href="{{ route('barangs.index') }}"
+                                href="{{ route('customers.index') }}"
                                 class="btn btn-light border px-3"
                             >
                                 Reset
@@ -269,15 +239,12 @@
 
 
     {{-- ===================================================== --}}
-    {{-- TABLE CARD --}}
+    {{-- TABLE --}}
     {{-- ===================================================== --}}
 
     <div class="card border-0 shadow-sm table-card">
 
-
-        {{-- ================================================= --}}
         {{-- TABLE HEADER --}}
-        {{-- ================================================= --}}
 
         <div class="card-header bg-white border-0 px-3 px-md-4 py-3">
 
@@ -285,27 +252,27 @@
 
                 <div>
 
-                    <h5 class="fw-bold mb-1 table-title">
-                        Daftar Barang
+                    <h5 class="fw-bold mb-1">
+                        Daftar Customer
                     </h5>
 
-                    <small class="text-muted table-description">
-                        Data master barang yang tersedia di gudang.
+                    <small class="text-muted">
+                        Data customer yang terdaftar dalam sistem.
                     </small>
 
                 </div>
 
 
-                @if($barangs->total() > 0)
+                @if($customers->total() > 0)
 
                     <div class="data-count mt-2 mt-md-0">
 
                         <span class="count-number">
-                            {{ $barangs->total() }}
+                            {{ $customers->total() }}
                         </span>
 
                         <span class="count-label">
-                            Barang
+                            Customer
                         </span>
 
                     </div>
@@ -318,60 +285,40 @@
 
 
         {{-- ================================================= --}}
-        {{-- TABLE --}}
+        {{-- TABLE BODY --}}
         {{-- ================================================= --}}
 
         <div class="card-body p-0">
 
             <div class="table-responsive">
 
-                <table
-                    class="table align-middle mb-0 modern-table"
-                >
+                <table class="table align-middle mb-0 modern-table">
 
                     <thead>
 
                         <tr>
 
-                            {{-- NO --}}
                             <th
-                                class="text-center no-column"
+                                class="text-center"
+                                style="width: 80px;"
                             >
                                 No
                             </th>
 
-
-                            {{-- NAMA BARANG --}}
-                            <th class="barang-column">
-                                Nama Barang
+                            <th>
+                                Nama Customer
                             </th>
 
-
-                            {{-- KOLI --}}
                             <th
-                                class="text-center koli-column"
+                                class="text-center"
+                                style="width: 220px;"
                             >
-                                Koli
+                                Total Transaksi
                             </th>
 
-
-                            {{-- PCS --}}
                             <th
-                                class="text-center pcs-column"
-                            >
-                                PCS
-                            </th>
-
-
-                            {{-- SATUAN --}}
-                            <th class="satuan-column">
-                                Satuan
-                            </th>
-
-
-                            {{-- AKSI --}}
-                            <th
-                                class="text-center aksi-column"
+                                class="text-center"
+                                style="width: 150px;"
                             >
                                 Aksi
                             </th>
@@ -383,152 +330,106 @@
 
                     <tbody>
 
-                        @forelse($barangs as $barang)
+                        @forelse($customers as $customer)
 
                             <tr>
 
-                                {{-- ================================================= --}}
                                 {{-- NO --}}
-                                {{-- ================================================= --}}
 
                                 <td class="text-center">
 
                                     <span class="row-number">
 
-                                        {{ $barangs->firstItem() + $loop->index }}
+                                        {{ $customers->firstItem() + $loop->index }}
 
                                     </span>
 
                                 </td>
 
 
-                                {{-- ================================================= --}}
-                                {{-- NAMA BARANG --}}
-                                {{-- ================================================= --}}
+                                {{-- NAMA CUSTOMER --}}
 
                                 <td>
 
-                                    <div class="product-name">
+                                    <div class="customer-name">
 
-                                        {{ $barang->nama_barang }}
+                                        {{ $customer->nama_customer }}
 
                                     </div>
 
-                                    <small class="product-label">
-                                        Data Master Barang
-                                    </small>
+                                    @if($customer->no_telepon)
 
-                                </td>
+                                        <small class="customer-phone">
 
+                                            {{ $customer->no_telepon }}
 
-                                {{-- ================================================= --}}
-                                {{-- KOLI --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-center">
-
-                                    <div class="quantity-box">
-
-                                        <strong>
-
-                                            {{ number_format(
-                                                $barang->jumlah_koli ?? 1
-                                            ) }}
-
-                                        </strong>
-
-                                        <small>
-                                            Koli
                                         </small>
-
-                                    </div>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- PCS --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-center">
-
-                                    <div class="quantity-box pcs-box">
-
-                                        <strong>
-
-                                            {{ number_format(
-                                                $barang->pcs_per_koli ?? 0
-                                            ) }}
-
-                                        </strong>
-
-                                        <small>
-                                            PCS
-                                        </small>
-
-                                    </div>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- SATUAN --}}
-                                {{-- ================================================= --}}
-
-                                <td>
-
-                                    @if($barang->satuan)
-
-                                        <span class="unit-badge">
-
-                                            {{ strtoupper($barang->satuan) }}
-
-                                        </span>
-
-                                    @else
-
-                                        <span class="text-muted no-data">
-                                            —
-                                        </span>
 
                                     @endif
 
                                 </td>
 
 
-                                {{-- ================================================= --}}
+                                {{-- TOTAL TRANSAKSI --}}
+
+                                <td class="text-center">
+
+                                    <span class="transaction-badge">
+
+                                        {{ number_format(
+                                            $customer->transaksis_count ?? 0
+                                        ) }}
+
+                                    </span>
+
+                                </td>
+
+
                                 {{-- AKSI --}}
-                                {{-- ================================================= --}}
 
                                 <td>
 
                                     <div class="action-buttons">
 
+                                        {{-- DETAIL --}}
+
+                                        <a
+                                            href="{{ route(
+                                                'customers.show',
+                                                $customer
+                                            ) }}"
+                                            class="action-btn view-btn"
+                                            title="Lihat detail"
+                                        >
+                                            👁️
+                                        </a>
+
+
                                         {{-- EDIT --}}
 
                                         <a
                                             href="{{ route(
-                                                'barangs.edit',
-                                                $barang
+                                                'customers.edit',
+                                                $customer
                                             ) }}"
                                             class="action-btn edit-btn"
-                                            title="Edit barang"
+                                            title="Edit customer"
                                         >
                                             ✏️
                                         </a>
 
 
-                                        {{-- DELETE --}}
+                                        {{-- HAPUS --}}
 
                                         <form
                                             action="{{ route(
-                                                'barangs.destroy',
-                                                $barang
+                                                'customers.destroy',
+                                                $customer
                                             ) }}"
                                             method="POST"
                                             class="d-inline"
                                             onsubmit="return confirm(
-                                                'Apakah kamu yakin ingin menghapus barang ini?'
+                                                'Apakah kamu yakin ingin menghapus customer ini?'
                                             )"
                                         >
 
@@ -539,7 +440,7 @@
                                             <button
                                                 type="submit"
                                                 class="action-btn delete-btn"
-                                                title="Hapus barang"
+                                                title="Hapus customer"
                                             >
                                                 🗑️
                                             </button>
@@ -552,38 +453,33 @@
 
                             </tr>
 
-
                         @empty
-
-                            {{-- ================================================= --}}
-                            {{-- EMPTY STATE --}}
-                            {{-- ================================================= --}}
 
                             <tr>
 
                                 <td
-                                    colspan="6"
+                                    colspan="4"
                                     class="empty-state"
                                 >
 
                                     <div class="empty-icon">
-                                        📦
+                                        👥
                                     </div>
 
                                     <h6 class="fw-bold mb-1">
-                                        Belum Ada Master Barang
+                                        Belum Ada Customer
                                     </h6>
 
                                     <p class="text-muted mb-3">
-                                        Belum ada data barang yang tersedia
-                                        di dalam master barang.
+                                        Belum ada customer yang terdaftar
+                                        di dalam sistem.
                                     </p>
 
                                     <a
-                                        href="{{ route('barangs.create') }}"
+                                        href="{{ route('customers.create') }}"
                                         class="btn btn-primary btn-sm px-3"
                                     >
-                                        ＋ Tambah Barang
+                                        ＋ Tambah Customer
                                     </a>
 
                                 </td>
@@ -605,7 +501,7 @@
         {{-- PAGINATION --}}
         {{-- ================================================= --}}
 
-        @if($barangs->hasPages())
+        @if($customers->hasPages())
 
             <div class="card-footer bg-white border-0 px-3 px-md-4 py-3">
 
@@ -618,22 +514,22 @@
                             Menampilkan
 
                             <strong>
-                                {{ $barangs->firstItem() }}
+                                {{ $customers->firstItem() }}
                             </strong>
 
                             sampai
 
                             <strong>
-                                {{ $barangs->lastItem() }}
+                                {{ $customers->lastItem() }}
                             </strong>
 
                             dari
 
                             <strong>
-                                {{ $barangs->total() }}
+                                {{ $customers->total() }}
                             </strong>
 
-                            barang
+                            customer
 
                         </small>
 
@@ -642,7 +538,7 @@
 
                     <div class="mt-2 mt-md-0">
 
-                        {{ $barangs->withQueryString()->links() }}
+                        {{ $customers->withQueryString()->links() }}
 
                     </div>
 
@@ -681,44 +577,18 @@
     border-radius: 10px;
 
     font-size: 21px;
-
 }
 
 
 .btn {
 
     border-radius: 8px;
-
-}
-
-
-/* =========================================================
-   HEADER BUTTON
-========================================================= */
-
-.btn-header {
-
-    padding: 10px 17px;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    transition: all 0.2s ease;
-
-}
-
-
-.btn-header:hover {
-
-    transform: translateY(-1px);
-
 }
 
 
 .btn-add {
 
-    padding: 10px 19px;
+    padding: 10px 18px;
 
     font-size: 14px;
 
@@ -727,15 +597,13 @@
     box-shadow:
         0 3px 10px rgba(13, 110, 253, 0.15);
 
-    transition: all 0.2s ease;
-
+    transition: all .2s ease;
 }
 
 
 .btn-add:hover {
 
     transform: translateY(-1px);
-
 }
 
 
@@ -750,8 +618,7 @@
     border-radius: 10px;
 
     box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.04);
-
+        0 2px 8px rgba(0,0,0,.04);
 }
 
 
@@ -763,15 +630,12 @@
     border-radius: 50%;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     margin-right: 12px;
 
     font-weight: 700;
-
 }
 
 
@@ -780,7 +644,6 @@
     background: #d1e7dd;
 
     color: #146c43;
-
 }
 
 
@@ -789,7 +652,6 @@
     background: #f8d7da;
 
     color: #b02a37;
-
 }
 
 
@@ -800,14 +662,12 @@
 .search-card {
 
     border-radius: 10px;
-
 }
 
 
 .search-wrapper {
 
     position: relative;
-
 }
 
 
@@ -825,29 +685,19 @@
 
     font-size: 15px;
 
-    opacity: 0.65;
-
+    opacity: .65;
 }
 
 
 .search-input {
 
-    padding-left: 40px;
-
     height: 44px;
+
+    padding-left: 40px;
 
     border-radius: 8px;
 
     font-size: 14px;
-
-}
-
-
-.search-input:focus {
-
-    box-shadow:
-        0 0 0 3px rgba(13, 110, 253, 0.08);
-
 }
 
 
@@ -860,21 +710,6 @@
     border-radius: 12px;
 
     overflow: hidden;
-
-}
-
-
-.table-title {
-
-    font-size: 19px;
-
-}
-
-
-.table-description {
-
-    font-size: 13px;
-
 }
 
 
@@ -887,7 +722,6 @@
     border-radius: 20px;
 
     font-size: 13px;
-
 }
 
 
@@ -896,7 +730,6 @@
     font-weight: 700;
 
     color: #0d6efd;
-
 }
 
 
@@ -905,7 +738,6 @@
     color: #6c757d;
 
     margin-left: 3px;
-
 }
 
 
@@ -915,81 +747,15 @@
 
 .modern-table {
 
-    width: 100%;
-
     font-size: 15px;
 
-    table-layout: fixed;
-
+    width: 100%;
 }
 
-
-/* =========================================================
-   COLUMN WIDTH
-========================================================= */
-
-.no-column {
-
-    width: 8%;
-
-    min-width: 70px;
-
-}
-
-
-.barang-column {
-
-    width: 34%;
-
-    min-width: 220px;
-
-}
-
-
-.koli-column {
-
-    width: 14%;
-
-    min-width: 110px;
-
-}
-
-
-.pcs-column {
-
-    width: 14%;
-
-    min-width: 110px;
-
-}
-
-
-.satuan-column {
-
-    width: 15%;
-
-    min-width: 120px;
-
-}
-
-
-.aksi-column {
-
-    width: 15%;
-
-    min-width: 120px;
-
-}
-
-
-/* =========================================================
-   TABLE HEADER
-========================================================= */
 
 .modern-table thead {
 
     background: #f8fafc;
-
 }
 
 
@@ -1003,55 +769,45 @@
 
     text-transform: uppercase;
 
-    letter-spacing: 0.3px;
+    letter-spacing: .3px;
 
-    padding: 16px 14px;
+    padding: 16px 18px;
 
     border-bottom: 1px solid #e9ecef;
 
     white-space: nowrap;
 
     vertical-align: middle;
-
 }
 
 
-/* =========================================================
-   TABLE BODY
-========================================================= */
-
 .modern-table tbody td {
 
-    padding: 17px 14px;
+    padding: 17px 18px;
 
     border-bottom: 1px solid #f1f3f5;
 
     vertical-align: middle;
 
     font-size: 15px;
-
 }
 
 
 .modern-table tbody tr {
 
-    transition:
-        background-color 0.15s ease;
-
+    transition: background-color .15s ease;
 }
 
 
 .modern-table tbody tr:hover {
 
     background: #f8fbff;
-
 }
 
 
 .modern-table tbody tr:last-child td {
 
     border-bottom: 0;
-
 }
 
 
@@ -1067,131 +823,11 @@
 
     justify-content: center;
 
-    width: 34px;
+    width: 32px;
 
-    height: 34px;
-
-    background: #f1f5f9;
-
-    border-radius: 8px;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    color: #64748b;
-
-}
-
-
-/* =========================================================
-   PRODUCT
-========================================================= */
-
-.product-name {
-
-    font-size: 16px;
-
-    font-weight: 700;
-
-    color: #1e293b;
-
-    line-height: 1.4;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-}
-
-
-.product-label {
-
-    display: block;
-
-    margin-top: 3px;
-
-    color: #94a3b8;
-
-    font-size: 12px;
-
-}
-
-
-/* =========================================================
-   QUANTITY
-========================================================= */
-
-.quantity-box {
-
-    display: inline-flex;
-
-    align-items: baseline;
-
-    justify-content: center;
-
-    gap: 5px;
-
-    padding: 7px 12px;
-
-    background: #f8fafc;
-
-    border-radius: 8px;
-
-    white-space: nowrap;
-
-}
-
-
-.quantity-box strong {
-
-    font-size: 16px;
-
-    color: #334155;
-
-}
-
-
-.quantity-box small {
-
-    font-size: 11px;
-
-    color: #94a3b8;
-
-    font-weight: 700;
-
-}
-
-
-.pcs-box {
-
-    background: #eef6ff;
-
-}
-
-
-.pcs-box strong {
-
-    color: #0d6efd;
-
-}
-
-
-/* =========================================================
-   SATUAN
-========================================================= */
-
-.unit-badge {
-
-    display: inline-block;
-
-    padding: 7px 12px;
+    height: 32px;
 
     background: #f1f5f9;
-
-    color: #475569;
 
     border-radius: 7px;
 
@@ -1199,13 +835,61 @@
 
     font-weight: 600;
 
+    color: #64748b;
 }
 
 
-.no-data {
+/* =========================================================
+   CUSTOMER
+========================================================= */
 
-    font-size: 15px;
+.customer-name {
 
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #1e293b;
+}
+
+
+.customer-phone {
+
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   TRANSAKSI
+========================================================= */
+
+.transaction-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 50px;
+
+    padding: 7px 13px;
+
+    background: #eef6ff;
+
+    color: #0d6efd;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    font-weight: 700;
 }
 
 
@@ -1219,18 +903,15 @@
 
     justify-content: center;
 
-    align-items: center;
-
-    gap: 7px;
-
+    gap: 6px;
 }
 
 
 .action-btn {
 
-    width: 36px;
+    width: 35px;
 
-    height: 36px;
+    height: 35px;
 
     display: inline-flex;
 
@@ -1240,21 +921,37 @@
 
     border: 0;
 
-    border-radius: 8px;
+    border-radius: 7px;
 
     text-decoration: none;
 
-    transition: all 0.15s ease;
+    transition: all .15s ease;
 
-    font-size: 15px;
-
+    font-size: 14px;
 }
 
+
+/* VIEW */
+
+.view-btn {
+
+    background: #d1ecf1;
+}
+
+
+.view-btn:hover {
+
+    background: #0dcaf0;
+
+    transform: translateY(-1px);
+}
+
+
+/* EDIT */
 
 .edit-btn {
 
     background: #fff3cd;
-
 }
 
 
@@ -1263,14 +960,14 @@
     background: #ffc107;
 
     transform: translateY(-1px);
-
 }
 
+
+/* DELETE */
 
 .delete-btn {
 
     background: #f8d7da;
-
 }
 
 
@@ -1279,12 +976,11 @@
     background: #dc3545;
 
     transform: translateY(-1px);
-
 }
 
 
 /* =========================================================
-   EMPTY STATE
+   EMPTY
 ========================================================= */
 
 .empty-state {
@@ -1292,7 +988,6 @@
     text-align: center;
 
     padding: 70px 20px !important;
-
 }
 
 
@@ -1315,21 +1010,6 @@
     border-radius: 50%;
 
     font-size: 31px;
-
-}
-
-
-.empty-state h6 {
-
-    font-size: 16px;
-
-}
-
-
-.empty-state p {
-
-    font-size: 14px;
-
 }
 
 
@@ -1342,40 +1022,24 @@
     font-size: 13px;
 
     color: #64748b;
-
 }
 
 
 .pagination-info strong {
 
     color: #334155;
-
 }
 
 
 .card-footer .pagination {
 
     margin-bottom: 0;
-
 }
 
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
-
-@media (max-width: 992px) {
-
-    .modern-table {
-
-        min-width: 850px;
-
-        table-layout: auto;
-
-    }
-
-}
-
 
 @media (max-width: 768px) {
 
@@ -1384,104 +1048,28 @@
         padding-left: 12px !important;
 
         padding-right: 12px !important;
-
-    }
-
-
-    .btn-header,
-    .btn-add {
-
-        flex: 1;
-
-        text-align: center;
-
-    }
-
-
-    .search-wrapper {
-
-        width: 100%;
-
-    }
-
-
-    .search-card .col-auto {
-
-        width: auto;
-
-    }
-
-
-    .modern-table {
-
-        min-width: 850px;
-
-        font-size: 14px;
-
     }
 
 
     .modern-table thead th {
 
-        font-size: 12px;
-
         padding: 13px 10px;
 
+        font-size: 12px;
     }
 
 
     .modern-table tbody td {
 
-        font-size: 14px;
-
         padding: 14px 10px;
 
+        font-size: 14px;
     }
 
 
-    .product-name {
+    .customer-name {
 
         font-size: 15px;
-
-    }
-
-
-    .product-label {
-
-        font-size: 11px;
-
-    }
-
-
-    .quantity-box strong {
-
-        font-size: 15px;
-
-    }
-
-
-    .quantity-box small {
-
-        font-size: 10px;
-
-    }
-
-
-    .unit-badge {
-
-        font-size: 12px;
-
-        padding: 6px 10px;
-
-    }
-
-
-    .action-btn {
-
-        width: 34px;
-
-        height: 34px;
-
     }
 
 }

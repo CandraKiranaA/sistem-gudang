@@ -7,6 +7,7 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\CustomerController;
 
 
 /*
@@ -63,21 +64,74 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    // Form import Excel
+    Route::get(
+        '/barangs/import',
+        [BarangController::class, 'importForm']
+    )->name('barangs.import.form');
+
+    // Proses import Excel
+    Route::post(
+        '/barangs/import',
+        [BarangController::class, 'import']
+    )->name('barangs.import');
+
+    // Export Excel
+    Route::get(
+        '/barangs/export',
+        [BarangController::class, 'export']
+    )->name('barangs.export');
+
+    // CRUD Barang
     Route::resource(
         'barangs',
         BarangController::class
+    )->except([
+        'show'
+    ]);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BARANG MASUK
+    |--------------------------------------------------------------------------
+    */
+
+    // Form import Excel Barang Masuk
+    Route::get(
+        '/barang-masuk/import',
+        [BarangMasukController::class, 'importForm']
+    )->name('barang-masuk.import.form');
+
+    // Proses import Excel Barang Masuk
+    Route::post(
+        '/barang-masuk/import',
+        [BarangMasukController::class, 'import']
+    )->name('barang-masuk.import');
+
+    // Export Excel Barang Masuk
+    Route::get(
+        '/barang-masuk/export',
+        [BarangMasukController::class, 'export']
+    )->name('barang-masuk.export');
+
+    // CRUD Barang Masuk
+    Route::resource(
+        'barang-masuk',
+        BarangMasukController::class
     );
 
 
     /*
     |--------------------------------------------------------------------------
-    | STOCK IN
+    | CUSTOMERS
     |--------------------------------------------------------------------------
     */
 
+    // CRUD Customer
     Route::resource(
-        'barang-masuk',
-        BarangMasukController::class
+        'customers',
+        CustomerController::class
     );
 
 
@@ -104,25 +158,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    // Daftar penjualan
     Route::get(
         '/stock-out',
         [PenjualanController::class, 'index']
     )->name('penjualan.index');
 
+    // Form penjualan
     Route::get(
         '/stock-out/create',
         [PenjualanController::class, 'create']
     )->name('penjualan.create');
 
+    // Simpan penjualan
     Route::post(
         '/stock-out',
         [PenjualanController::class, 'store']
     )->name('penjualan.store');
 
+    // Detail penjualan
     Route::get(
         '/stock-out/{penjualan}',
         [PenjualanController::class, 'show']
     )->name('penjualan.show');
+
 
     /*
     |--------------------------------------------------------------------------

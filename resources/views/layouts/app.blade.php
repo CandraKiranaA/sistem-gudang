@@ -222,7 +222,7 @@
 
                     {{-- LAPORAN CUSTOMER --}}
 
-                    <a href="#" class="{{ request()->is('laporan/customer*') ? 'active' : '' }}">
+                    <a href="{{ route('customers.index') }}" class="{{ request()->is('laporan/customer*') ? 'active' : '' }}">
                         👥 Customer
                     </a>
 
