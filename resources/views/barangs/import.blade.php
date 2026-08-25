@@ -8,9 +8,10 @@
     {{-- HEADER --}}
     {{-- ===================================================== --}}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
         <div>
+
             <h3 class="mb-1">
                 Import Data Barang
             </h3>
@@ -18,6 +19,7 @@
             <p class="text-muted mb-0">
                 Tambahkan banyak data barang ke Master Barang menggunakan file Excel.
             </p>
+
         </div>
 
         <div class="d-flex gap-2">
@@ -52,7 +54,9 @@
             role="alert"
         >
 
-            <strong>Import berhasil!</strong>
+            <strong>
+                Import berhasil!
+            </strong>
 
             <div class="mt-1">
                 {{ session('success') }}
@@ -80,7 +84,9 @@
             role="alert"
         >
 
-            <strong>Import gagal!</strong>
+            <strong>
+                Import gagal!
+            </strong>
 
             <div class="mt-1">
                 {{ session('error') }}
@@ -105,7 +111,9 @@
 
         <div class="alert alert-danger">
 
-            <strong>Terjadi kesalahan:</strong>
+            <strong>
+                Terjadi kesalahan:
+            </strong>
 
             <ul class="mb-0 mt-2">
 
@@ -130,7 +138,10 @@
 
     <div class="card shadow-sm border-0">
 
-        {{-- HEADER CARD --}}
+        {{-- ================================================= --}}
+        {{-- CARD HEADER --}}
+        {{-- ================================================= --}}
+
         <div class="card-header bg-white py-3">
 
             <div class="d-flex align-items-center">
@@ -139,9 +150,11 @@
                     class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3"
                     style="width: 48px; height: 48px;"
                 >
+
                     <span style="font-size: 24px;">
                         📥
                     </span>
+
                 </div>
 
                 <div>
@@ -161,7 +174,10 @@
         </div>
 
 
+        {{-- ================================================= --}}
         {{-- BODY --}}
+        {{-- ================================================= --}}
+
         <div class="card-body p-4">
 
             <form
@@ -237,7 +253,7 @@
 
 
                 {{-- ================================================= --}}
-                {{-- FORMAT DATA --}}
+                {{-- CONTOH FORMAT EXCEL --}}
                 {{-- ================================================= --}}
 
                 <div class="alert alert-info border-0">
@@ -254,17 +270,19 @@
                         <div class="w-100">
 
                             <h6 class="fw-bold mb-2">
-                                Format Kolom Excel
+                                Contoh Format Data Excel
                             </h6>
 
                             <p class="small mb-3">
-                                Pastikan baris pertama pada file Excel
-                                menggunakan nama kolom berikut:
+                                Berikut contoh format data yang dapat digunakan
+                                untuk import barang.
                             </p>
 
                             <div class="table-responsive">
 
-                                <table class="table table-sm table-bordered bg-white mb-0">
+                                <table
+                                    class="table table-sm table-bordered bg-white mb-0"
+                                >
 
                                     <thead class="table-light">
 
@@ -366,131 +384,10 @@
 
 
                 {{-- ================================================= --}}
-                {{-- PETUNJUK --}}
-                {{-- ================================================= --}}
-
-                <div class="card border-0 bg-light mb-4">
-
-                    <div class="card-body">
-
-                        <h6 class="fw-bold mb-3">
-                            📌 Petunjuk Import
-                        </h6>
-
-                        <div class="row g-3">
-
-                            <div class="col-md-6">
-
-                                <div class="d-flex">
-
-                                    <span class="me-2">
-                                        ✓
-                                    </span>
-
-                                    <small>
-                                        <strong>nama_barang</strong>
-                                        wajib diisi.
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <div class="d-flex">
-
-                                    <span class="me-2">
-                                        ✓
-                                    </span>
-
-                                    <small>
-                                        <strong>satuan</strong>
-                                        diisi sesuai satuan barang.
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <div class="d-flex">
-
-                                    <span class="me-2">
-                                        ✓
-                                    </span>
-
-                                    <small>
-                                        <strong>jumlah_koli</strong>
-                                        harus berupa angka minimal 1.
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <div class="d-flex">
-
-                                    <span class="me-2">
-                                        ✓
-                                    </span>
-
-                                    <small>
-                                        <strong>pcs_per_koli</strong>
-                                        harus berupa angka minimal 1.
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <div class="d-flex">
-
-                                    <span class="me-2">
-                                        ✓
-                                    </span>
-
-                                    <small>
-                                        Baris pertama digunakan sebagai header.
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <div class="d-flex">
-
-                                    <span class="me-2">
-                                        ✓
-                                    </span>
-
-                                    <small>
-                                        Data akan ditambahkan ke Master Barang.
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                {{-- ================================================= --}}
                 {{-- BUTTON --}}
                 {{-- ================================================= --}}
 
-                <div class="d-flex justify-content-end gap-2">
+                <div class="d-flex justify-content-end gap-2 mt-4">
 
                     <a
                         href="{{ route('barangs.index') }}"

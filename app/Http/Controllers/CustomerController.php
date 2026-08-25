@@ -2,19 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
+use App\Models\Penjualan;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    /**
-     * =========================================================
-     * INDEX
-     * =========================================================
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | DAFTAR CUSTOMER
+    |--------------------------------------------------------------------------
+    */
+
     public function index(Request $request)
     {
-        $query = Customer::query();
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil customer langsung dari tabel penjualans
+        |--------------------------------------------------------------------------
+        */
+
+        $query = Penjualan::query()
+            ->select('nama_customer')
+            ->selectRaw('COUNT(*) as total_transaksi')
+            ->whereNotNull('nama_customer')
+            ->where('nama_customer', '!=', '')
+            ->groupBy('nama_customer')
+            ->orderBy('nama_customer');
+
 
         /*
         |--------------------------------------------------------------------------
@@ -24,7 +38,7 @@ class CustomerController extends Controller
 
         if ($request->filled('search')) {
 
-            $search = $request->search;
+            $search = trim($request->search);
 
             $query->where(
                 'nama_customer',
@@ -33,16 +47,17 @@ class CustomerController extends Controller
             );
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | DATA CUSTOMER
+        | PAGINATION
         |--------------------------------------------------------------------------
         */
 
         $customers = $query
-            ->orderBy('nama_customer', 'asc')
             ->paginate(10)
             ->withQueryString();
+
 
         return view(
             'customers.index',
@@ -51,135 +66,66 @@ class CustomerController extends Controller
     }
 
 
-    /**
-     * =========================================================
-     * CREATE
-     * =========================================================
-     */
-    public function create()
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL CUSTOMER
+    |--------------------------------------------------------------------------
+    */
+
+    public function show($nama_customer)
     {
-        return view('customers.create');
-    }
+        /*
+        |--------------------------------------------------------------------------
+        | Decode nama customer
+        |--------------------------------------------------------------------------
+        */
+
+        $nama_customer = urldecode($nama_customer);
 
 
-    /**
-     * =========================================================
-     * STORE
-     * =========================================================
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama_customer' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil semua transaksi Stock Out customer
+        |--------------------------------------------------------------------------
+        */
 
-            'no_telepon' => [
-                'nullable',
-                'string',
-                'max:30',
-            ],
-
-            'alamat' => [
-                'nullable',
-                'string',
-            ],
-        ]);
-
-        Customer::create($validated);
-
-        return redirect()
-            ->route('customers.index')
-            ->with(
-                'success',
-                'Customer berhasil ditambahkan.'
-            );
-    }
+        $penjualans = Penjualan::with([
+            'details.barang'
+        ])
+        ->where('nama_customer', $nama_customer)
+        ->latest('tanggal_penjualan')
+        ->get();
 
 
-    /**
-     * =========================================================
-     * SHOW
-     * =========================================================
-     */
-    public function show(Customer $customer)
-    {
+        /*
+        |--------------------------------------------------------------------------
+        | Kalau customer tidak ditemukan
+        |--------------------------------------------------------------------------
+        */
+
+        if ($penjualans->isEmpty()) {
+
+            return redirect()
+                ->route('customers.index')
+                ->with(
+                    'error',
+                    'Data customer tidak ditemukan.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Kirim nama customer dan transaksi
+        |--------------------------------------------------------------------------
+        */
+
         return view(
             'customers.show',
-            compact('customer')
+            [
+                'nama_customer' => $nama_customer,
+                'penjualans' => $penjualans
+            ]
         );
-    }
-
-
-    /**
-     * =========================================================
-     * EDIT
-     * =========================================================
-     */
-    public function edit(Customer $customer)
-    {
-        return view(
-            'customers.edit',
-            compact('customer')
-        );
-    }
-
-
-    /**
-     * =========================================================
-     * UPDATE
-     * =========================================================
-     */
-    public function update(
-        Request $request,
-        Customer $customer
-    ) {
-        $validated = $request->validate([
-            'nama_customer' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'no_telepon' => [
-                'nullable',
-                'string',
-                'max:30',
-            ],
-
-            'alamat' => [
-                'nullable',
-                'string',
-            ],
-        ]);
-
-        $customer->update($validated);
-
-        return redirect()
-            ->route('customers.index')
-            ->with(
-                'success',
-                'Data customer berhasil diperbarui.'
-            );
-    }
-
-
-    /**
-     * =========================================================
-     * DESTROY
-     * =========================================================
-     */
-    public function destroy(Customer $customer)
-    {
-        $customer->delete();
-
-        return redirect()
-            ->route('customers.index')
-            ->with(
-                'success',
-                'Customer berhasil dihapus.'
-            );
     }
 }
