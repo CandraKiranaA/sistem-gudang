@@ -50,6 +50,7 @@
                         <th>Tanggal</th>
                         <th>Customer</th>
                         <th>Jumlah Barang</th>
+                        <th>Diskon</th>
                         <th>Total</th>
                         <th width="150">Aksi</th>
                     </tr>
@@ -83,6 +84,11 @@
 
                             <td>
                                 Rp
+                                {{ number_format($penjualan->diskon ?? 0, 0, ',', '.') }}
+                            </td>
+
+                            <td>
+                                Rp
                                 {{ number_format($penjualan->total, 0, ',', '.') }}
                             </td>
 
@@ -104,7 +110,7 @@
                         <tr>
 
                             <td
-                                colspan="6"
+                                colspan="7"
                                 class="text-center text-muted py-4"
                             >
                                 Belum ada transaksi penjualan.

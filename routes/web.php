@@ -8,6 +8,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\LaporanBarangController;
 
 
 /*
@@ -149,8 +150,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         CustomerController::class,
         'show'
     ])
-    ->where('nama_customer', '.*')
-    ->name('customers.show');
+        ->where('nama_customer', '.*')
+        ->name('customers.show');
 
 
     /*
@@ -251,4 +252,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'logout'
     ])->name('logout');
 
+    /*
+|--------------------------------------------------------------------------
+| LAPORAN BARANG
+|--------------------------------------------------------------------------
+*/
+
+    Route::get(
+        '/laporan/barang',
+        [LaporanBarangController::class, 'index']
+    )->name('laporan.barang.index');
+
+
+    Route::get(
+        '/laporan/barang/{id}',
+        [LaporanBarangController::class, 'show']
+    )->name('laporan.barang.show');
+
+    Route::get('/laporan/export-excel', [LaporanBarangController::class, 'exportExcel'])
+    ->name('laporan.export.excel');
+    
 });

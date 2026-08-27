@@ -215,14 +215,15 @@
 
                     {{-- LAPORAN BARANG KELUAR --}}
 
-                    <a href="#" class="{{ request()->is('laporan/barang-keluar*') ? 'active' : '' }}">
+                    <a href="{{ route('laporan.barang.index') }}"
+                        class="{{ request()->is('laporan/barang*') ? 'active' : '' }}">
                         📊 Barang Keluar
                     </a>
 
-
                     {{-- LAPORAN CUSTOMER --}}
 
-                    <a href="{{ route('customers.index') }}" class="{{ request()->is('laporan/customer*') ? 'active' : '' }}">
+                    <a href="{{ route('customers.index') }}"
+                        class="{{ request()->is('laporan/customer*') ? 'active' : '' }}">
                         👥 Customer
                     </a>
 
