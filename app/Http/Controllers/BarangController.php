@@ -11,103 +11,248 @@ use Maatwebsite\Excel\Facades\Excel;
 class BarangController extends Controller
 {
     /**
-     * Menampilkan daftar barang
+     * =========================================================
+     * MENAMPILKAN DAFTAR BARANG
+     * =========================================================
      */
-    public function index()
+    public function index(Request $request)
     {
-        $barangs = Barang::latest()->paginate(10);
+        /*
+         * Ambil keyword search
+         */
+        $search = $request->input('search');
 
-        return view('barangs.index', compact('barangs'));
+
+        /*
+         * Query barang
+         */
+        $query = Barang::query();
+
+
+        /*
+         * Jika ada search
+         */
+        if ($search) {
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where(
+                    'nama_barang',
+                    'like',
+                    '%' . $search . '%'
+                )
+
+                ->orWhere(
+                    'satuan',
+                    'like',
+                    '%' . $search . '%'
+                );
+
+            });
+
+        }
+
+
+        /*
+         * Urutkan terbaru
+         * dan pagination
+         */
+        $barangs = $query
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+
+        return view(
+            'barangs.index',
+            compact(
+                'barangs',
+                'search'
+            )
+        );
     }
 
+
     /**
-     * Form tambah barang
+     * =========================================================
+     * FORM TAMBAH BARANG
+     * =========================================================
      */
     public function create()
     {
         return view('barangs.create');
     }
 
+
     /**
-     * Simpan barang secara manual
+     * =========================================================
+     * SIMPAN BARANG SECARA MANUAL
+     * =========================================================
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'satuan' => 'required|string|max:50',
-            'jumlah_koli' => 'required|integer|min:1',
-            'pcs_per_koli' => 'required|integer|min:1',
+
+            'nama_barang' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+
+            'satuan' => [
+                'required',
+                'string',
+                'max:50'
+            ],
+
+            'jumlah_koli' => [
+                'required',
+                'integer',
+                'min:1'
+            ],
+
+            'pcs_per_koli' => [
+                'required',
+                'integer',
+                'min:1'
+            ],
+
         ]);
+
 
         Barang::create($validated);
 
+
         return redirect()
             ->route('barangs.index')
-            ->with('success', 'Barang berhasil ditambahkan.');
+            ->with(
+                'success',
+                'Barang berhasil ditambahkan.'
+            );
     }
 
+
     /**
-     * Form edit barang
+     * =========================================================
+     * FORM EDIT BARANG
+     * =========================================================
      */
     public function edit(Barang $barang)
     {
-        return view('barangs.edit', compact('barang'));
+        return view(
+            'barangs.edit',
+            compact('barang')
+        );
     }
 
+
     /**
-     * Update barang
+     * =========================================================
+     * UPDATE BARANG
+     * =========================================================
      */
-    public function update(Request $request, Barang $barang)
-    {
+    public function update(
+        Request $request,
+        Barang $barang
+    ) {
+
         $validated = $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'satuan' => 'required|string|max:50',
-            'jumlah_koli' => 'required|integer|min:1',
-            'pcs_per_koli' => 'required|integer|min:1',
+
+            'nama_barang' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+
+            'satuan' => [
+                'required',
+                'string',
+                'max:50'
+            ],
+
+            'jumlah_koli' => [
+                'required',
+                'integer',
+                'min:1'
+            ],
+
+            'pcs_per_koli' => [
+                'required',
+                'integer',
+                'min:1'
+            ],
+
         ]);
+
 
         $barang->update($validated);
 
+
         return redirect()
             ->route('barangs.index')
-            ->with('success', 'Barang berhasil diperbarui.');
+            ->with(
+                'success',
+                'Barang berhasil diperbarui.'
+            );
     }
 
+
     /**
-     * Hapus barang
+     * =========================================================
+     * HAPUS BARANG
+     * =========================================================
      */
     public function destroy(Barang $barang)
     {
         $barang->delete();
 
+
         return redirect()
             ->route('barangs.index')
-            ->with('success', 'Barang berhasil dihapus.');
+            ->with(
+                'success',
+                'Barang berhasil dihapus.'
+            );
     }
 
+
     /**
-     * Form import Excel
+     * =========================================================
+     * FORM IMPORT EXCEL
+     * =========================================================
      */
     public function importForm()
     {
         return view('barangs.import');
     }
 
+
     /**
-     * Proses import Excel
+     * =========================================================
+     * PROSES IMPORT EXCEL
+     * =========================================================
      */
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+
+            'file' => [
+                'required',
+                'file',
+                'mimes:xlsx,xls,csv',
+                'max:5120'
+            ],
+
         ]);
 
+
         try {
+
             Excel::import(
                 new BarangImport(),
                 $request->file('file')
             );
+
 
             return redirect()
                 ->route('barangs.index')
@@ -127,8 +272,11 @@ class BarangController extends Controller
         }
     }
 
+
     /**
-     * Export data barang ke Excel
+     * =========================================================
+     * EXPORT DATA BARANG
+     * =========================================================
      */
     public function export()
     {

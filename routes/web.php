@@ -18,7 +18,9 @@ use App\Http\Controllers\LaporanBarangController;
 */
 
 Route::get('/', function () {
+
     return redirect()->route('login');
+
 });
 
 
@@ -32,6 +34,7 @@ Route::get('/login', [
     AuthController::class,
     'showLogin'
 ])->name('login');
+
 
 Route::post('/login', [
     AuthController::class,
@@ -55,8 +58,44 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
 
     Route::get('/dashboard', function () {
-        return view('dashboard');
+
+        // Total jenis barang
+        $totalBarang = \App\Models\Barang::count();
+
+
+        // Total koli barang masuk
+        $totalBarangMasuk =
+            \App\Models\BarangMasuk::sum('jumlah_koli');
+
+
+        // Total barang keluar
+        $totalBarangKeluar =
+            \App\Models\PenjualanDetail::sum('jumlah_pcs');
+
+
+        // Total nota penjualan
+        $totalNota =
+            \App\Models\Penjualan::count();
+
+
+        // Total customer unik
+        $totalCustomer =
+            \App\Models\Penjualan::whereNotNull('nama_customer')
+                ->where('nama_customer', '!=', '')
+                ->distinct()
+                ->count('nama_customer');
+
+
+        return view('dashboard', compact(
+            'totalBarang',
+            'totalBarangMasuk',
+            'totalBarangKeluar',
+            'totalNota',
+            'totalCustomer'
+        ));
+
     })->name('dashboard');
+
 
 
     /*
@@ -65,23 +104,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
+
     Route::get('/barangs/import', [
         BarangController::class,
         'importForm'
     ])->name('barangs.import.form');
+
 
     Route::post('/barangs/import', [
         BarangController::class,
         'import'
     ])->name('barangs.import');
 
+
     Route::get('/barangs/export', [
         BarangController::class,
         'export'
     ])->name('barangs.export');
 
+
     Route::resource('barangs', BarangController::class)
         ->except(['show']);
+
 
 
     /*
@@ -90,20 +134,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
+
     Route::get('/barang-masuk/import', [
         BarangMasukController::class,
         'importForm'
     ])->name('barang-masuk.import.form');
+
 
     Route::post('/barang-masuk/import', [
         BarangMasukController::class,
         'import'
     ])->name('barang-masuk.import');
 
+
     Route::get('/barang-masuk/export', [
         BarangMasukController::class,
         'export'
     ])->name('barang-masuk.export');
+
 
     Route::resource(
         'barang-masuk',
@@ -111,21 +159,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     );
 
 
+
     /*
     |--------------------------------------------------------------------------
-    | CUSTOMER / LAPORAN CUSTOMER
+    | CUSTOMER
     |--------------------------------------------------------------------------
     |
-    | DATA CUSTOMER DIAMBIL DARI:
+    | Data customer diambil dari:
     | penjualans.nama_customer
     |
     */
 
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | DAFTAR CUSTOMER
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     Route::get('/customers', [
@@ -135,15 +184,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | DETAIL CUSTOMER
-    |----------------------------------------------------------------------
-    |
-    | Contoh:
-    | /customers/Toko%20Bahari
-    |
-    | Parameter harus bernama nama_customer
-    |
+    |--------------------------------------------------------------------------
     */
 
     Route::get('/customers/{nama_customer}', [
@@ -154,6 +197,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('customers.show');
 
 
+
     /*
     |--------------------------------------------------------------------------
     | STOCK OUT / PENJUALAN
@@ -162,9 +206,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | DAFTAR STOCK OUT
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     Route::get('/stock-out', [
@@ -173,10 +217,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('penjualan.index');
 
 
+
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | FORM BUAT NOTA
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     Route::get('/stock-out/create', [
@@ -185,10 +230,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('penjualan.create');
 
 
+
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | SIMPAN STOCK OUT
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     Route::post('/stock-out', [
@@ -197,12 +243,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('penjualan.store');
 
 
+
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | CEK STOK
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     |
-    | Harus sebelum /stock-out/{penjualan}
+    | Route ini harus diletakkan sebelum:
+    | /stock-out/{penjualan}
     |
     */
 
@@ -212,16 +260,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('penjualan.stok');
 
 
+
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | DETAIL NOTA
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     Route::get('/stock-out/{penjualan}', [
         PenjualanController::class,
         'show'
     ])->name('penjualan.show');
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS NOTA
+    |--------------------------------------------------------------------------
+    */
+
+    Route::delete('/stock-out/{penjualan}', [
+        PenjualanController::class,
+        'destroy'
+    ])->name('penjualan.destroy');
+
 
 
     /*
@@ -235,10 +298,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'showChangePassword'
     ])->name('change-password');
 
+
     Route::post('/change-password', [
         PasswordController::class,
         'updatePassword'
     ])->name('change-password.update');
+
 
 
     /*
@@ -252,11 +317,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'logout'
     ])->name('logout');
 
+
+
     /*
-|--------------------------------------------------------------------------
-| LAPORAN BARANG
-|--------------------------------------------------------------------------
-*/
+    |--------------------------------------------------------------------------
+    | LAPORAN BARANG
+    |--------------------------------------------------------------------------
+    */
 
     Route::get(
         '/laporan/barang',
@@ -269,7 +336,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [LaporanBarangController::class, 'show']
     )->name('laporan.barang.show');
 
-    Route::get('/laporan/export-excel', [LaporanBarangController::class, 'exportExcel'])
-    ->name('laporan.export.excel');
-    
+
+    Route::get(
+        '/laporan/export-excel',
+        [LaporanBarangController::class, 'exportExcel']
+    )->name('laporan.export.excel');
+
 });
