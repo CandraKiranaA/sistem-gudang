@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Buat Nota')
@@ -49,7 +50,6 @@
 @endif
 
 
-
 <form
     action="{{ route('penjualan.store') }}"
     method="POST"
@@ -67,7 +67,7 @@
 
     <div class="card-body">
 
-        <h5 class="fw-bold mb-3">
+        <h5 class="section-title mb-3">
             Informasi Customer
         </h5>
 
@@ -84,7 +84,7 @@
                 <input
                     type="text"
                     name="nama_customer"
-                    class="form-control"
+                    class="form-control input-tegas"
                     value="{{ old('nama_customer') }}"
                     placeholder="Contoh: Toko Jaya"
                     required
@@ -98,19 +98,24 @@
             <div class="col-md-6">
 
                 <label class="form-label fw-semibold">
-                    Tanggal Penjualan
+                    Tanggal & Jam Penjualan
                 </label>
 
                 <input
                     type="datetime-local"
                     name="tanggal_penjualan"
-                    class="form-control"
+                    id="tanggal_penjualan"
+                    class="form-control input-tegas"
                     value="{{ old(
                         'tanggal_penjualan',
-                        now()->format('Y-m-d\TH:i')
+                        now()->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')
                     ) }}"
                     required
                 >
+
+                <small class="text-muted">
+                    Waktu Indonesia Barat (WIB)
+                </small>
 
             </div>
 
@@ -134,7 +139,7 @@
 
             <div>
 
-                <h5 class="fw-bold mb-1">
+                <h5 class="section-title mb-1">
                     Barang yang Dibeli
                 </h5>
 
@@ -157,10 +162,6 @@
 
         <div id="barang-container">
 
-            {{-- =================================================
-                 BARIS BARANG
-            ================================================== --}}
-
             <div class="barang-row row g-2 mb-3 align-items-end">
 
                 {{-- BARANG --}}
@@ -173,7 +174,7 @@
 
                     <select
                         name="barang_id[]"
-                        class="form-select barang-select"
+                        class="form-select barang-select input-tegas"
                         required
                     >
 
@@ -211,7 +212,7 @@
                     <input
                         type="number"
                         name="jumlah_koli[]"
-                        class="form-control jumlah-koli"
+                        class="form-control jumlah-koli input-tegas angka-input"
                         value="0"
                         min="0"
                     >
@@ -230,7 +231,7 @@
                     <input
                         type="number"
                         name="jumlah_pcs[]"
-                        class="form-control jumlah-pcs"
+                        class="form-control jumlah-pcs input-tegas angka-input"
                         value="0"
                         min="0"
                     >
@@ -248,7 +249,7 @@
 
                     <input
                         type="text"
-                        class="form-control harga-display"
+                        class="form-control harga-display input-tegas harga-readonly"
                         value="Rp 0"
                         readonly
                     >
@@ -256,15 +257,15 @@
                 </div>
 
 
-                {{-- HAPUS --}}
+                {{-- RESET --}}
 
                 <div class="col-lg-1 col-md-12">
 
                     <button
                         type="button"
-                        class="btn btn-outline-danger w-100"
+                        class="btn btn-outline-danger w-100 btn-reset"
                         onclick="hapusBarang(this)"
-                        title="Hapus barang"
+                        title="Reset barang"
                     >
                         Reset
                     </button>
@@ -275,8 +276,6 @@
 
         </div>
 
-
-        {{-- KETERANGAN --}}
 
         <div class="alert alert-light border mt-3 mb-0">
 
@@ -305,11 +304,9 @@
 
     <div class="card-body p-4">
 
-        {{-- HEADER --}}
-
         <div class="payment-header mb-4">
 
-            <h5 class="fw-bold mb-1">
+            <h5 class="section-title mb-1">
                 💰 Ringkasan Pembayaran
             </h5>
 
@@ -320,16 +317,10 @@
         </div>
 
 
-        {{-- =================================================
-             PAYMENT SUMMARY
-        ================================================== --}}
-
         <div class="payment-summary">
 
 
-            {{-- =================================================
-                 SUBTOTAL
-            ================================================== --}}
+            {{-- SUBTOTAL --}}
 
             <div class="payment-row">
 
@@ -348,9 +339,7 @@
 
 
 
-            {{-- =================================================
-                 DISKON
-            ================================================== --}}
+            {{-- DISKON --}}
 
             <div class="payment-row">
 
@@ -376,7 +365,7 @@
                         type="number"
                         name="diskon"
                         id="diskon"
-                        class="form-control text-end"
+                        class="form-control input-tegas text-end"
                         value="{{ old('diskon', 0) }}"
                         min="0"
                         max="100"
@@ -393,9 +382,7 @@
 
 
 
-            {{-- =================================================
-                 POTONGAN DISKON
-            ================================================== --}}
+            {{-- POTONGAN DISKON --}}
 
             <div class="payment-row">
 
@@ -414,9 +401,7 @@
 
 
 
-            {{-- =================================================
-                 TOTAL
-            ================================================== --}}
+            {{-- TOTAL --}}
 
             <div class="payment-total-box">
 
@@ -443,9 +428,7 @@
 
 
 
-            {{-- =================================================
-                 PEMBAYARAN CUSTOMER
-            ================================================== --}}
+            {{-- PEMBAYARAN CUSTOMER --}}
 
             <div class="payment-section">
 
@@ -465,7 +448,7 @@
                         Bayar Cash
                     </label>
 
-                    <div class="input-group">
+                    <div class="input-group input-tegas-group">
 
                         <span class="input-group-text">
                             Rp
@@ -475,7 +458,7 @@
                             type="number"
                             name="bayar_cash"
                             id="bayar_cash"
-                            class="form-control"
+                            class="form-control input-tegas"
                             value="{{ old('bayar_cash', 0) }}"
                             min="0"
                             step="1"
@@ -503,7 +486,7 @@
                         Hutang
                     </label>
 
-                    <div class="input-group">
+                    <div class="input-group input-tegas-group">
 
                         <span class="input-group-text">
                             Rp
@@ -513,7 +496,7 @@
                             type="number"
                             name="hutang"
                             id="hutang"
-                            class="form-control"
+                            class="form-control input-tegas"
                             value="0"
                             readonly
                         >
@@ -533,9 +516,7 @@
 
 
 
-            {{-- =================================================
-                 STATUS PEMBAYARAN
-            ================================================== --}}
+            {{-- STATUS PEMBAYARAN --}}
 
             <div
                 id="status-pembayaran"
@@ -587,17 +568,134 @@
 <style>
 
 /* =========================================================
+   INPUT LEBIH JELAS
+========================================================= */
+
+.input-tegas {
+
+    min-height: 44px;
+
+    border: 2px solid #cbd5e1 !important;
+
+    border-radius: 8px;
+
+    background-color: #ffffff;
+
+    color: #1e293b;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background-color 0.15s ease;
+
+}
+
+
+/* INPUT HOVER */
+
+.input-tegas:hover {
+
+    border-color: #94a3b8 !important;
+
+}
+
+
+/* INPUT SAAT DIKLIK */
+
+.input-tegas:focus {
+
+    border-color: #0d6efd !important;
+
+    box-shadow:
+        0 0 0 3px rgba(13, 110, 253, 0.12) !important;
+
+    outline: none;
+
+}
+
+
+/* SELECT */
+
+select.input-tegas {
+
+    cursor: pointer;
+
+    padding-left: 12px;
+
+}
+
+
+/* INPUT ANGKA */
+
+.angka-input {
+
+    text-align: center;
+
+    font-weight: 600;
+
+}
+
+
+/* INPUT READONLY */
+
+.harga-readonly {
+
+    background-color: #f8fafc !important;
+
+    color: #334155 !important;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.form-label {
+
+    color: #334155;
+
+    margin-bottom: 7px;
+
+}
+
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.section-title {
+
+    color: #0d47a1;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
    PAYMENT CARD
 ========================================================= */
 
 .payment-card {
+
     border: 0;
+
     border-radius: 12px;
+
 }
 
+
 .payment-header {
+
     padding-bottom: 15px;
+
     border-bottom: 1px solid #eeeeee;
+
 }
 
 
@@ -606,7 +704,9 @@
 ========================================================= */
 
 .payment-summary {
+
     width: 100%;
+
 }
 
 
@@ -631,17 +731,23 @@
     padding: 14px 0;
 
     border-bottom: 1px solid #eeeeee;
+
 }
 
 
 .payment-label-box {
+
     min-width: 0;
+
 }
 
 
 .payment-label {
+
     color: #475569;
+
     font-size: 14px;
+
 }
 
 
@@ -656,11 +762,12 @@
     font-size: 15px;
 
     white-space: nowrap;
+
 }
 
 
 /* =========================================================
-   DISKON INPUT
+   DISKON
 ========================================================= */
 
 .diskon-input {
@@ -670,6 +777,7 @@
     width: 260px;
 
     justify-self: end;
+
 }
 
 
@@ -677,11 +785,10 @@
 
     width: 100%;
 
-    height: 42px;
+    height: 44px;
 
     padding-right: 40px;
 
-    text-align: right;
 }
 
 
@@ -698,6 +805,8 @@
     color: #6c757d;
 
     pointer-events: none;
+
+    font-weight: 600;
 
 }
 
@@ -724,9 +833,10 @@
 
     background: #f8fafc;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
 
     border-radius: 10px;
+
 }
 
 
@@ -737,6 +847,7 @@
     font-size: 14px;
 
     color: #334155;
+
 }
 
 
@@ -751,6 +862,7 @@
     font-size: 21px;
 
     white-space: nowrap;
+
 }
 
 
@@ -768,9 +880,10 @@
 
     background: #ffffff;
 
-    border: 1px solid #e5e7eb;
+    border: 2px solid #dbe3ec;
 
     border-radius: 10px;
+
 }
 
 
@@ -787,6 +900,7 @@
     margin-bottom: 20px;
 
     border-bottom: 1px solid #eeeeee;
+
 }
 
 
@@ -797,12 +911,14 @@
 .payment-field {
 
     width: 100%;
+
 }
 
 
 .payment-field + .payment-field {
 
     margin-top: 22px;
+
 }
 
 
@@ -811,26 +927,56 @@
     display: block;
 
     margin-bottom: 8px;
+
 }
 
 
 .payment-field .input-group {
 
     width: 100%;
+
 }
 
 
-.payment-field .input-group-text {
+.input-tegas-group {
 
-    width: 52px;
+    border-radius: 8px;
 
-    min-width: 52px;
+}
+
+
+.input-tegas-group .input-group-text {
+
+    width: 55px;
+
+    min-width: 55px;
 
     justify-content: center;
 
-    background: #f8fafc;
+    background: #f1f5f9;
 
-    font-weight: 600;
+    border: 2px solid #cbd5e1;
+
+    border-right: 0;
+
+    font-weight: 700;
+
+    color: #334155;
+
+}
+
+
+.input-tegas-group .input-tegas {
+
+    border-left: 0 !important;
+
+}
+
+
+.input-tegas-group:focus-within .input-group-text {
+
+    border-color: #0d6efd;
+
 }
 
 
@@ -838,34 +984,31 @@
 #hutang {
 
     height: 44px;
+
 }
 
 
 #bayar_cash {
 
     text-align: right;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
 }
 
 
 #hutang {
 
-    background-color: #f8f9fa;
+    background-color: #f8fafc !important;
 
-    font-weight: 600;
+    font-weight: 700;
 
     text-align: right;
 
     cursor: not-allowed;
-}
 
-
-#hutang-keterangan {
-
-    display: block;
-
-    margin-top: 7px;
-
-    font-size: 13px;
 }
 
 
@@ -882,6 +1025,7 @@
     padding: 13px 16px;
 
     font-size: 14px;
+
 }
 
 
@@ -891,29 +1035,49 @@
 
 .barang-row {
 
-    border-bottom: 1px solid #eeeeee;
+    border: 1px solid #e2e8f0;
 
-    padding-bottom: 15px;
+    border-radius: 10px;
+
+    padding: 15px 10px;
+
+    margin-left: 0;
+
+    margin-right: 0;
+
+    background: #ffffff;
+
 }
 
 
-.barang-row:last-child {
+.barang-row:hover {
 
-    border-bottom: none;
+    border-color: #cbd5e1;
+
+}
+
+
+.btn-reset {
+
+    min-height: 44px;
+
 }
 
 
 /* =========================================================
-   DESKTOP
+   TOMBOL
 ========================================================= */
 
-@media (min-width: 992px) {
+.btn-primary {
 
-    .payment-summary {
+    font-weight: 600;
 
-        width: 100%;
+}
 
-    }
+
+.btn-outline-primary {
+
+    font-weight: 600;
 
 }
 
@@ -1029,6 +1193,13 @@
 
     }
 
+
+    .barang-row {
+
+        padding: 15px;
+
+    }
+
 }
 
 </style>
@@ -1040,7 +1211,6 @@
 ========================================================= --}}
 
 <script>
-
 
 /*
 |--------------------------------------------------------------------------
@@ -1062,7 +1232,7 @@ function formatRupiah(angka)
 
 /*
 |--------------------------------------------------------------------------
-| HITUNG TOTAL PENJUALAN
+| HITUNG TOTAL
 |--------------------------------------------------------------------------
 */
 
@@ -1076,10 +1246,8 @@ function hitungTotal()
         .querySelectorAll('.barang-row')
         .forEach(row => {
 
-
             const select =
                 row.querySelector('.barang-select');
-
 
             const option =
                 select.options[select.selectedIndex];
@@ -1109,31 +1277,13 @@ function hitungTotal()
                 );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | TOTAL PCS
-            |--------------------------------------------------------------------------
-            */
-
             const totalPcs =
                 (koli * pcsPerKoli) + pcs;
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | SUBTOTAL
-            |--------------------------------------------------------------------------
-            */
-
             subtotal +=
                 totalPcs * harga;
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | TAMPILKAN HARGA
-            |--------------------------------------------------------------------------
-            */
 
             const hargaDisplay =
                 row.querySelector('.harga-display');
@@ -1163,36 +1313,18 @@ function hitungTotal()
 
 
     if (diskon < 0) {
-
         diskon = 0;
-
     }
 
 
     if (diskon > 100) {
-
         diskon = 100;
-
     }
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | JUMLAH DISKON
-    |--------------------------------------------------------------------------
-    */
 
     const jumlahDiskon =
         subtotal * (diskon / 100);
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL AKHIR
-    |--------------------------------------------------------------------------
-    */
 
     const total =
         Math.max(
@@ -1201,52 +1333,23 @@ function hitungTotal()
         );
 
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | SUBTOTAL DISPLAY
-    |--------------------------------------------------------------------------
-    */
-
     document.getElementById(
         'subtotal-display'
     ).textContent =
         formatRupiah(subtotal);
 
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | DISKON DISPLAY
-    |--------------------------------------------------------------------------
-    */
-
     document.getElementById(
         'diskon-display'
     ).textContent =
-        '- ' +
-        formatRupiah(jumlahDiskon);
+        '- ' + formatRupiah(jumlahDiskon);
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL DISPLAY
-    |--------------------------------------------------------------------------
-    */
 
     document.getElementById(
         'total-display'
     ).textContent =
         formatRupiah(total);
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | HITUNG PEMBAYARAN
-    |--------------------------------------------------------------------------
-    */
 
     hitungPembayaran(total);
 
@@ -1256,7 +1359,7 @@ function hitungTotal()
 
 /*
 |--------------------------------------------------------------------------
-| HITUNG BAYAR CASH & HUTANG
+| HITUNG PEMBAYARAN
 |--------------------------------------------------------------------------
 */
 
@@ -1266,42 +1369,21 @@ function hitungPembayaran(total)
     const bayarCashInput =
         document.getElementById('bayar_cash');
 
-
     const hutangInput =
         document.getElementById('hutang');
 
-
     const statusPembayaran =
-        document.getElementById(
-            'status-pembayaran'
-        );
-
+        document.getElementById('status-pembayaran');
 
     const hutangKeterangan =
-        document.getElementById(
-            'hutang-keterangan'
-        );
+        document.getElementById('hutang-keterangan');
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | BAYAR CASH
-    |--------------------------------------------------------------------------
-    */
 
     let bayarCash =
         Number(
             bayarCashInput.value || 0
         );
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CASH TIDAK BOLEH NEGATIF
-    |--------------------------------------------------------------------------
-    */
 
     if (bayarCash < 0) {
 
@@ -1312,29 +1394,14 @@ function hitungPembayaran(total)
     }
 
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | CASH TIDAK BOLEH LEBIH BESAR DARI TOTAL
-    |--------------------------------------------------------------------------
-    */
-
     if (bayarCash > total) {
 
         bayarCash = total;
 
-        bayarCashInput.value =
-            total;
+        bayarCashInput.value = total;
 
     }
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | HITUNG HUTANG
-    |--------------------------------------------------------------------------
-    */
 
     const hutang =
         Math.max(
@@ -1343,13 +1410,6 @@ function hitungPembayaran(total)
         );
 
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | ISI INPUT HUTANG
-    |--------------------------------------------------------------------------
-    */
-
     hutangInput.value =
         Math.round(hutang);
 
@@ -1357,57 +1417,45 @@ function hitungPembayaran(total)
 
     /*
     |--------------------------------------------------------------------------
-    | STATUS PEMBAYARAN
+    | STATUS
     |--------------------------------------------------------------------------
-
     */
 
     if (total <= 0) {
 
-
         statusPembayaran.className =
             'alert alert-secondary payment-status mb-0';
 
-
         statusPembayaran.textContent =
             'Belum ada barang yang dipilih.';
-
 
         hutangKeterangan.textContent =
             'Belum ada total pembayaran.';
 
     }
 
-
     else if (hutang <= 0) {
-
 
         statusPembayaran.className =
             'alert alert-success payment-status mb-0';
 
-
         statusPembayaran.textContent =
             '✓ Pembayaran lunas.';
-
 
         hutangKeterangan.textContent =
             'Tidak ada hutang.';
 
     }
 
-
     else {
-
 
         statusPembayaran.className =
             'alert alert-warning payment-status mb-0';
-
 
         statusPembayaran.textContent =
             '⚠️ Pembayaran belum lunas. Customer masih memiliki hutang ' +
             formatRupiah(hutang) +
             '.';
-
 
         hutangKeterangan.textContent =
             'Sisa hutang customer: ' +
@@ -1429,85 +1477,24 @@ function tambahBarang()
 {
 
     const container =
-        document.getElementById(
-            'barang-container'
-        );
-
+        document.getElementById('barang-container');
 
     const firstRow =
-        document.querySelector(
-            '.barang-row'
-        );
+        document.querySelector('.barang-row');
 
 
     const newRow =
         firstRow.cloneNode(true);
 
 
+    newRow.querySelector('.barang-select').value = '';
 
-    /*
-    |--------------------------------------------------------------------------
-    | RESET SELECT
-    |--------------------------------------------------------------------------
-    */
+    newRow.querySelector('.jumlah-koli').value = 0;
 
-    const select =
-        newRow.querySelector(
-            '.barang-select'
-        );
+    newRow.querySelector('.jumlah-pcs').value = 0;
 
+    newRow.querySelector('.harga-display').value = 'Rp 0';
 
-    select.value = '';
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | RESET KOLI
-    |--------------------------------------------------------------------------
-    */
-
-    newRow
-        .querySelector(
-            '.jumlah-koli'
-        )
-        .value = 0;
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | RESET PCS
-    |--------------------------------------------------------------------------
-    */
-
-    newRow
-        .querySelector(
-            '.jumlah-pcs'
-        )
-        .value = 0;
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | RESET HARGA
-    |--------------------------------------------------------------------------
-    */
-
-    newRow
-        .querySelector(
-            '.harga-display'
-        )
-        .value = 'Rp 0';
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | TAMBAHKAN BARIS
-    |--------------------------------------------------------------------------
-    */
 
     container.appendChild(newRow);
 
@@ -1520,7 +1507,7 @@ function tambahBarang()
 
 /*
 |--------------------------------------------------------------------------
-| HAPUS BARANG
+| RESET / HAPUS BARANG
 |--------------------------------------------------------------------------
 */
 
@@ -1528,16 +1515,25 @@ function hapusBarang(button)
 {
 
     const rows =
-        document.querySelectorAll(
-            '.barang-row'
-        );
+        document.querySelectorAll('.barang-row');
 
 
     if (rows.length <= 1) {
 
-        alert(
-            'Minimal harus ada satu barang.'
-        );
+        const row =
+            button.closest('.barang-row');
+
+
+        row.querySelector('.barang-select').value = '';
+
+        row.querySelector('.jumlah-koli').value = 0;
+
+        row.querySelector('.jumlah-pcs').value = 0;
+
+        row.querySelector('.harga-display').value = 'Rp 0';
+
+
+        hitungTotal();
 
         return;
 
@@ -1571,7 +1567,6 @@ document.addEventListener(
                 'barang-select'
             )
         ) {
-
 
             const select =
                 event.target;
@@ -1616,7 +1611,7 @@ document.addEventListener(
 
 /*
 |--------------------------------------------------------------------------
-| INPUT JUMLAH BARANG / DISKON / CASH
+| INPUT JUMLAH / DISKON / CASH
 |--------------------------------------------------------------------------
 */
 

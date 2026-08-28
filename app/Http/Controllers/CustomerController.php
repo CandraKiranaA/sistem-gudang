@@ -17,17 +17,23 @@ class CustomerController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
-        | Ambil customer langsung dari tabel penjualans
+        | QUERY CUSTOMER
+        |--------------------------------------------------------------------------
+        | Setiap customer hanya ditampilkan satu kali.
+        |
+        | COUNT(*)  = jumlah transaksi customer
+        | MAX(...)  = tanggal transaksi terakhir customer
+        |
+        | Customer yang transaksi paling baru akan berada di paling atas.
         |--------------------------------------------------------------------------
         */
 
         $query = Penjualan::query()
             ->select('nama_customer')
             ->selectRaw('COUNT(*) as total_transaksi')
+            ->selectRaw('MAX(tanggal_penjualan) as transaksi_terakhir')
             ->whereNotNull('nama_customer')
-            ->where('nama_customer', '!=', '')
-            ->groupBy('nama_customer')
-            ->orderBy('nama_customer');
+            ->where('nama_customer', '!=', '');
 
 
         /*
@@ -50,6 +56,17 @@ class CustomerController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | GROUP CUSTOMER
+        |--------------------------------------------------------------------------
+        */
+
+        $query
+            ->groupBy('nama_customer')
+            ->orderByRaw('MAX(tanggal_penjualan) DESC');
+
+
+        /*
+        |--------------------------------------------------------------------------
         | PAGINATION
         |--------------------------------------------------------------------------
         */
@@ -58,6 +75,12 @@ class CustomerController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'customers.index',
@@ -85,7 +108,9 @@ class CustomerController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ambil semua transaksi Stock Out customer
+        | AMBIL TRANSAKSI CUSTOMER
+        |--------------------------------------------------------------------------
+        | Transaksi terbaru berada paling atas.
         |--------------------------------------------------------------------------
         */
 
@@ -93,13 +118,13 @@ class CustomerController extends Controller
             'details.barang'
         ])
         ->where('nama_customer', $nama_customer)
-        ->latest('tanggal_penjualan')
+        ->orderByDesc('tanggal_penjualan')
         ->get();
 
 
         /*
         |--------------------------------------------------------------------------
-        | Kalau customer tidak ditemukan
+        | CUSTOMER TIDAK DITEMUKAN
         |--------------------------------------------------------------------------
         */
 
@@ -116,7 +141,7 @@ class CustomerController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Kirim nama customer dan transaksi
+        | KIRIM DATA KE VIEW
         |--------------------------------------------------------------------------
         */
 
@@ -129,3 +154,4 @@ class CustomerController extends Controller
         );
     }
 }
+

@@ -30,6 +30,10 @@
 
                 <div class="row g-3">
 
+                    {{-- ================================================= --}}
+                    {{-- TANGGAL INPUT --}}
+                    {{-- ================================================= --}}
+
                     <div class="col-md-4">
 
                         <label class="form-label">
@@ -48,6 +52,11 @@
                         >
 
                     </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- NAMA BARANG --}}
+                    {{-- ================================================= --}}
 
                     <div class="col-md-8">
 
@@ -72,9 +81,11 @@
                                         $barangMasuk->barang_id
                                     ) == $barang->id ? 'selected' : '' }}
                                 >
+
                                     {{ $barang->kode_barang }}
                                     -
                                     {{ $barang->nama_barang }}
+
                                 </option>
 
                             @endforeach
@@ -82,6 +93,40 @@
                         </select>
 
                     </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- EDISI --}}
+                    {{-- ================================================= --}}
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Edisi
+                        </label>
+
+                        <input
+                            type="text"
+                            name="edisi"
+                            class="form-control"
+                            placeholder="Contoh: Edisi 2026"
+                            value="{{ old(
+                                'edisi',
+                                $barangMasuk->edisi
+                            ) }}"
+                            maxlength="100"
+                        >
+
+                        <small class="text-muted">
+                            Isi edisi jika barang memiliki edisi.
+                        </small>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- PCS / KOLI --}}
+                    {{-- ================================================= --}}
 
                     <div class="col-md-4">
 
@@ -98,6 +143,11 @@
                         >
 
                     </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- JUMLAH KOLI --}}
+                    {{-- ================================================= --}}
 
                     <div class="col-md-4">
 
@@ -120,6 +170,11 @@
 
                     </div>
 
+
+                    {{-- ================================================= --}}
+                    {{-- JUMLAH PCS --}}
+                    {{-- ================================================= --}}
+
                     <div class="col-md-4">
 
                         <label class="form-label">
@@ -135,6 +190,11 @@
                         >
 
                     </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- HARGA BELI --}}
+                    {{-- ================================================= --}}
 
                     <div class="col-md-4">
 
@@ -155,6 +215,11 @@
 
                     </div>
 
+
+                    {{-- ================================================= --}}
+                    {{-- HARGA JUAL KOLI --}}
+                    {{-- ================================================= --}}
+
                     <div class="col-md-4">
 
                         <label class="form-label">
@@ -173,6 +238,11 @@
                         >
 
                     </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- HARGA JUAL PCS --}}
+                    {{-- ================================================= --}}
 
                     <div class="col-md-4">
 
@@ -197,6 +267,11 @@
 
             </div>
 
+
+            {{-- ================================================= --}}
+            {{-- FOOTER --}}
+            {{-- ================================================= --}}
+
             <div class="card-footer text-end">
 
                 <a
@@ -206,7 +281,10 @@
                     Batal
                 </a>
 
-                <button class="btn btn-primary">
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
                     Update
                 </button>
 
@@ -217,6 +295,11 @@
     </form>
 
 </div>
+
+
+{{-- ========================================================= --}}
+{{-- JAVASCRIPT --}}
+{{-- ========================================================= --}}
 
 <script>
 
@@ -248,15 +331,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const jumlahKoli =
             parseInt(koli.value) || 0;
 
-        pcsPerKoli.value = perKoli;
+        pcsPerKoli.value =
+            perKoli;
 
         pcs.value =
             jumlahKoli * perKoli;
     }
 
 
-    barang.addEventListener('change', hitung);
-    koli.addEventListener('input', hitung);
+    barang.addEventListener(
+        'change',
+        hitung
+    );
+
+    koli.addEventListener(
+        'input',
+        hitung
+    );
+
 
     hitung();
 
@@ -265,3 +357,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 @endsection
+
