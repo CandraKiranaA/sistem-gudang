@@ -2,31 +2,53 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Penjualan extends Model
 {
+    use HasFactory;
+
+    protected $table = 'penjualans';
+
     protected $fillable = [
+
         'nomor_nota',
-        'nama_customer',
+
         'tanggal_penjualan',
-        'total',
+
+        'nama_customer',
+
+        'total_harga',
+
         'diskon',
-        'bayar_cash',
-        'hutang',
+
+        'total_setelah_diskon',
+
     ];
+
 
     protected $casts = [
-        'tanggal_penjualan' => 'datetime',
-        'total' => 'decimal:2',
-        'diskon' => 'decimal:2',
-        'bayar_cash' => 'decimal:2',
-        'hutang' => 'decimal:2',
+
+        'tanggal_penjualan' => 'date',
+
+        'total_harga' =>
+            'decimal:2',
+
+        'diskon' =>
+            'decimal:2',
+
+        'total_setelah_diskon' =>
+            'decimal:2',
+
     ];
 
-    public function details(): HasMany
+
+    public function details()
     {
-        return $this->hasMany(PenjualanDetail::class);
+        return $this->hasMany(
+            PenjualanDetail::class,
+            'penjualan_id'
+        );
     }
 }

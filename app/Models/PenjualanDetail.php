@@ -2,32 +2,64 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PenjualanDetail extends Model
 {
+    use HasFactory;
+
+    protected $table = 'penjualan_details';
+
+
     protected $fillable = [
+
         'penjualan_id',
+
         'barang_id',
+
         'jumlah_koli',
+
         'jumlah_pcs',
+
         'harga',
+
         'subtotal',
+
     ];
+
 
     protected $casts = [
-        'harga' => 'decimal:2',
-        'subtotal' => 'decimal:2',
+
+        'jumlah_koli' =>
+            'integer',
+
+        'jumlah_pcs' =>
+            'integer',
+
+        'harga' =>
+            'decimal:2',
+
+        'subtotal' =>
+            'decimal:2',
+
     ];
 
-    public function penjualan(): BelongsTo
+
+    public function penjualan()
     {
-        return $this->belongsTo(Penjualan::class);
+        return $this->belongsTo(
+            Penjualan::class,
+            'penjualan_id'
+        );
     }
 
-    public function barang(): BelongsTo
+
+    public function barang()
     {
-        return $this->belongsTo(Barang::class);
+        return $this->belongsTo(
+            Barang::class,
+            'barang_id'
+        );
     }
 }

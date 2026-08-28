@@ -41,7 +41,7 @@
         background-color: #ffffff;
         border: 1px solid #d1d5db;
 
-        border-radius: 5px;
+        border-radius: 7px;
 
         color: #4b5563;
         text-decoration: none;
@@ -49,7 +49,7 @@
         font-size: 13px;
         font-weight: 500;
 
-        transition: 0.2s;
+        transition: .2s;
     }
 
     .back-btn:hover {
@@ -68,7 +68,8 @@
         border: 1px solid #e5e7eb;
         border-radius: 10px;
 
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        box-shadow:
+            0 2px 8px rgba(0, 0, 0, .04);
 
         margin-bottom: 25px;
 
@@ -80,14 +81,14 @@
         padding: 18px 20px;
 
         border-bottom: 1px solid #e5e7eb;
-
-        background-color: #ffffff;
     }
 
 
     .info-card-title {
         font-size: 16px;
+
         font-weight: 700;
+
         color: #1f2937;
 
         margin: 0;
@@ -148,7 +149,8 @@
         border: 1px solid #e5e7eb;
         border-radius: 10px;
 
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        box-shadow:
+            0 2px 8px rgba(0, 0, 0, .04);
 
         overflow: hidden;
     }
@@ -164,6 +166,10 @@
         justify-content: space-between;
 
         align-items: center;
+
+        gap: 15px;
+
+        flex-wrap: wrap;
     }
 
 
@@ -178,6 +184,17 @@
     }
 
 
+    .transaction-description {
+        font-size: 12px;
+
+        color: #9ca3af;
+
+        margin-top: 4px;
+
+        margin-bottom: 0;
+    }
+
+
     .transaction-count {
         font-size: 12px;
 
@@ -185,7 +202,7 @@
 
         background-color: #f3f4f6;
 
-        padding: 5px 10px;
+        padding: 6px 11px;
 
         border-radius: 20px;
     }
@@ -212,7 +229,7 @@
 
 
     .report-table thead th {
-        background-color: #f9fafb;
+        background-color: #f8fafc;
 
         color: #374151;
 
@@ -246,6 +263,10 @@
     }
 
 
+    /* =========================================================
+       TABLE CELL
+    ========================================================= */
+
     .number-cell {
         text-align: center;
     }
@@ -259,7 +280,9 @@
 
 
     .customer-cell {
-        color: #4b5563 !important;
+        color: #374151 !important;
+
+        font-weight: 500;
     }
 
 
@@ -277,12 +300,30 @@
     }
 
 
+    .discount-cell {
+        text-align: right;
+
+        color: #dc2626 !important;
+
+        font-weight: 600;
+    }
+
+
+    .total-cell {
+        text-align: right;
+
+        color: #16a34a !important;
+
+        font-weight: 700;
+    }
+
+
     /* =========================================================
        EMPTY DATA
     ========================================================= */
 
     .empty-data {
-        padding: 40px 20px !important;
+        padding: 45px 20px !important;
 
         text-align: center;
 
@@ -291,9 +332,24 @@
 
 
     .empty-icon {
-        font-size: 30px;
+        font-size: 32px;
 
         margin-bottom: 8px;
+    }
+
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    .transaction-footer {
+        padding: 13px 20px;
+
+        border-top: 1px solid #e5e7eb;
+
+        color: #6b7280;
+
+        font-size: 13px;
     }
 
 
@@ -309,6 +365,7 @@
 
         .page-header .d-flex {
             align-items: flex-start !important;
+
             gap: 15px;
         }
 
@@ -318,7 +375,6 @@
 
         .transaction-header {
             align-items: flex-start;
-            gap: 10px;
         }
 
     }
@@ -334,6 +390,8 @@
 
     <div class="d-flex justify-content-between align-items-center">
 
+
+        {{-- TITLE --}}
 
         <div>
 
@@ -366,6 +424,7 @@
 </div>
 
 
+
 {{-- ========================================================= --}}
 {{-- INFORMASI BARANG --}}
 {{-- ========================================================= --}}
@@ -373,14 +432,18 @@
 <div class="info-card">
 
 
+    {{-- HEADER --}}
+
     <div class="info-card-header">
 
         <h5 class="info-card-title">
-            Informasi Barang
+            📦 Informasi Barang
         </h5>
 
     </div>
 
+
+    {{-- BODY --}}
 
     <div class="info-card-body">
 
@@ -398,7 +461,9 @@
                     </span>
 
                     <div class="info-value">
+
                         {{ $barang->nama_barang }}
+
                     </div>
 
                 </div>
@@ -417,7 +482,9 @@
                     </span>
 
                     <div class="info-value">
+
                         {{ $barang->satuan }}
+
                     </div>
 
                 </div>
@@ -437,7 +504,9 @@
 
                     <div class="info-value">
 
-                        {{ number_format($barang->pcs_per_koli) }}
+                        {{ number_format(
+                            $barang->pcs_per_koli
+                        ) }}
 
                         PCS / Koli
 
@@ -454,6 +523,7 @@
 </div>
 
 
+
 {{-- ========================================================= --}}
 {{-- RIWAYAT BARANG KELUAR --}}
 {{-- ========================================================= --}}
@@ -461,18 +531,31 @@
 <div class="transaction-card">
 
 
+    {{-- ===================================================== --}}
     {{-- HEADER --}}
+    {{-- ===================================================== --}}
 
     <div class="transaction-header">
 
-        <h5 class="transaction-title">
-            Riwayat Barang Keluar
-        </h5>
+        <div>
+
+            <h5 class="transaction-title">
+                📤 Riwayat Barang Keluar
+            </h5>
+
+            <p class="transaction-description">
+                Riwayat transaksi barang
+                {{ $barang->nama_barang }}
+                berdasarkan nota.
+            </p>
+
+        </div>
 
 
         <span class="transaction-count">
 
             {{ $penjualanDetails->count() }}
+
             Transaksi
 
         </span>
@@ -480,16 +563,15 @@
     </div>
 
 
+
+    {{-- ===================================================== --}}
     {{-- TABLE --}}
+    {{-- ===================================================== --}}
 
     <div class="table-wrapper">
 
         <table class="report-table">
 
-
-            {{-- ================================================= --}}
-            {{-- TABLE HEADER --}}
-            {{-- ================================================= --}}
 
             <thead>
 
@@ -504,7 +586,7 @@
 
 
                     <th>
-                        Tanggal
+                        Tanggal Keluar
                     </th>
 
 
@@ -514,7 +596,7 @@
 
 
                     <th>
-                        Customer
+                        Nama Customer
                     </th>
 
 
@@ -537,14 +619,21 @@
                         Subtotal
                     </th>
 
+
+                    <th class="text-end">
+                        Diskon
+                    </th>
+
+
+                    <th class="text-end">
+                        Total Setelah Diskon
+                    </th>
+
                 </tr>
 
             </thead>
 
 
-            {{-- ================================================= --}}
-            {{-- TABLE BODY --}}
-            {{-- ================================================= --}}
 
             <tbody>
 
@@ -571,7 +660,10 @@
 
                         <td>
 
-                            @if($detail->penjualan?->tanggal_penjualan)
+                            @if(
+                                $detail->penjualan
+                                ?->tanggal_penjualan
+                            )
 
                                 {{
                                     $detail->penjualan
@@ -620,7 +712,7 @@
 
                             {{
                                 number_format(
-                                    $detail->jumlah_koli
+                                    $detail->jumlah_koli ?? 0
                                 )
                             }}
 
@@ -633,7 +725,7 @@
 
                             {{
                                 number_format(
-                                    $detail->jumlah_pcs
+                                    $detail->jumlah_pcs ?? 0
                                 )
                             }}
 
@@ -647,7 +739,7 @@
                             Rp
                             {{
                                 number_format(
-                                    $detail->harga,
+                                    $detail->harga ?? 0,
                                     0,
                                     ',',
                                     '.'
@@ -664,7 +756,44 @@
                             Rp
                             {{
                                 number_format(
-                                    $detail->subtotal,
+                                    $detail->subtotal ?? 0,
+                                    0,
+                                    ',',
+                                    '.'
+                                )
+                            }}
+
+                        </td>
+
+
+                        {{-- DISKON --}}
+
+                        <td class="discount-cell">
+
+                            Rp
+                            {{
+                                number_format(
+                                    $detail->penjualan
+                                        ?->diskon ?? 0,
+                                    0,
+                                    ',',
+                                    '.'
+                                )
+                            }}
+
+                        </td>
+
+
+                        {{-- TOTAL SETELAH DISKON --}}
+
+                        <td class="total-cell">
+
+                            Rp
+                            {{
+                                number_format(
+                                    $detail->penjualan
+                                        ?->total_setelah_diskon
+                                        ?? 0,
                                     0,
                                     ',',
                                     '.'
@@ -683,7 +812,7 @@
                     <tr>
 
                         <td
-                            colspan="8"
+                            colspan="10"
                             class="empty-data"
                         >
 
@@ -692,7 +821,8 @@
                             </div>
 
                             <div>
-                                Belum ada barang keluar.
+                                Belum ada barang keluar
+                                untuk barang ini.
                             </div>
 
                         </td>
@@ -706,6 +836,28 @@
             </tbody>
 
         </table>
+
+    </div>
+
+
+
+    {{-- ===================================================== --}}
+    {{-- FOOTER --}}
+    {{-- ===================================================== --}}
+
+    <div class="transaction-footer">
+
+        Menampilkan
+
+        <strong>
+            {{ $penjualanDetails->count() }}
+        </strong>
+
+        transaksi untuk
+
+        <strong>
+            {{ $barang->nama_barang }}
+        </strong>
 
     </div>
 

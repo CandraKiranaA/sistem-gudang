@@ -697,7 +697,7 @@
                     </span>
 
                     <span class="menu-text">
-                        Barang Keluar
+                        Barang
                     </span>
 
                 </a>
