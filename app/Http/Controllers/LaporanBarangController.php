@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\BarangMasuk;
-use App\Models\Penjualan;
 use App\Models\PenjualanDetail;
 use Illuminate\Http\Request;
 
@@ -51,12 +50,7 @@ class LaporanBarangController extends Controller
 
         $laporan = $barangs->map(function ($barang) {
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | BARANG MASUK
-            |--------------------------------------------------------------------------
-            */
+            // BARANG MASUK
 
             $barangMasukKoli = BarangMasuk::where(
                 'barang_id',
@@ -70,11 +64,7 @@ class LaporanBarangController extends Controller
             )->sum('jumlah_pcs');
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | BARANG KELUAR
-            |--------------------------------------------------------------------------
-            */
+            // BARANG KELUAR
 
             $barangKeluarKoli = PenjualanDetail::where(
                 'barang_id',
@@ -90,7 +80,8 @@ class LaporanBarangController extends Controller
 
             return [
 
-                'id' => $barang->id,
+                'id' =>
+                    $barang->id,
 
                 'nama_barang' =>
                     $barang->nama_barang,
@@ -119,10 +110,6 @@ class LaporanBarangController extends Controller
         |--------------------------------------------------------------------------
         | DATA BARANG KELUAR / NOTA
         |--------------------------------------------------------------------------
-        |
-        | Satu detail barang = satu baris.
-        | Informasi customer dan total nota diambil dari penjualan.
-        |
         */
 
         $barangKeluar = PenjualanDetail::with([
@@ -132,23 +119,27 @@ class LaporanBarangController extends Controller
 
         ->when($search, function ($query) use ($search) {
 
-            $query->whereHas('barang', function ($q) use ($search) {
+            $query->where(function ($q) use ($search) {
 
-                $q->where(
-                    'nama_barang',
-                    'like',
-                    '%' . $search . '%'
-                );
+                $q->whereHas('barang', function ($barangQuery) use ($search) {
 
-            })
+                    $barangQuery->where(
+                        'nama_barang',
+                        'like',
+                        '%' . $search . '%'
+                    );
 
-            ->orWhereHas('penjualan', function ($q) use ($search) {
+                })
 
-                $q->where(
-                    'nama_customer',
-                    'like',
-                    '%' . $search . '%'
-                );
+                ->orWhereHas('penjualan', function ($penjualanQuery) use ($search) {
+
+                    $penjualanQuery->where(
+                        'nama_customer',
+                        'like',
+                        '%' . $search . '%'
+                    );
+
+                });
 
             });
 
@@ -375,7 +366,7 @@ class LaporanBarangController extends Controller
                 fputcsv($handle, [
 
                     'No',
-                    'Tanggal Keluar',
+                    'Tanggal & Jam Keluar',
                     'Nama Customer',
                     'Barang Keluar',
 
@@ -398,12 +389,41 @@ class LaporanBarangController extends Controller
                         $detail->penjualan;
 
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | HITUNG NILAI DISKON
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $subtotal =
+                        (float) (
+                            $detail->subtotal ?? 0
+                        );
+
+
+                    $diskonPersen =
+                        (float) (
+                            $penjualan?->diskon ?? 0
+                        );
+
+
+                    $jumlahDiskon =
+                        $subtotal *
+                        ($diskonPersen / 100);
+
+
+                    $totalSetelahDiskon =
+                        $subtotal -
+                        $jumlahDiskon;
+
+
                     fputcsv($handle, [
 
                         $index + 1,
 
                         $penjualan?->tanggal_penjualan
-                            ?->format('d/m/Y'),
+                            ?->timezone('Asia/Jakarta')
+                            ?->format('d/m/Y H:i'),
 
                         $penjualan?->nama_customer,
 
@@ -414,11 +434,11 @@ class LaporanBarangController extends Controller
 
                         $detail->jumlah_pcs,
 
-                        $penjualan?->total_harga ?? 0,
+                        $subtotal,
 
-                        $penjualan?->diskon ?? 0,
+                        $diskonPersen . '%',
 
-                        $penjualan?->total_setelah_diskon ?? 0,
+                        $totalSetelahDiskon,
 
                     ]);
 

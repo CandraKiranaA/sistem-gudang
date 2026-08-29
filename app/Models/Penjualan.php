@@ -12,37 +12,22 @@ class Penjualan extends Model
     protected $table = 'penjualans';
 
     protected $fillable = [
-
         'nomor_nota',
-
         'tanggal_penjualan',
-
         'nama_customer',
-
-        'total_harga',
-
+        'total',
         'diskon',
-
-        'total_setelah_diskon',
-
+        'bayar_cash',
+        'hutang',
     ];
-
 
     protected $casts = [
-
-        'tanggal_penjualan' => 'date',
-
-        'total_harga' =>
-            'decimal:2',
-
-        'diskon' =>
-            'decimal:2',
-
-        'total_setelah_diskon' =>
-            'decimal:2',
-
+        'tanggal_penjualan' => 'datetime',
+        'total' => 'decimal:2',
+        'diskon' => 'decimal:2',
+        'bayar_cash' => 'decimal:2',
+        'hutang' => 'decimal:2',
     ];
-
 
     public function details()
     {
