@@ -325,21 +325,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::get(
-        '/laporan/barang',
-        [LaporanBarangController::class, 'index']
-    )->name('laporan.barang.index');
+Route::get('/laporan/barang', [LaporanBarangController::class, 'index'])
+    ->name('laporan.barang.index');
 
+Route::get('/laporan/barang/download', [LaporanBarangController::class, 'download'])
+    ->name('laporan.export.excel');
 
-    Route::get(
-        '/laporan/barang/{id}',
-        [LaporanBarangController::class, 'show']
-    )->name('laporan.barang.show');
-
-
-    Route::get(
-        '/laporan/export-excel',
-        [LaporanBarangController::class, 'exportExcel']
-    )->name('laporan.export.excel');
+Route::get('/laporan/barang/{barang}', [LaporanBarangController::class, 'show'])
+    ->name('laporan.barang.show');
 
 });

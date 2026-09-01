@@ -11,40 +11,30 @@ class LaporanBarangController extends Controller
 {
     /**
      * =========================================================
-     * LAPORAN BARANG
+     * HALAMAN LAPORAN BARANG
      * =========================================================
      */
     public function index(Request $request)
     {
-        $search = $request->search;
-
+        $search = trim($request->search ?? '');
 
         /*
         |--------------------------------------------------------------------------
-        | DATA BARANG
+        | AMBIL SEMUA BARANG
         |--------------------------------------------------------------------------
         */
 
         $barangs = Barang::query()
-
-            ->when($search, function ($query) use ($search) {
-
-                $query->where(
-                    'nama_barang',
-                    'like',
-                    '%' . $search . '%'
-                );
-
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('nama_barang', 'like', '%' . $search . '%');
             })
-
-            ->orderBy('nama_barang')
-
+            ->orderBy('nama_barang', 'asc')
             ->get();
 
 
         /*
         |--------------------------------------------------------------------------
-        | LAPORAN STOK BARANG
+        | BUAT LAPORAN SETIAP BARANG
         |--------------------------------------------------------------------------
         */
 
@@ -56,18 +46,19 @@ class LaporanBarangController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $barangMasukKoli =
-                BarangMasuk::where(
-                    'barang_id',
-                    $barang->id
-                )->sum('jumlah_koli');
+            $barangMasuks = BarangMasuk::query()
+                ->where('barang_id', $barang->id)
+                ->get();
 
 
-            $barangMasukPcs =
-                BarangMasuk::where(
-                    'barang_id',
-                    $barang->id
-                )->sum('jumlah_pcs');
+            $barangMasukKoli = $barangMasuks->sum(function ($item) {
+                return (int) ($item->jumlah_koli ?? 0);
+            });
+
+
+            $barangMasukPcs = $barangMasuks->sum(function ($item) {
+                return (int) ($item->jumlah_pcs ?? 0);
+            });
 
 
             /*
@@ -76,31 +67,176 @@ class LaporanBarangController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $barangKeluarKoli =
-                PenjualanDetail::where(
-                    'barang_id',
-                    $barang->id
-                )->sum('jumlah_koli');
+            $barangKeluarDetails = PenjualanDetail::query()
+                ->where('barang_id', $barang->id)
+                ->get();
 
 
-            $barangKeluarPcs =
-                PenjualanDetail::where(
-                    'barang_id',
-                    $barang->id
-                )->sum('jumlah_pcs');
+            $barangKeluarKoli = $barangKeluarDetails->sum(function ($item) {
+                return (int) ($item->jumlah_koli ?? 0);
+            });
+
+
+            $barangKeluarPcs = $barangKeluarDetails->sum(function ($item) {
+                return (int) ($item->jumlah_pcs ?? 0);
+            });
 
 
             /*
             |--------------------------------------------------------------------------
-            | KEUNTUNGAN
+            | SISA
+            |--------------------------------------------------------------------------
+            */
+
+            $sisaKoli =
+                $barangMasukKoli -
+                $barangKeluarKoli;
+
+
+            $sisaPcs =
+                $barangMasukPcs -
+                $barangKeluarPcs;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TOTAL MODAL BARANG MASUK
+            |--------------------------------------------------------------------------
+            */
+
+            $totalModalMasuk = $barangMasuks->sum(function ($item) {
+
+                $hargaBeliKoli =
+                    (float) ($item->harga_beli_koli ?? 0);
+
+                $jumlahKoli =
+                    (int) ($item->jumlah_koli ?? 0);
+
+                return $hargaBeliKoli * $jumlahKoli;
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | MODAL RATA-RATA PER PCS
+            |--------------------------------------------------------------------------
+            */
+
+            $modalPerPcs = 0;
+
+            if ($barangMasukPcs > 0) {
+
+                $modalPerPcs =
+                    $totalModalMasuk /
+                    $barangMasukPcs;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | HITUNG KEUNTUNGAN
             |--------------------------------------------------------------------------
             */
 
             $keuntungan = 0;
 
 
-            return [
+            foreach ($barangKeluarDetails as $detail) {
 
+                $jumlahPcs =
+                    (int) ($detail->jumlah_pcs ?? 0);
+
+
+                $subtotal =
+                    (float) ($detail->subtotal ?? 0);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | AMBIL DATA PENJUALAN
+                |--------------------------------------------------------------------------
+                */
+
+                $penjualan = null;
+
+                if ($detail->penjualan_id) {
+
+                    $penjualan = \App\Models\Penjualan::find(
+                        $detail->penjualan_id
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | DISKON
+                |--------------------------------------------------------------------------
+                */
+
+                $diskonPersen = 0;
+
+                if ($penjualan) {
+
+                    $diskonPersen =
+                        (float) (
+                            $penjualan->getRawOriginal('diskon')
+                            ?? 0
+                        );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | NOMINAL DISKON
+                |--------------------------------------------------------------------------
+                */
+
+                $nominalDiskon =
+                    $subtotal *
+                    ($diskonPersen / 100);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | TOTAL SETELAH DISKON
+                |--------------------------------------------------------------------------
+                */
+
+                $totalSetelahDiskon =
+                    $subtotal -
+                    $nominalDiskon;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | MODAL BARANG TERJUAL
+                |--------------------------------------------------------------------------
+                */
+
+                $modalTerjual =
+                    $jumlahPcs *
+                    $modalPerPcs;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | KEUNTUNGAN
+                |--------------------------------------------------------------------------
+                */
+
+                $keuntungan +=
+                    $totalSetelahDiskon -
+                    $modalTerjual;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RETURN DATA
+            |--------------------------------------------------------------------------
+            */
+
+            return [
                 'id' =>
                     $barang->id,
 
@@ -109,6 +245,9 @@ class LaporanBarangController extends Controller
 
                 'satuan' =>
                     $barang->satuan,
+
+                'pcs_per_koli' =>
+                    $barang->pcs_per_koli ?? 0,
 
                 'barang_masuk_koli' =>
                     $barangMasukKoli,
@@ -122,168 +261,108 @@ class LaporanBarangController extends Controller
                 'barang_keluar_pcs' =>
                     $barangKeluarPcs,
 
+                'sisa_koli' =>
+                    $sisaKoli,
+
+                'sisa_pcs' =>
+                    $sisaPcs,
+
                 'keuntungan' =>
                     $keuntungan,
-
             ];
         });
 
 
         /*
         |--------------------------------------------------------------------------
-        | DATA BARANG KELUAR / DETAIL NOTA
+        | DATA BARANG KELUAR
         |--------------------------------------------------------------------------
         */
 
-        $barangKeluar =
-            PenjualanDetail::with([
+        $barangKeluar = PenjualanDetail::query()
+            ->with([
                 'barang',
                 'penjualan'
             ])
-
-            ->when($search, function ($query) use ($search) {
+            ->when($search !== '', function ($query) use ($search) {
 
                 $query->where(function ($q) use ($search) {
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | CARI BARANG
-                    |--------------------------------------------------------------------------
-                    */
+                    $q->whereHas('barang', function ($barangQuery) use ($search) {
 
-                    $q->whereHas(
-                        'barang',
-                        function ($barangQuery) use ($search) {
+                        $barangQuery->where(
+                            'nama_barang',
+                            'like',
+                            '%' . $search . '%'
+                        );
 
-                            $barangQuery->where(
-                                'nama_barang',
-                                'like',
-                                '%' . $search . '%'
-                            );
+                    })->orWhereHas('penjualan', function ($penjualanQuery) use ($search) {
 
-                        }
-                    )
+                        $penjualanQuery->where(
+                            'nama_customer',
+                            'like',
+                            '%' . $search . '%'
+                        );
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ATAU CARI CUSTOMER
-                    |--------------------------------------------------------------------------
-                    */
-
-                    ->orWhereHas(
-                        'penjualan',
-                        function ($penjualanQuery) use ($search) {
-
-                            $penjualanQuery->where(
-                                'nama_customer',
-                                'like',
-                                '%' . $search . '%'
-                            );
-
-                        }
-                    );
-
+                    });
                 });
-
             })
-
             ->orderByDesc('created_at')
-
             ->get();
 
 
         /*
         |--------------------------------------------------------------------------
-        | SIAPKAN DATA LAPORAN
+        | HITUNG DATA DISKON UNTUK BARANG KELUAR
         |--------------------------------------------------------------------------
-        |
-        | Diskon diambil dari tabel penjualans.
-        | Diskon adalah PERSENTASE.
-        |
         */
 
-        $barangKeluar->each(function ($detail) {
-
-            $penjualan =
-                $detail->penjualan;
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | SUBTOTAL BARANG
-            |--------------------------------------------------------------------------
-            */
+        foreach ($barangKeluar as $detail) {
 
             $subtotal =
-                (float) (
-                    $detail->subtotal ?? 0
-                );
+                (float) ($detail->subtotal ?? 0);
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | DISKON
-            |--------------------------------------------------------------------------
-            |
-            | Ambil nilai asli dari database.
-            |
-            */
 
             $diskonPersen = 0;
 
-            if ($penjualan) {
+
+            if ($detail->penjualan) {
 
                 $diskonPersen =
                     (float) (
-                        $penjualan
+                        $detail
+                            ->penjualan
                             ->getRawOriginal('diskon')
                         ?? 0
                     );
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | NOMINAL DISKON
-            |--------------------------------------------------------------------------
-            */
-
-            $jumlahDiskon =
+            $nominalDiskon =
                 $subtotal *
                 ($diskonPersen / 100);
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | TOTAL SETELAH DISKON
-            |--------------------------------------------------------------------------
-            */
-
             $totalSetelahDiskon =
                 $subtotal -
-                $jumlahDiskon;
+                $nominalDiskon;
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | TAMBAHKAN DATA KE OBJECT DETAIL
-            |--------------------------------------------------------------------------
-            */
 
             $detail->laporan_subtotal =
                 $subtotal;
 
+
             $detail->laporan_diskon_persen =
                 $diskonPersen;
 
+
             $detail->laporan_diskon_nominal =
-                $jumlahDiskon;
+                $nominalDiskon;
+
 
             $detail->laporan_total_setelah_diskon =
                 $totalSetelahDiskon;
-
-        });
+        }
 
 
         /*
@@ -294,11 +373,11 @@ class LaporanBarangController extends Controller
 
         return view(
             'laporan.barang.index',
-            compact(
-                'laporan',
-                'barangKeluar',
-                'search'
-            )
+            [
+                'laporan' => $laporan,
+                'barangKeluar' => $barangKeluar,
+                'search' => $search,
+            ]
         );
     }
 
@@ -310,27 +389,231 @@ class LaporanBarangController extends Controller
      */
     public function show(Barang $barang)
     {
-        $penjualanDetails =
-            PenjualanDetail::with([
-                'penjualan',
-                'barang'
-            ])
+        /*
+        |--------------------------------------------------------------------------
+        | BARANG MASUK
+        |--------------------------------------------------------------------------
+        */
 
-            ->where(
-                'barang_id',
-                $barang->id
-            )
-
+        $barangMasuks = BarangMasuk::query()
+            ->where('barang_id', $barang->id)
+            ->orderByDesc('tanggal_input')
             ->orderByDesc('created_at')
-
             ->get();
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL BARANG MASUK
+        |--------------------------------------------------------------------------
+        */
+
+        $totalMasukKoli =
+            $barangMasuks->sum(function ($item) {
+                return (int) ($item->jumlah_koli ?? 0);
+            });
+
+
+        $totalMasukPcs =
+            $barangMasuks->sum(function ($item) {
+                return (int) ($item->jumlah_pcs ?? 0);
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BARANG KELUAR
+        |--------------------------------------------------------------------------
+        */
+
+        $penjualanDetails =
+            PenjualanDetail::query()
+                ->with([
+                    'barang',
+                    'penjualan'
+                ])
+                ->where('barang_id', $barang->id)
+                ->orderByDesc('created_at')
+                ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL BARANG KELUAR
+        |--------------------------------------------------------------------------
+        */
+
+        $totalKeluarKoli =
+            $penjualanDetails->sum(function ($item) {
+                return (int) ($item->jumlah_koli ?? 0);
+            });
+
+
+        $totalKeluarPcs =
+            $penjualanDetails->sum(function ($item) {
+                return (int) ($item->jumlah_pcs ?? 0);
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SISA
+        |--------------------------------------------------------------------------
+        */
+
+        $sisaKoli =
+            $totalMasukKoli -
+            $totalKeluarKoli;
+
+
+        $sisaPcs =
+            $totalMasukPcs -
+            $totalKeluarPcs;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL MODAL
+        |--------------------------------------------------------------------------
+        */
+
+        $totalModalMasuk =
+            $barangMasuks->sum(function ($item) {
+
+                $hargaBeli =
+                    (float) (
+                        $item->harga_beli_koli ?? 0
+                    );
+
+                $jumlahKoli =
+                    (int) (
+                        $item->jumlah_koli ?? 0
+                    );
+
+                return $hargaBeli * $jumlahKoli;
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODAL PER PCS
+        |--------------------------------------------------------------------------
+        */
+
+        $rataRataModalPcs = 0;
+
+
+        if ($totalMasukPcs > 0) {
+
+            $rataRataModalPcs =
+                $totalModalMasuk /
+                $totalMasukPcs;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KEUNTUNGAN
+        |--------------------------------------------------------------------------
+        */
+
+        $totalKeuntungan = 0;
+
+
+        foreach ($penjualanDetails as $detail) {
+
+            $jumlahPcs =
+                (int) ($detail->jumlah_pcs ?? 0);
+
+
+            $subtotal =
+                (float) ($detail->subtotal ?? 0);
+
+
+            $diskonPersen = 0;
+
+
+            if ($detail->penjualan) {
+
+                $diskonPersen =
+                    (float) (
+                        $detail
+                            ->penjualan
+                            ->getRawOriginal('diskon')
+                        ?? 0
+                    );
+            }
+
+
+            $nominalDiskon =
+                $subtotal *
+                ($diskonPersen / 100);
+
+
+            $totalSetelahDiskon =
+                $subtotal -
+                $nominalDiskon;
+
+
+            $modalTerjual =
+                $jumlahPcs *
+                $rataRataModalPcs;
+
+
+            $keuntungan =
+                $totalSetelahDiskon -
+                $modalTerjual;
+
+
+            $detail->laporan_subtotal =
+                $subtotal;
+
+
+            $detail->laporan_diskon_persen =
+                $diskonPersen;
+
+
+            $detail->laporan_diskon_nominal =
+                $nominalDiskon;
+
+
+            $detail->laporan_total_setelah_diskon =
+                $totalSetelahDiskon;
+
+
+            $detail->laporan_modal =
+                $modalTerjual;
+
+
+            $detail->laporan_keuntungan =
+                $keuntungan;
+
+
+            $totalKeuntungan +=
+                $keuntungan;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN VIEW DETAIL
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'laporan.barang.show',
             compact(
                 'barang',
-                'penjualanDetails'
+                'barangMasuks',
+                'penjualanDetails',
+                'totalMasukKoli',
+                'totalMasukPcs',
+                'totalKeluarKoli',
+                'totalKeluarPcs',
+                'sisaKoli',
+                'sisaPcs',
+                'totalKeuntungan',
+                'rataRataModalPcs'
             )
         );
     }
@@ -344,9 +627,7 @@ class LaporanBarangController extends Controller
     public function download()
     {
         $barangs =
-            Barang::orderBy(
-                'nama_barang'
-            )->get();
+            Barang::orderBy('nama_barang')->get();
 
 
         $barangKeluar =
@@ -354,22 +635,17 @@ class LaporanBarangController extends Controller
                 'barang',
                 'penjualan'
             ])
-
             ->orderByDesc('created_at')
-
             ->get();
 
 
         $filename =
             'laporan-barang-' .
-            now()->format(
-                'Y-m-d-H-i-s'
-            ) .
+            now()->format('Y-m-d-H-i-s') .
             '.csv';
 
 
         $headers = [
-
             'Content-Type' =>
                 'text/csv; charset=UTF-8',
 
@@ -377,7 +653,6 @@ class LaporanBarangController extends Controller
                 'attachment; filename="' .
                 $filename .
                 '"',
-
         ];
 
 
@@ -397,7 +672,7 @@ class LaporanBarangController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | BOM EXCEL
+                | BOM
                 |--------------------------------------------------------------------------
                 */
 
@@ -411,32 +686,29 @@ class LaporanBarangController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | TABEL STOK BARANG
+                | STOK BARANG
                 |--------------------------------------------------------------------------
                 */
 
                 fputcsv(
                     $handle,
-                    [
-                        'STOK BARANG'
-                    ]
+                    ['STOK BARANG']
                 );
 
 
                 fputcsv(
                     $handle,
                     [
-
                         'No',
                         'Nama Barang',
                         'Satuan',
-
                         'Barang Masuk Koli',
                         'Barang Masuk PCS',
-
                         'Barang Keluar Koli',
                         'Barang Keluar PCS',
-
+                        'Sisa Koli',
+                        'Sisa PCS',
+                        'Keuntungan'
                     ]
                 );
 
@@ -446,113 +718,179 @@ class LaporanBarangController extends Controller
                     as $index => $barang
                 ) {
 
-                    $masukKoli =
+                    $masuks =
                         BarangMasuk::where(
                             'barang_id',
                             $barang->id
-                        )->sum(
+                        )->get();
+
+
+                    $keluars =
+                        PenjualanDetail::where(
+                            'barang_id',
+                            $barang->id
+                        )->get();
+
+
+                    $masukKoli =
+                        $masuks->sum(
                             'jumlah_koli'
                         );
 
 
                     $masukPcs =
-                        BarangMasuk::where(
-                            'barang_id',
-                            $barang->id
-                        )->sum(
+                        $masuks->sum(
                             'jumlah_pcs'
                         );
 
 
                     $keluarKoli =
-                        PenjualanDetail::where(
-                            'barang_id',
-                            $barang->id
-                        )->sum(
+                        $keluars->sum(
                             'jumlah_koli'
                         );
 
 
                     $keluarPcs =
-                        PenjualanDetail::where(
-                            'barang_id',
-                            $barang->id
-                        )->sum(
+                        $keluars->sum(
                             'jumlah_pcs'
                         );
+
+
+                    $totalModal =
+                        $masuks->sum(
+                            function ($item) {
+
+                                return
+                                    (float) (
+                                        $item->harga_beli_koli ?? 0
+                                    )
+                                    *
+                                    (int) (
+                                        $item->jumlah_koli ?? 0
+                                    );
+                            }
+                        );
+
+
+                    $modalPerPcs = 0;
+
+
+                    if ($masukPcs > 0) {
+
+                        $modalPerPcs =
+                            $totalModal /
+                            $masukPcs;
+                    }
+
+
+                    $keuntungan = 0;
+
+
+                    foreach ($keluars as $detail) {
+
+                        $subtotal =
+                            (float) (
+                                $detail->subtotal ?? 0
+                            );
+
+
+                        $jumlahPcs =
+                            (int) (
+                                $detail->jumlah_pcs ?? 0
+                            );
+
+
+                        $penjualan =
+                            \App\Models\Penjualan::find(
+                                $detail->penjualan_id
+                            );
+
+
+                        $diskonPersen = 0;
+
+
+                        if ($penjualan) {
+
+                            $diskonPersen =
+                                (float) (
+                                    $penjualan
+                                        ->getRawOriginal(
+                                            'diskon'
+                                        )
+                                    ?? 0
+                                );
+                        }
+
+
+                        $diskon =
+                            $subtotal *
+                            ($diskonPersen / 100);
+
+
+                        $bersih =
+                            $subtotal -
+                            $diskon;
+
+
+                        $modal =
+                            $jumlahPcs *
+                            $modalPerPcs;
+
+
+                        $keuntungan +=
+                            $bersih -
+                            $modal;
+                    }
 
 
                     fputcsv(
                         $handle,
                         [
-
                             $index + 1,
-
                             $barang->nama_barang,
-
                             $barang->satuan,
-
                             $masukKoli,
-
                             $masukPcs,
-
                             $keluarKoli,
-
                             $keluarPcs,
-
+                            $masukKoli - $keluarKoli,
+                            $masukPcs - $keluarPcs,
+                            $keuntungan
                         ]
                     );
-
                 }
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | PEMISAH
+                | BARANG KELUAR
                 |--------------------------------------------------------------------------
                 */
 
-                fputcsv(
-                    $handle,
-                    []
-                );
+                fputcsv($handle, []);
+
+                fputcsv($handle, []);
 
                 fputcsv(
                     $handle,
-                    []
-                );
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | TABEL BARANG KELUAR
-                |--------------------------------------------------------------------------
-                */
-
-                fputcsv(
-                    $handle,
-                    [
-                        'BARANG KELUAR'
-                    ]
+                    ['BARANG KELUAR']
                 );
 
 
                 fputcsv(
                     $handle,
                     [
-
                         'No',
                         'Tanggal & Jam Keluar',
+                        'No Nota',
                         'Nama Customer',
-                        'Barang Keluar',
-
+                        'Barang',
                         'Koli',
                         'PCS',
-
-                        'Total Harga',
+                        'Harga / PCS',
+                        'Subtotal',
                         'Diskon',
-                        'Total Setelah Diskon',
-
+                        'Total Setelah Diskon'
                     ]
                 );
 
@@ -566,25 +904,14 @@ class LaporanBarangController extends Controller
                         $detail->penjualan;
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SUBTOTAL
-                    |--------------------------------------------------------------------------
-                    */
-
                     $subtotal =
                         (float) (
                             $detail->subtotal ?? 0
                         );
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | DISKON
-                    |--------------------------------------------------------------------------
-                    */
-
                     $diskonPersen = 0;
+
 
                     if ($penjualan) {
 
@@ -599,60 +926,48 @@ class LaporanBarangController extends Controller
                     }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | NOMINAL DISKON
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $jumlahDiskon =
+                    $diskon =
                         $subtotal *
                         ($diskonPersen / 100);
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | TOTAL SETELAH DISKON
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $totalSetelahDiskon =
+                    $total =
                         $subtotal -
-                        $jumlahDiskon;
+                        $diskon;
+
+
+                    $tanggal = '';
+
+
+                    if (
+                        $penjualan &&
+                        $penjualan->tanggal_penjualan
+                    ) {
+
+                        $tanggal =
+                            \Carbon\Carbon::parse(
+                                $penjualan->tanggal_penjualan
+                            )
+                            ->format('d/m/Y H:i');
+                    }
 
 
                     fputcsv(
                         $handle,
                         [
-
                             $index + 1,
-
-                            $penjualan?->tanggal_penjualan
-                                ?->timezone(
-                                    'Asia/Jakarta'
-                                )
-                                ?->format(
-                                    'd/m/Y H:i'
-                                ),
-
-                            $penjualan?->nama_customer,
-
-                            $detail->barang
-                                ?->nama_barang,
-
-                            $detail->jumlah_koli,
-
-                            $detail->jumlah_pcs,
-
+                            $tanggal,
+                            $penjualan?->nomor_nota ?? '-',
+                            $penjualan?->nama_customer ?? '-',
+                            $detail->barang?->nama_barang ?? '-',
+                            $detail->jumlah_koli ?? 0,
+                            $detail->jumlah_pcs ?? 0,
+                            $detail->harga ?? 0,
                             $subtotal,
-
                             $diskonPersen . '%',
-
-                            $totalSetelahDiskon,
-
+                            $total
                         ]
                     );
-
                 }
 
 
@@ -661,9 +976,7 @@ class LaporanBarangController extends Controller
             },
 
             $filename,
-
             $headers
-
         );
     }
 }

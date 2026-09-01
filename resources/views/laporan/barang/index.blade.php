@@ -6,10 +6,6 @@
 
 <style>
 
-/* =========================================================
-   PAGE HEADER
-========================================================= */
-
 .page-header {
     margin-bottom: 25px;
 }
@@ -26,11 +22,6 @@
     color: #9ca3af;
 }
 
-
-/* =========================================================
-   REPORT CARD
-========================================================= */
-
 .report-card {
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -39,11 +30,6 @@
     margin-bottom: 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
 }
-
-
-/* =========================================================
-   REPORT HEADER
-========================================================= */
 
 .report-header {
     padding: 20px;
@@ -63,29 +49,15 @@
     margin: 5px 0 0;
 }
 
-
-/* =========================================================
-   TOOLBAR
-========================================================= */
-
 .report-toolbar {
     padding: 15px 20px;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     gap: 12px;
     flex-wrap: wrap;
-
     border-bottom: 1px solid #e5e7eb;
-    background: #ffffff;
 }
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
 
 .search-box {
     width: 280px;
@@ -94,48 +66,29 @@
 .search-box input {
     width: 100%;
     height: 38px;
-
     padding: 8px 12px;
-
     border: 1px solid #d1d5db;
     border-radius: 6px;
-
     font-size: 13px;
-
     outline: none;
 }
 
 .search-box input:focus {
-    border-color: #6366f1;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(99, 102, 241, .08);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
 }
-
-
-/* =========================================================
-   DOWNLOAD BUTTON
-========================================================= */
 
 .download-btn {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-
     padding: 9px 15px;
-
     border-radius: 6px;
-
     background: #198754;
     color: #ffffff;
-
     text-decoration: none;
-
     font-size: 13px;
     font-weight: 600;
-
-    transition: .2s;
 }
 
 .download-btn:hover {
@@ -143,66 +96,39 @@
     color: #ffffff;
 }
 
-
-/* =========================================================
-   TABLE WRAPPER
-========================================================= */
-
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
 }
 
-
-/* =========================================================
-   TABLE
-========================================================= */
-
 .report-table {
     width: 100%;
     margin: 0;
-
     border-collapse: collapse;
-
     font-size: 13px;
 }
 
 .report-table thead th {
     background: #f8fafc;
-
     color: #475569;
-
     font-weight: 700;
-
     border: 1px solid #e5e7eb;
-
     padding: 12px 10px;
-
     white-space: nowrap;
-
     vertical-align: middle;
 }
 
 .report-table tbody td {
     border: 1px solid #e5e7eb;
-
     padding: 11px 10px;
-
     color: #475569;
-
     vertical-align: middle;
-
     white-space: nowrap;
 }
 
 .report-table tbody tr:hover {
     background: #f8fafc;
 }
-
-
-/* =========================================================
-   CELL
-========================================================= */
 
 .text-center {
     text-align: center !important;
@@ -223,102 +149,87 @@
 
 .price-cell {
     text-align: right;
-
     font-weight: 600;
-
     color: #334155 !important;
 }
 
 .discount-cell {
     text-align: right;
-
     font-weight: 600;
-
     color: #dc2626 !important;
 }
 
 .discount-detail {
     display: block;
-
     margin-top: 2px;
-
     font-size: 11px;
-
     color: #9ca3af;
-
     font-weight: 400;
 }
 
 .total-cell {
     text-align: right;
-
     font-weight: 700;
-
     color: #16a34a !important;
 }
 
 .profit-cell {
     text-align: right;
-
     font-weight: 700;
-
     color: #16a34a !important;
 }
 
-
-/* =========================================================
-   STOCK COLORS
-========================================================= */
-
 .stock-in {
-    color: #2563eb;
+    color: #2563eb !important;
     font-weight: 600;
 }
 
 .stock-out {
-    color: #dc2626;
+    color: #dc2626 !important;
     font-weight: 600;
 }
 
 .stock-sisa {
-    color: #475569;
+    color: #475569 !important;
     font-weight: 600;
 }
 
+.detail-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+}
 
-/* =========================================================
-   EMPTY DATA
-========================================================= */
+.detail-btn:hover {
+    background: #1d4ed8;
+    color: #ffffff;
+}
+
+.action-cell {
+    text-align: center;
+}
 
 .empty-data {
     padding: 40px 20px !important;
-
     text-align: center;
-
     color: #9ca3af !important;
 }
 
-
-/* =========================================================
-   TABLE FOOTER
-========================================================= */
-
 .table-footer {
     padding: 13px 20px;
-
     border-top: 1px solid #e5e7eb;
-
     background: #fafafa;
-
     color: #6b7280;
-
     font-size: 13px;
 }
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
 
 @media (max-width: 768px) {
 
@@ -344,10 +255,6 @@
 </style>
 
 
-{{-- =========================================================
-   PAGE HEADER
-========================================================= --}}
-
 <div class="page-header">
 
     <h3 class="page-title">
@@ -361,14 +268,11 @@
 </div>
 
 
-
 {{-- =========================================================
-   TABEL 1 : STOK BARANG
+STOK BARANG
 ========================================================= --}}
 
 <div class="report-card">
-
-    {{-- HEADER --}}
 
     <div class="report-header">
 
@@ -383,11 +287,7 @@
     </div>
 
 
-    {{-- TOOLBAR --}}
-
     <div class="report-toolbar">
-
-        {{-- DOWNLOAD --}}
 
         <a
             href="{{ route('laporan.export.excel') }}"
@@ -396,8 +296,6 @@
             ⬇ Download Excel
         </a>
 
-
-        {{-- SEARCH --}}
 
         <form
             action="{{ route('laporan.barang.index') }}"
@@ -409,15 +307,13 @@
                 type="text"
                 name="search"
                 value="{{ $search ?? '' }}"
-                placeholder="Cari barang atau customer..."
+                placeholder="Cari nama barang..."
             >
 
         </form>
 
     </div>
 
-
-    {{-- TABLE --}}
 
     <div class="table-wrapper">
 
@@ -441,36 +337,40 @@
 
                     <th class="text-center">
                         Barang Masuk<br>
-                        (Koli)
+                        Koli
                     </th>
 
                     <th class="text-center">
                         Barang Masuk<br>
-                        (PCS)
+                        PCS
                     </th>
 
                     <th class="text-center">
                         Barang Keluar<br>
-                        (Koli)
+                        Koli
                     </th>
 
                     <th class="text-center">
                         Barang Keluar<br>
-                        (PCS)
+                        PCS
                     </th>
 
                     <th class="text-center">
-                        Sisa Barang<br>
-                        (Koli)
+                        Sisa<br>
+                        Koli
                     </th>
 
                     <th class="text-center">
-                        Sisa Barang<br>
-                        (PCS)
+                        Sisa<br>
+                        PCS
                     </th>
 
-                    <th class="text-center">
+                    <th class="text-end">
                         Keuntungan
+                    </th>
+
+                    <th class="text-center">
+                        Aksi
                     </th>
 
                 </tr>
@@ -482,110 +382,77 @@
 
                 @forelse($laporan as $index => $data)
 
-                    @php
-
-                        $barangMasukKoli =
-                            $data['barang_masuk_koli'] ?? 0;
-
-                        $barangMasukPcs =
-                            $data['barang_masuk_pcs'] ?? 0;
-
-                        $barangKeluarKoli =
-                            $data['barang_keluar_koli'] ?? 0;
-
-                        $barangKeluarPcs =
-                            $data['barang_keluar_pcs'] ?? 0;
-
-                        $sisaKoli =
-                            $barangMasukKoli -
-                            $barangKeluarKoli;
-
-                        $sisaPcs =
-                            $barangMasukPcs -
-                            $barangKeluarPcs;
-
-                        $keuntungan =
-                            $data['keuntungan'] ?? 0;
-
-                    @endphp
-
-
                     <tr>
-
-                        {{-- NO --}}
 
                         <td class="number-cell">
                             {{ $index + 1 }}
                         </td>
 
 
-                        {{-- NAMA BARANG --}}
-
                         <td class="name-cell">
-                            {{ $data['nama_barang'] ?? '-' }}
+                            {{ $data['nama_barang'] }}
                         </td>
 
-
-                        {{-- SATUAN --}}
 
                         <td class="number-cell">
                             {{ $data['satuan'] ?? '-' }}
                         </td>
 
 
-                        {{-- BARANG MASUK KOLI --}}
+                        <td class="number-cell stock-in">
+                            {{ number_format($data['barang_masuk_koli'] ?? 0) }}
+                        </td>
+
 
                         <td class="number-cell stock-in">
-                            {{ number_format($barangMasukKoli) }}
+                            {{ number_format($data['barang_masuk_pcs'] ?? 0) }}
                         </td>
 
-
-                        {{-- BARANG MASUK PCS --}}
-
-                        <td class="number-cell stock-in">
-                            {{ number_format($barangMasukPcs) }}
-                        </td>
-
-
-                        {{-- BARANG KELUAR KOLI --}}
 
                         <td class="number-cell stock-out">
-                            {{ number_format($barangKeluarKoli) }}
+                            {{ number_format($data['barang_keluar_koli'] ?? 0) }}
                         </td>
 
-
-                        {{-- BARANG KELUAR PCS --}}
 
                         <td class="number-cell stock-out">
-                            {{ number_format($barangKeluarPcs) }}
+                            {{ number_format($data['barang_keluar_pcs'] ?? 0) }}
                         </td>
 
-
-                        {{-- SISA KOLI --}}
 
                         <td class="number-cell stock-sisa">
-                            {{ number_format($sisaKoli) }}
+                            {{ number_format($data['sisa_koli'] ?? 0) }}
                         </td>
 
-
-                        {{-- SISA PCS --}}
 
                         <td class="number-cell stock-sisa">
-                            {{ number_format($sisaPcs) }}
+                            {{ number_format($data['sisa_pcs'] ?? 0) }}
                         </td>
 
-
-                        {{-- KEUNTUNGAN --}}
 
                         <td class="profit-cell">
 
                             Rp
                             {{ number_format(
-                                $keuntungan,
+                                $data['keuntungan'] ?? 0,
                                 0,
                                 ',',
                                 '.'
                             ) }}
+
+                        </td>
+
+
+                        <td class="action-cell">
+
+                            <a
+                                href="{{ route(
+                                    'laporan.barang.show',
+                                    $data['id']
+                                ) }}"
+                                class="detail-btn"
+                            >
+                                👁 Detail
+                            </a>
 
                         </td>
 
@@ -596,10 +463,12 @@
                     <tr>
 
                         <td
-                            colspan="10"
+                            colspan="11"
                             class="empty-data"
                         >
+
                             📦 Belum ada data stok barang.
+
                         </td>
 
                     </tr>
@@ -612,8 +481,6 @@
 
     </div>
 
-
-    {{-- FOOTER --}}
 
     <div class="table-footer">
 
@@ -630,14 +497,11 @@
 </div>
 
 
-
 {{-- =========================================================
-   TABEL 2 : BARANG KELUAR
+BARANG KELUAR
 ========================================================= --}}
 
 <div class="report-card">
-
-    {{-- HEADER --}}
 
     <div class="report-header">
 
@@ -651,8 +515,6 @@
 
     </div>
 
-
-    {{-- TABLE --}}
 
     <div class="table-wrapper">
 
@@ -671,11 +533,15 @@
                     </th>
 
                     <th>
+                        No Nota
+                    </th>
+
+                    <th>
                         Nama Customer
                     </th>
 
                     <th>
-                        Barang Keluar
+                        Barang
                     </th>
 
                     <th class="text-center">
@@ -707,95 +573,20 @@
 
                 @forelse($barangKeluar as $index => $detail)
 
-                    @php
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | DATA PENJUALAN
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $penjualan =
-                            $detail->penjualan;
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | TOTAL HARGA
-                        |--------------------------------------------------------------------------
-                        |
-                        | Menggunakan subtotal dari masing-masing
-                        | detail barang.
-                        |
-                        */
-
-                        $totalHarga =
-                            (float) (
-                                $detail->subtotal ?? 0
-                            );
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | DISKON
-                        |--------------------------------------------------------------------------
-                        |
-                        | Diskon pada tabel penjualan disimpan
-                        | dalam bentuk PERSENTASE.
-                        |
-                        */
-
-                        $diskonPersen =
-                            (float) (
-                                $penjualan?->diskon ?? 0
-                            );
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | NOMINAL DISKON
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $jumlahDiskon =
-                            $totalHarga *
-                            ($diskonPersen / 100);
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | TOTAL SETELAH DISKON
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $totalSetelahDiskon =
-                            $totalHarga -
-                            $jumlahDiskon;
-
-                    @endphp
-
-
                     <tr>
-
-                        {{-- NO --}}
 
                         <td class="number-cell">
                             {{ $index + 1 }}
                         </td>
 
 
-                        {{-- TANGGAL KELUAR --}}
-
                         <td>
 
-                            @if($penjualan?->tanggal_penjualan)
+                            @if($detail->penjualan?->tanggal_penjualan)
 
-                                {{
-                                    $penjualan
-                                        ->tanggal_penjualan
-                                        ->timezone('Asia/Jakarta')
-                                        ->format('d/m/Y H:i')
-                                }}
+                                {{ \Carbon\Carbon::parse(
+                                    $detail->penjualan->tanggal_penjualan
+                                )->format('d/m/Y H:i') }}
 
                             @else
 
@@ -806,127 +597,108 @@
                         </td>
 
 
-                        {{-- NAMA CUSTOMER --}}
+                        <td class="name-cell">
+
+                            {{ $detail->penjualan?->nomor_nota ?? '-' }}
+
+                        </td>
+
 
                         <td class="name-cell">
 
-                            {{
-                                $penjualan?->nama_customer
-                                ?? '-'
-                            }}
+                            {{ $detail->penjualan?->nama_customer ?? '-' }}
 
                         </td>
 
-
-                        {{-- BARANG KELUAR --}}
 
                         <td class="name-cell">
 
-                            {{
-                                $detail->barang
-                                    ?->nama_barang
-                                ?? '-'
-                            }}
+                            {{ $detail->barang?->nama_barang ?? '-' }}
 
                         </td>
 
-
-                        {{-- KOLI --}}
 
                         <td class="number-cell">
 
-                            {{
-                                number_format(
-                                    $detail->jumlah_koli ?? 0
-                                )
-                            }}
+                            {{ number_format(
+                                $detail->jumlah_koli ?? 0
+                            ) }}
 
                         </td>
 
-
-                        {{-- PCS --}}
 
                         <td class="number-cell">
 
-                            {{
-                                number_format(
-                                    $detail->jumlah_pcs ?? 0
-                                )
-                            }}
+                            {{ number_format(
+                                $detail->jumlah_pcs ?? 0
+                            ) }}
 
                         </td>
 
-
-                        {{-- TOTAL HARGA --}}
 
                         <td class="price-cell">
 
                             Rp
-                            {{
-                                number_format(
-                                    $totalHarga,
-                                    0,
-                                    ',',
-                                    '.'
-                                )
-                            }}
+                            {{ number_format(
+                                $detail->laporan_subtotal ?? 0,
+                                0,
+                                ',',
+                                '.'
+                            ) }}
 
                         </td>
 
 
-                        {{-- DISKON --}}
-
                         <td class="discount-cell">
 
                             {{ number_format(
-                                $diskonPersen,
+                                $detail->laporan_diskon_persen ?? 0,
                                 0,
                                 ',',
                                 '.'
                             ) }}%
 
-                            <span class="discount-detail">
+                            @if(
+                                ($detail->laporan_diskon_nominal ?? 0) > 0
+                            )
 
-                                - Rp
-                                {{
-                                    number_format(
-                                        $jumlahDiskon,
+                                <span class="discount-detail">
+
+                                    - Rp
+                                    {{ number_format(
+                                        $detail->laporan_diskon_nominal,
                                         0,
                                         ',',
                                         '.'
-                                    )
-                                }}
+                                    ) }}
 
-                            </span>
+                                </span>
+
+                            @endif
 
                         </td>
 
-
-                        {{-- TOTAL SETELAH DISKON --}}
 
                         <td class="total-cell">
 
                             Rp
-                            {{
-                                number_format(
-                                    $totalSetelahDiskon,
-                                    0,
-                                    ',',
-                                    '.'
-                                )
-                            }}
+                            {{ number_format(
+                                $detail->laporan_total_setelah_diskon ?? 0,
+                                0,
+                                ',',
+                                '.'
+                            ) }}
 
                         </td>
 
                     </tr>
-
 
                 @empty
 
                     <tr>
 
                         <td
-                            colspan="9"
+                            colspan="10"
                             class="empty-data"
                         >
 
@@ -944,8 +716,6 @@
 
     </div>
 
-
-    {{-- FOOTER --}}
 
     <div class="table-footer">
 
