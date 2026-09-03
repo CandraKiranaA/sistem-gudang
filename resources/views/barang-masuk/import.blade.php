@@ -234,7 +234,7 @@
 
                             <small class="text-muted">
                                 Ukuran maksimal:
-                                <strong>20 MB</strong>
+                                <strong>100 MB</strong>
                             </small>
 
                         </div>

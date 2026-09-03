@@ -235,15 +235,8 @@ class BarangController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-
-            'file' => [
-                'required',
-                'file',
-                'mimes:xlsx,xls,csv',
-                'max:5120'
-            ],
-
-        ]);
+        'file' => 'required|mimes:xlsx,xls,csv|max:102400',
+    ]);
 
 
         try {

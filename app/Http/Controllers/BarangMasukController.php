@@ -274,13 +274,7 @@ class BarangMasukController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-
-            'file' => [
-                'required',
-                'file',
-                'mimes:xlsx,xls,csv',
-                'max:20480',
-            ],
+        'file' => 'required|mimes:xlsx,xls,csv|max:102400',
 
         ], [
 
