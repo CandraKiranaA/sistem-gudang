@@ -18,9 +18,7 @@ use App\Http\Controllers\LaporanBarangController;
 */
 
 Route::get('/', function () {
-
     return redirect()->route('login');
-
 });
 
 
@@ -34,7 +32,6 @@ Route::get('/login', [
     AuthController::class,
     'showLogin'
 ])->name('login');
-
 
 Route::post('/login', [
     AuthController::class,
@@ -50,7 +47,6 @@ Route::post('/login', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-
     /*
     |--------------------------------------------------------------------------
     | DASHBOARD
@@ -62,21 +58,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Total jenis barang
         $totalBarang = \App\Models\Barang::count();
 
-
         // Total koli barang masuk
         $totalBarangMasuk =
             \App\Models\BarangMasuk::sum('jumlah_koli');
-
 
         // Total barang keluar
         $totalBarangKeluar =
             \App\Models\PenjualanDetail::sum('jumlah_pcs');
 
-
         // Total nota penjualan
         $totalNota =
             \App\Models\Penjualan::count();
-
 
         // Total customer unik
         $totalCustomer =
@@ -84,7 +76,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->where('nama_customer', '!=', '')
                 ->distinct()
                 ->count('nama_customer');
-
 
         return view('dashboard', compact(
             'totalBarang',
@@ -97,68 +88,107 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
 
-
     /*
     |--------------------------------------------------------------------------
     | MASTER BARANG
     |--------------------------------------------------------------------------
     */
 
-
+    // Form import
     Route::get('/barangs/import', [
         BarangController::class,
         'importForm'
     ])->name('barangs.import.form');
 
 
+    // Proses import
     Route::post('/barangs/import', [
         BarangController::class,
         'import'
     ])->name('barangs.import');
 
 
+    // Export Excel
     Route::get('/barangs/export', [
         BarangController::class,
         'export'
     ])->name('barangs.export');
 
 
-    Route::resource('barangs', BarangController::class)
-        ->except(['show']);
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS BARANG TERPILIH
+    |--------------------------------------------------------------------------
+    |
+    | PENTING:
+    | Route ini harus berada SEBELUM Route::resource('barangs', ...)
+    |
+    */
 
+    Route::delete('/barangs/bulk-delete', [
+        BarangController::class,
+        'bulkDelete'
+    ])->name('barangs.bulkDelete');
 
 
     /*
     |--------------------------------------------------------------------------
-    | BARANG MASUK
+    | RESOURCE MASTER BARANG
     |--------------------------------------------------------------------------
+    |
+    | Hanya SATU kali.
+    |
     */
 
-
-    Route::get('/barang-masuk/import', [
-        BarangMasukController::class,
-        'importForm'
-    ])->name('barang-masuk.import.form');
-
-
-    Route::post('/barang-masuk/import', [
-        BarangMasukController::class,
-        'import'
-    ])->name('barang-masuk.import');
-
-
-    Route::get('/barang-masuk/export', [
-        BarangMasukController::class,
-        'export'
-    ])->name('barang-masuk.export');
-
-
     Route::resource(
-        'barang-masuk',
-        BarangMasukController::class
-    );
+        'barangs',
+        BarangController::class
+    )->except([
+        'show'
+    ]);
+
+/*
+|--------------------------------------------------------------------------
+| BARANG MASUK
+|--------------------------------------------------------------------------
+*/
+
+// Form import barang masuk
+Route::get('/barang-masuk/import', [
+    BarangMasukController::class,
+    'importForm'
+])->name('barang-masuk.import.form');
 
 
+// Proses import barang masuk
+Route::post('/barang-masuk/import', [
+    BarangMasukController::class,
+    'import'
+])->name('barang-masuk.import');
+
+
+// Export barang masuk
+Route::get('/barang-masuk/export', [
+    BarangMasukController::class,
+    'export'
+])->name('barang-masuk.export');
+
+
+// ================================================================
+// BULK DELETE BARANG MASUK
+// ================================================================
+
+Route::delete('/barang-masuk/bulk-delete', [
+    BarangMasukController::class,
+    'bulkDelete'
+])->name('barang-masuk.bulkDelete');
+
+
+// Resource barang masuk
+Route::resource(
+    'barang-masuk',
+    BarangMasukController::class
+);
 
     /*
     |--------------------------------------------------------------------------
@@ -197,7 +227,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('customers.show');
 
 
-
     /*
     |--------------------------------------------------------------------------
     | STOCK OUT / PENJUALAN
@@ -217,7 +246,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('penjualan.index');
 
 
-
     /*
     |--------------------------------------------------------------------------
     | FORM BUAT NOTA
@@ -228,7 +256,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         PenjualanController::class,
         'create'
     ])->name('penjualan.create');
-
 
 
     /*
@@ -243,13 +270,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('penjualan.store');
 
 
-
     /*
     |--------------------------------------------------------------------------
     | CEK STOK
     |--------------------------------------------------------------------------
     |
-    | Route ini harus diletakkan sebelum:
+    | Harus sebelum:
     | /stock-out/{penjualan}
     |
     */
@@ -258,7 +284,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         PenjualanController::class,
         'stok'
     ])->name('penjualan.stok');
-
 
 
     /*
@@ -273,7 +298,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('penjualan.show');
 
 
-
     /*
     |--------------------------------------------------------------------------
     | HAPUS NOTA
@@ -284,7 +308,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         PenjualanController::class,
         'destroy'
     ])->name('penjualan.destroy');
-
 
 
     /*
@@ -305,6 +328,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ])->name('change-password.update');
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | LAPORAN BARANG
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/laporan/barang', [
+        LaporanBarangController::class,
+        'index'
+    ])->name('laporan.barang.index');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOWNLOAD / EXPORT LAPORAN BARANG
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/laporan/barang/download', [
+        LaporanBarangController::class,
+        'download'
+    ])->name('laporan.export.excel');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL LAPORAN BARANG
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/laporan/barang/{barang}', [
+        LaporanBarangController::class,
+        'show'
+    ])->name('laporan.barang.show');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -316,22 +374,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
         AuthController::class,
         'logout'
     ])->name('logout');
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | LAPORAN BARANG
-    |--------------------------------------------------------------------------
-    */
-
-Route::get('/laporan/barang', [LaporanBarangController::class, 'index'])
-    ->name('laporan.barang.index');
-
-Route::get('/laporan/barang/download', [LaporanBarangController::class, 'download'])
-    ->name('laporan.export.excel');
-
-Route::get('/laporan/barang/{barang}', [LaporanBarangController::class, 'show'])
-    ->name('laporan.barang.show');
 
 });

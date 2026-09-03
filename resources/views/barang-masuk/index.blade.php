@@ -287,499 +287,624 @@
                 </div>
 
 
-                @if($barangMasuks->total() > 0)
+                <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
 
-                    <div class="data-count mt-2 mt-md-0">
+                    {{-- JUMLAH DATA --}}
+                    @if($barangMasuks->total() > 0)
 
-                        <span class="count-number">
-                            {{ $barangMasuks->total() }}
-                        </span>
+                        <div class="data-count">
 
-                        <span class="count-label">
-                            Data
-                        </span>
-
-                    </div>
-
-                @endif
-
-            </div>
-
-        </div>
-
-
-        {{-- ================================================= --}}
-        {{-- TABLE --}}
-        {{-- ================================================= --}}
-
-        <div class="card-body p-0">
-
-            <div class="table-responsive">
-
-                <table
-                    class="table align-middle mb-0 modern-table"
-                >
-
-                    <thead>
-
-                        <tr>
-
-                            {{-- NO --}}
-                            <th
-                                class="text-center col-no"
-                            >
-                                No
-                            </th>
-
-
-                            {{-- TANGGAL --}}
-                            <th class="col-tanggal">
-                                Tanggal
-                            </th>
-
-
-                            {{-- BARANG --}}
-                            <th class="col-barang">
-                                Barang
-                            </th>
-
-
-                            {{-- EDISI --}}
-                            <th class="text-center col-edisi">
-                                Edisi
-                            </th>
-
-
-                            {{-- KOLI --}}
-                            <th class="text-center col-jumlah">
-                                Koli
-                            </th>
-
-
-                            {{-- PCS --}}
-                            <th class="text-center col-jumlah">
-                                PCS
-                            </th>
-
-
-                            {{-- HARGA BELI --}}
-                            <th class="text-end col-harga">
-                                Beli / Koli
-                            </th>
-
-
-                            {{-- HARGA JUAL KOLI --}}
-                            <th class="text-end col-harga">
-                                Jual / Koli
-                            </th>
-
-
-                            {{-- HARGA JUAL PCS --}}
-                            <th class="text-end col-harga">
-                                Jual / PCS
-                            </th>
-
-
-                            {{-- AKSI --}}
-                            <th class="text-center col-aksi">
-                                Aksi
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        @forelse($barangMasuks as $item)
-
-                            <tr>
-
-                                {{-- ================================================= --}}
-                                {{-- NO --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-center">
-
-                                    <span class="row-number">
-                                        {{ $barangMasuks->firstItem() + $loop->index }}
-                                    </span>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- TANGGAL --}}
-                                {{-- ================================================= --}}
-
-                                <td class="date-column">
-
-                                    @if($item->tanggal_input)
-
-                                        @php
-                                            $tanggal = \Carbon\Carbon::parse(
-                                                $item->tanggal_input
-                                            );
-                                        @endphp
-
-                                        {{-- TANGGAL UTAMA SATU BARIS --}}
-                                        <div class="date-main">
-
-                                            {{ $tanggal->format('d M Y') }}
-
-                                        </div>
-
-                                        {{-- TANGGAL FORMAT DATABASE --}}
-                                        <div class="date-sub">
-
-                                            {{ $tanggal->format('Y-m-d') }}
-
-                                        </div>
-
-                                    @else
-
-                                        <span class="text-muted">
-                                            —
-                                        </span>
-
-                                    @endif
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- BARANG --}}
-                                {{-- ================================================= --}}
-
-                                <td>
-
-                                    @if($item->barang)
-
-                                        <div class="product-name">
-
-                                            {{ $item->barang->nama_barang }}
-
-                                        </div>
-
-
-                                        @if($item->barang->satuan)
-
-                                            <div class="product-unit">
-
-                                                {{ strtoupper($item->barang->satuan) }}
-
-                                            </div>
-
-                                        @endif
-
-                                    @else
-
-                                        <span class="text-danger product-not-found">
-
-                                            Barang tidak ditemukan
-
-                                        </span>
-
-                                    @endif
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- EDISI --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-center">
-
-                                    @if($item->edisi)
-
-                                        <span class="edition-badge">
-
-                                            {{ $item->edisi }}
-
-                                        </span>
-
-                                    @else
-
-                                        <span class="no-data">
-                                            —
-                                        </span>
-
-                                    @endif
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- KOLI --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-center">
-
-                                    <div class="quantity-box">
-
-                                        <strong>
-                                            {{ number_format($item->jumlah_koli ?? 0) }}
-                                        </strong>
-
-                                        <small>
-                                            Koli
-                                        </small>
-
-                                    </div>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- PCS --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-center">
-
-                                    <div class="quantity-box pcs-box">
-
-                                        <strong>
-                                            {{ number_format($item->jumlah_pcs ?? 0) }}
-                                        </strong>
-
-                                        <small>
-                                            PCS
-                                        </small>
-
-                                    </div>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- HARGA BELI --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-end price-column">
-
-                                    <span class="currency-label">
-                                        Rp
-                                    </span>
-
-                                    <strong class="price-text">
-
-                                        {{ number_format(
-                                            $item->harga_beli_koli ?? 0,
-                                            0,
-                                            ',',
-                                            '.'
-                                        ) }}
-
-                                    </strong>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- HARGA JUAL KOLI --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-end price-column">
-
-                                    <span class="currency-label">
-                                        Rp
-                                    </span>
-
-                                    <strong class="price-text">
-
-                                        {{ number_format(
-                                            $item->harga_jual_koli ?? 0,
-                                            0,
-                                            ',',
-                                            '.'
-                                        ) }}
-
-                                    </strong>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- HARGA JUAL PCS --}}
-                                {{-- ================================================= --}}
-
-                                <td class="text-end price-column">
-
-                                    <span class="currency-label">
-                                        Rp
-                                    </span>
-
-                                    <strong class="price-text">
-
-                                        {{ number_format(
-                                            $item->harga_jual_pcs ?? 0,
-                                            0,
-                                            ',',
-                                            '.'
-                                        ) }}
-
-                                    </strong>
-
-                                </td>
-
-
-                                {{-- ================================================= --}}
-                                {{-- AKSI --}}
-                                {{-- ================================================= --}}
-
-                                <td>
-
-                                    <div class="action-buttons">
-
-                                        <a
-                                            href="{{ route(
-                                                'barang-masuk.edit',
-                                                $item
-                                            ) }}"
-                                            class="action-btn edit-btn"
-                                            title="Edit data"
-                                        >
-                                            ✏️
-                                        </a>
-
-
-                                        <form
-                                            action="{{ route(
-                                                'barang-masuk.destroy',
-                                                $item
-                                            ) }}"
-                                            method="POST"
-                                            class="d-inline"
-                                            onsubmit="return confirm(
-                                                'Apakah kamu yakin ingin menghapus data ini?'
-                                            )"
-                                        >
-
-                                            @csrf
-
-                                            @method('DELETE')
-
-                                            <button
-                                                type="submit"
-                                                class="action-btn delete-btn"
-                                                title="Hapus data"
-                                            >
-                                                🗑️
-                                            </button>
-
-                                        </form>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                        @empty
-
-                            {{-- ================================================= --}}
-                            {{-- EMPTY --}}
-                            {{-- ================================================= --}}
-
-                            <tr>
-
-                                <td
-                                    colspan="10"
-                                    class="empty-state"
-                                >
-
-                                    <div class="empty-icon">
-                                        📦
-                                    </div>
-
-                                    <h6 class="fw-bold mb-1">
-                                        Belum Ada Data Barang Masuk
-                                    </h6>
-
-                                    <p class="text-muted mb-3">
-                                        Belum ada barang yang tercatat
-                                        sebagai barang masuk.
-                                    </p>
-
-                                    <a
-                                        href="{{ route('barang-masuk.create') }}"
-                                        class="btn btn-primary btn-sm px-3"
-                                    >
-                                        ＋ Tambah Barang
-                                    </a>
-
-                                </td>
-
-                            </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        {{-- ================================================= --}}
-        {{-- PAGINATION --}}
-        {{-- ================================================= --}}
-
-        @if($barangMasuks->hasPages())
-
-            <div class="card-footer bg-white border-0 px-3 px-md-4 py-3">
-
-                <div class="d-flex flex-wrap justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="pagination-info">
-
-                            Menampilkan
-
-                            <strong>
-                                {{ $barangMasuks->firstItem() }}
-                            </strong>
-
-                            sampai
-
-                            <strong>
-                                {{ $barangMasuks->lastItem() }}
-                            </strong>
-
-                            dari
-
-                            <strong>
+                            <span class="count-number">
                                 {{ $barangMasuks->total() }}
-                            </strong>
+                            </span>
 
-                            data
+                            <span class="count-label">
+                                Data
+                            </span>
 
-                        </small>
+                        </div>
 
-                    </div>
+                    @endif
 
 
-                    <div class="mt-2 mt-md-0">
+                    {{-- ================================================= --}}
+                    {{-- BUTTON HAPUS TERPILIH --}}
+                    {{-- ================================================= --}}
 
-                        {{ $barangMasuks->withQueryString()->links() }}
-
-                    </div>
+                    <button
+                        type="button"
+                        id="bulkDeleteButton"
+                        class="btn btn-danger bulk-delete-btn"
+                        disabled
+                    >
+                        🗑️
+                        <span id="bulkDeleteText">
+                            Hapus Terpilih
+                        </span>
+                    </button>
 
                 </div>
 
             </div>
+
+        </div>
+
+
+        {{-- ================================================= --}}
+        {{-- FORM BULK DELETE --}}
+        {{-- ================================================= --}}
+
+        <form
+            id="bulkDeleteForm"
+            action="{{ route('barang-masuk.bulkDelete') }}"
+            method="POST"
+        >
+
+            @csrf
+
+            @method('DELETE')
+
+
+            {{-- ================================================= --}}
+            {{-- TABLE --}}
+            {{-- ================================================= --}}
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table align-middle mb-0 modern-table"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                {{-- CHECKBOX --}}
+                                <th
+                                    class="text-center col-check"
+                                >
+
+                                    <div class="checkbox-wrapper">
+
+                                        <input
+                                            type="checkbox"
+                                            id="checkAll"
+                                            class="form-check-input row-checkbox"
+                                            title="Pilih semua data di halaman ini"
+                                        >
+
+                                    </div>
+
+                                </th>
+
+
+                                {{-- NO --}}
+                                <th
+                                    class="text-center col-no"
+                                >
+                                    No
+                                </th>
+
+
+                                {{-- TANGGAL --}}
+                                <th class="col-tanggal">
+                                    Tanggal
+                                </th>
+
+
+                                {{-- BARANG --}}
+                                <th class="col-barang">
+                                    Barang
+                                </th>
+
+
+                                {{-- EDISI --}}
+                                <th class="text-center col-edisi">
+                                    Edisi
+                                </th>
+
+
+                                {{-- KOLI --}}
+                                <th class="text-center col-jumlah">
+                                    Koli
+                                </th>
+
+
+                                {{-- PCS --}}
+                                <th class="text-center col-jumlah">
+                                    PCS
+                                </th>
+
+
+                                {{-- HARGA BELI --}}
+                                <th class="text-end col-harga">
+                                    Beli / Koli
+                                </th>
+
+
+                                {{-- HARGA JUAL KOLI --}}
+                                <th class="text-end col-harga">
+                                    Jual / Koli
+                                </th>
+
+
+                                {{-- HARGA JUAL PCS --}}
+                                <th class="text-end col-harga">
+                                    Jual / PCS
+                                </th>
+
+
+                                {{-- AKSI --}}
+                                <th class="text-center col-aksi">
+                                    Aksi
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @forelse($barangMasuks as $item)
+
+                                <tr>
+
+                                    {{-- ================================================= --}}
+                                    {{-- CHECKBOX --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-center">
+
+                                        <div class="checkbox-wrapper">
+
+                                            <input
+                                                type="checkbox"
+                                                name="ids[]"
+                                                value="{{ $item->id }}"
+                                                class="form-check-input row-checkbox item-checkbox"
+                                            >
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- NO --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-center">
+
+                                        <span class="row-number">
+
+                                            {{ $barangMasuks->firstItem() + $loop->index }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- TANGGAL --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="date-column">
+
+                                        @if($item->tanggal_input)
+
+                                            @php
+
+                                                $tanggal = \Carbon\Carbon::parse(
+                                                    $item->tanggal_input
+                                                );
+
+                                            @endphp
+
+
+                                            <div class="date-main">
+
+                                                {{ $tanggal->format('d M Y') }}
+
+                                            </div>
+
+
+                                            <div class="date-sub">
+
+                                                {{ $tanggal->format('Y-m-d') }}
+
+                                            </div>
+
+                                        @else
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- BARANG --}}
+                                    {{-- ================================================= --}}
+
+                                    <td>
+
+                                        @if($item->barang)
+
+                                            <div class="product-name">
+
+                                                {{ $item->barang->nama_barang }}
+
+                                            </div>
+
+
+                                            @if($item->barang->satuan)
+
+                                                <div class="product-unit">
+
+                                                    {{ strtoupper($item->barang->satuan) }}
+
+                                                </div>
+
+                                            @endif
+
+                                        @else
+
+                                            <span class="text-danger product-not-found">
+
+                                                Barang tidak ditemukan
+
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- EDISI --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-center">
+
+                                        @if($item->edisi)
+
+                                            <span class="edition-badge">
+
+                                                {{ $item->edisi }}
+
+                                            </span>
+
+                                        @else
+
+                                            <span class="no-data">
+                                                —
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- KOLI --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-center">
+
+                                        <div class="quantity-box">
+
+                                            <strong>
+
+                                                {{ number_format(
+                                                    $item->jumlah_koli ?? 0
+                                                ) }}
+
+                                            </strong>
+
+                                            <small>
+                                                Koli
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- PCS --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-center">
+
+                                        <div class="quantity-box pcs-box">
+
+                                            <strong>
+
+                                                {{ number_format(
+                                                    $item->jumlah_pcs ?? 0
+                                                ) }}
+
+                                            </strong>
+
+                                            <small>
+                                                PCS
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- HARGA BELI --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-end price-column">
+
+                                        <span class="currency-label">
+                                            Rp
+                                        </span>
+
+                                        <strong class="price-text">
+
+                                            {{ number_format(
+                                                $item->harga_beli_koli ?? 0,
+                                                0,
+                                                ',',
+                                                '.'
+                                            ) }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- HARGA JUAL KOLI --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-end price-column">
+
+                                        <span class="currency-label">
+                                            Rp
+                                        </span>
+
+                                        <strong class="price-text">
+
+                                            {{ number_format(
+                                                $item->harga_jual_koli ?? 0,
+                                                0,
+                                                ',',
+                                                '.'
+                                            ) }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- HARGA JUAL PCS --}}
+                                    {{-- ================================================= --}}
+
+                                    <td class="text-end price-column">
+
+                                        <span class="currency-label">
+                                            Rp
+                                        </span>
+
+                                        <strong class="price-text">
+
+                                            {{ number_format(
+                                                $item->harga_jual_pcs ?? 0,
+                                                0,
+                                                ',',
+                                                '.'
+                                            ) }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- AKSI --}}
+                                    {{-- ================================================= --}}
+
+                                    <td>
+
+                                        <div class="action-buttons">
+
+                                            {{-- EDIT --}}
+
+                                            <a
+                                                href="{{ route(
+                                                    'barang-masuk.edit',
+                                                    $item
+                                                ) }}"
+                                                class="action-btn edit-btn"
+                                                title="Edit data"
+                                            >
+                                                ✏️
+                                            </a>
+
+
+                                            {{-- DELETE SATU DATA --}}
+
+                                            <button
+                                                type="button"
+                                                class="action-btn delete-btn"
+                                                title="Hapus data"
+                                                onclick="confirmSingleDelete(
+                                                    '{{ route('barang-masuk.destroy', $item) }}'
+                                                )"
+                                            >
+                                                🗑️
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            @empty
+
+                                {{-- ================================================= --}}
+                                {{-- EMPTY --}}
+                                {{-- ================================================= --}}
+
+                                <tr>
+
+                                    <td
+                                        colspan="11"
+                                        class="empty-state"
+                                    >
+
+                                        <div class="empty-icon">
+                                            📦
+                                        </div>
+
+                                        <h6 class="fw-bold mb-1">
+                                            Belum Ada Data Barang Masuk
+                                        </h6>
+
+                                        <p class="text-muted mb-3">
+                                            Belum ada barang yang tercatat
+                                            sebagai barang masuk.
+                                        </p>
+
+                                        <a
+                                            href="{{ route('barang-masuk.create') }}"
+                                            class="btn btn-primary btn-sm px-3"
+                                        >
+                                            ＋ Tambah Barang
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            @endforelse
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </form>
+{{-- ================================================= --}}
+{{-- PAGINATION --}}
+{{-- ================================================= --}}
+
+@if($barangMasuks->hasPages())
+
+<div class="pagination-container">
+
+    {{-- INFO --}}
+    <div class="pagination-info">
+
+        Menampilkan
+        <strong>{{ $barangMasuks->firstItem() }}</strong>
+        sampai
+        <strong>{{ $barangMasuks->lastItem() }}</strong>
+        dari
+        <strong>{{ $barangMasuks->total() }}</strong>
+        data
+
+    </div>
+
+
+    {{-- PAGINATION --}}
+    <div class="custom-pagination">
+
+        {{-- PREVIOUS --}}
+        @if ($barangMasuks->onFirstPage())
+
+            <span class="pagination-btn disabled">
+                ‹
+            </span>
+
+        @else
+
+            <a
+                href="{{ $barangMasuks->previousPageUrl() }}"
+                class="pagination-btn"
+            >
+                ‹
+            </a>
+
+        @endif
+
+
+        {{-- NOMOR HALAMAN --}}
+        @foreach ($barangMasuks->getUrlRange(1, $barangMasuks->lastPage()) as $page => $url)
+
+            @if ($page == $barangMasuks->currentPage())
+
+                <span class="pagination-btn active">
+                    {{ $page }}
+                </span>
+
+            @else
+
+                <a
+                    href="{{ $url }}"
+                    class="pagination-btn"
+                >
+                    {{ $page }}
+                </a>
+
+            @endif
+
+        @endforeach
+
+
+        {{-- NEXT --}}
+        @if ($barangMasuks->hasMorePages())
+
+            <a
+                href="{{ $barangMasuks->nextPageUrl() }}"
+                class="pagination-btn"
+            >
+                ›
+            </a>
+
+        @else
+
+            <span class="pagination-btn disabled">
+                ›
+            </span>
 
         @endif
 
     </div>
 
 </div>
+
+@endif
+
+{{-- ========================================================= --}}
+{{-- FORM DELETE SATU DATA --}}
+{{-- ========================================================= --}}
+
+<form
+    id="singleDeleteForm"
+    method="POST"
+    style="display:none;"
+>
+    @csrf
+    @method('DELETE')
+</form>
 
 
 {{-- ========================================================= --}}
@@ -1017,17 +1142,93 @@
 
 
 /* =========================================================
-   TABLE UTAMA
+   BULK DELETE
 ========================================================= */
 
-/*
-|--------------------------------------------------------------------------
-| PENTING
-|--------------------------------------------------------------------------
-| Tidak menggunakan min-width besar.
-| Tabel mengikuti lebar card.
-|
-*/
+.bulk-delete-btn {
+
+    padding: 8px 14px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+
+}
+
+.bulk-delete-btn:disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+}
+
+.bulk-delete-btn:not(:disabled):hover {
+
+    transform: translateY(-1px);
+
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.checkbox-wrapper {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+.row-checkbox {
+
+    width: 18px;
+
+    height: 18px;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    border-radius: 5px;
+
+}
+
+.row-checkbox:focus {
+
+    box-shadow:
+        0 0 0 3px rgba(13, 110, 253, 0.12);
+
+}
+
+.item-checkbox:checked {
+
+    background-color: #0d6efd;
+
+    border-color: #0d6efd;
+
+}
+
+#checkAll:checked {
+
+    background-color: #0d6efd;
+
+    border-color: #0d6efd;
+
+}
+
+
+/* =========================================================
+   TABLE UTAMA
+========================================================= */
 
 .modern-table {
 
@@ -1093,7 +1294,8 @@
 
 .modern-table tbody tr {
 
-    transition: background-color 0.15s ease;
+    transition:
+        background-color 0.15s ease;
 
 }
 
@@ -1111,8 +1313,31 @@
 
 
 /* =========================================================
+   SELECTED ROW
+========================================================= */
+
+.modern-table tbody tr.selected-row {
+
+    background: #eef6ff;
+
+}
+
+.modern-table tbody tr.selected-row td {
+
+    border-bottom-color: #dbeafe;
+
+}
+
+
+/* =========================================================
    LEBAR KOLOM
 ========================================================= */
+
+.col-check {
+
+    width: 4%;
+
+}
 
 .col-no {
 
@@ -1517,23 +1742,154 @@
    PAGINATION
 ========================================================= */
 
+.pagination-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   INFO
+========================================================= */
+
 .pagination-info {
-
     font-size: 13px;
-
     color: #64748b;
-
+    white-space: nowrap;
 }
 
 .pagination-info strong {
-
     color: #334155;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PAGINATION WRAPPER
+========================================================= */
+
+.custom-pagination {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.pagination-btn {
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    margin: 0;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #475569;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    box-sizing: border-box;
+
+    transition: all 0.15s ease;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.pagination-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   ACTIVE
+========================================================= */
+
+.pagination-btn.active {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.pagination-btn.disabled {
+    background: #f8fafc;
+    color: #cbd5e1;
+    border-color: #e2e8f0;
+    cursor: default;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .pagination-container {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .pagination-info {
+        text-align: center;
+        white-space: normal;
+    }
+
+    .custom-pagination {
+        justify-content: center;
+    }
 
 }
 
-.card-footer .pagination {
 
-    margin-bottom: 0;
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .pagination-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
+
+    .custom-pagination {
+        gap: 4px;
+    }
 
 }
 
@@ -1630,12 +1986,12 @@
 
     /*
     | Pada layar kecil tabel tetap bisa digeser horizontal
-    | karena 10 kolom memang tidak mungkin semuanya muat.
+    | karena banyak kolom.
     */
 
     .modern-table {
 
-        min-width: 1050px;
+        min-width: 1100px;
 
         table-layout: fixed;
 
@@ -1687,6 +2043,12 @@
 
     }
 
+    .bulk-delete-btn {
+
+        width: 100%;
+
+    }
+
 }
 
 
@@ -1698,12 +2060,336 @@
 
     .modern-table {
 
-        min-width: 1000px;
+        min-width: 1050px;
 
     }
 
 }
 
 </style>
+
+
+{{-- ========================================================= --}}
+{{-- JAVASCRIPT --}}
+{{-- ========================================================= --}}
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const checkAll =
+        document.getElementById('checkAll');
+
+    const itemCheckboxes =
+        document.querySelectorAll('.item-checkbox');
+
+    const bulkDeleteButton =
+        document.getElementById('bulkDeleteButton');
+
+    const bulkDeleteText =
+        document.getElementById('bulkDeleteText');
+
+    const bulkDeleteForm =
+        document.getElementById('bulkDeleteForm');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE STATUS TOMBOL HAPUS
+    |--------------------------------------------------------------------------
+    */
+
+    function updateBulkDeleteButton() {
+
+        const checkedItems =
+            document.querySelectorAll(
+                '.item-checkbox:checked'
+            );
+
+        const jumlah =
+            checkedItems.length;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tombol aktif jika ada minimal 1 checkbox
+        |--------------------------------------------------------------------------
+        */
+
+        bulkDeleteButton.disabled =
+            jumlah === 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ubah tulisan tombol
+        |--------------------------------------------------------------------------
+        */
+
+        if (jumlah > 0) {
+
+            bulkDeleteText.textContent =
+                'Hapus ' + jumlah + ' Data';
+
+        } else {
+
+            bulkDeleteText.textContent =
+                'Hapus Terpilih';
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tandai baris yang dipilih
+        |--------------------------------------------------------------------------
+        */
+
+        itemCheckboxes.forEach(function (checkbox) {
+
+            const row =
+                checkbox.closest('tr');
+
+            if (!row) {
+                return;
+            }
+
+            if (checkbox.checked) {
+
+                row.classList.add(
+                    'selected-row'
+                );
+
+            } else {
+
+                row.classList.remove(
+                    'selected-row'
+                );
+
+            }
+
+        });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update checkbox "Pilih Semua"
+        |--------------------------------------------------------------------------
+        */
+
+        if (itemCheckboxes.length === 0) {
+
+            checkAll.checked = false;
+
+            checkAll.indeterminate = false;
+
+            return;
+
+        }
+
+
+        const checkedCount =
+            document.querySelectorAll(
+                '.item-checkbox:checked'
+            ).length;
+
+
+        if (checkedCount === itemCheckboxes.length) {
+
+            checkAll.checked = true;
+
+            checkAll.indeterminate = false;
+
+        } else if (checkedCount > 0) {
+
+            checkAll.checked = false;
+
+            checkAll.indeterminate = true;
+
+        } else {
+
+            checkAll.checked = false;
+
+            checkAll.indeterminate = false;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECKBOX PILIH SEMUA
+    |--------------------------------------------------------------------------
+    */
+
+    if (checkAll) {
+
+        checkAll.addEventListener(
+            'change',
+            function () {
+
+                itemCheckboxes.forEach(
+                    function (checkbox) {
+
+                        checkbox.checked =
+                            checkAll.checked;
+
+                    }
+                );
+
+
+                updateBulkDeleteButton();
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECKBOX PER BARIS
+    |--------------------------------------------------------------------------
+    */
+
+    itemCheckboxes.forEach(
+        function (checkbox) {
+
+            checkbox.addEventListener(
+                'change',
+                function () {
+
+                    updateBulkDeleteButton();
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS BANYAK DATA
+    |--------------------------------------------------------------------------
+    */
+
+    if (bulkDeleteButton) {
+
+        bulkDeleteButton.addEventListener(
+            'click',
+            function () {
+
+                const checkedItems =
+                    document.querySelectorAll(
+                        '.item-checkbox:checked'
+                    );
+
+
+                const jumlah =
+                    checkedItems.length;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Tidak ada data dipilih
+                |--------------------------------------------------------------------------
+                */
+
+                if (jumlah === 0) {
+
+                    alert(
+                        'Silakan pilih minimal satu data yang ingin dihapus.'
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Konfirmasi
+                |--------------------------------------------------------------------------
+                */
+
+                const konfirmasi = confirm(
+
+                    'Apakah kamu yakin ingin menghapus ' +
+                    jumlah +
+                    ' data barang masuk yang dipilih?\n\n' +
+                    'Data yang sudah dihapus tidak dapat dikembalikan.'
+
+                );
+
+
+                if (!konfirmasi) {
+
+                    return;
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Submit form
+                |--------------------------------------------------------------------------
+                */
+
+                bulkDeleteForm.submit();
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE SATU DATA
+    |--------------------------------------------------------------------------
+    */
+
+    window.confirmSingleDelete =
+        function (url) {
+
+            const konfirmasi =
+                confirm(
+                    'Apakah kamu yakin ingin menghapus data ini?'
+                );
+
+
+            if (!konfirmasi) {
+
+                return;
+
+            }
+
+
+            const form =
+                document.getElementById(
+                    'singleDeleteForm'
+                );
+
+
+            form.action = url;
+
+            form.submit();
+
+        };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INIT
+    |--------------------------------------------------------------------------
+    */
+
+    updateBulkDeleteButton();
+
+});
+
+</script>
 
 @endsection

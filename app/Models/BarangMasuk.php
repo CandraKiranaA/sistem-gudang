@@ -23,9 +23,13 @@ class BarangMasuk extends Model
     ];
 
     protected $casts = [
-        'tanggal_input' => 'date',
+        // PENTING:
+        // gunakan datetime agar JAM ikut tersimpan/dibaca
+        'tanggal_input' => 'datetime',
+
         'jumlah_koli' => 'integer',
         'jumlah_pcs' => 'integer',
+
         'harga_beli_koli' => 'decimal:2',
         'harga_jual_koli' => 'decimal:2',
         'harga_jual_pcs' => 'decimal:2',
@@ -39,3 +43,4 @@ class BarangMasuk extends Model
         );
     }
 }
+

@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
+@section('title', 'Master Barang')
+
 @section('content')
 
 <div class="container-fluid px-3 px-md-4 py-3">
 
-    {{-- ===================================================== --}}
-    {{-- HEADER --}}
-    {{-- ===================================================== --}}
+    {{-- =====================================================
+         HEADER
+    ====================================================== --}}
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
@@ -31,13 +33,14 @@
         </div>
 
 
-        {{-- ================================================= --}}
-        {{-- BUTTON HEADER --}}
-        {{-- ================================================= --}}
+        {{-- =================================================
+             BUTTON HEADER
+        ================================================== --}}
 
         <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
 
             {{-- IMPORT --}}
+
             <a
                 href="{{ route('barangs.import.form') }}"
                 class="btn btn-outline-success btn-header"
@@ -48,6 +51,7 @@
 
 
             {{-- EXPORT --}}
+
             <a
                 href="{{ route('barangs.export') }}"
                 class="btn btn-outline-primary btn-header"
@@ -58,6 +62,7 @@
 
 
             {{-- TAMBAH BARANG --}}
+
             <a
                 href="{{ route('barangs.create') }}"
                 class="btn btn-primary btn-add"
@@ -71,9 +76,9 @@
     </div>
 
 
-    {{-- ===================================================== --}}
-    {{-- NOTIFIKASI SUCCESS --}}
-    {{-- ===================================================== --}}
+    {{-- =====================================================
+         NOTIFIKASI SUCCESS
+    ====================================================== --}}
 
     @if(session('success'))
 
@@ -113,9 +118,9 @@
     @endif
 
 
-    {{-- ===================================================== --}}
-    {{-- NOTIFIKASI ERROR --}}
-    {{-- ===================================================== --}}
+    {{-- =====================================================
+         NOTIFIKASI ERROR
+    ====================================================== --}}
 
     @if(session('error'))
 
@@ -155,9 +160,9 @@
     @endif
 
 
-    {{-- ===================================================== --}}
-    {{-- VALIDATION ERROR --}}
-    {{-- ===================================================== --}}
+    {{-- =====================================================
+         VALIDATION ERROR
+    ====================================================== --}}
 
     @if($errors->any())
 
@@ -196,9 +201,9 @@
     @endif
 
 
-    {{-- ===================================================== --}}
-    {{-- SEARCH --}}
-    {{-- ===================================================== --}}
+    {{-- =====================================================
+         SEARCH
+    ====================================================== --}}
 
     <div class="card border-0 shadow-sm search-card mb-3">
 
@@ -268,16 +273,16 @@
     </div>
 
 
-    {{-- ===================================================== --}}
-    {{-- TABLE CARD --}}
-    {{-- ===================================================== --}}
+    {{-- =====================================================
+         TABLE CARD
+    ====================================================== --}}
 
     <div class="card border-0 shadow-sm table-card">
 
 
-        {{-- ================================================= --}}
-        {{-- TABLE HEADER --}}
-        {{-- ================================================= --}}
+        {{-- =================================================
+             TABLE HEADER
+        ================================================== --}}
 
         <div class="card-header bg-white border-0 px-3 px-md-4 py-3">
 
@@ -295,6 +300,8 @@
 
                 </div>
 
+
+                {{-- TOTAL BARANG --}}
 
                 @if($barangs->total() > 0)
 
@@ -317,334 +324,616 @@
         </div>
 
 
-        {{-- ================================================= --}}
-        {{-- TABLE --}}
-        {{-- ================================================= --}}
+        {{-- =================================================
+             FORM BULK DELETE
+        ================================================== --}}
 
-        <div class="card-body p-0">
+        <form
+            action="{{ route('barangs.bulkDelete') }}"
+            method="POST"
+            id="bulkDeleteForm"
+        >
 
-            <div class="table-responsive">
+            @csrf
 
-                <table
-                    class="table align-middle mb-0 modern-table"
+            @method('DELETE')
+
+
+            {{-- =================================================
+                 BULK ACTION BAR
+            ================================================== --}}
+
+            <div
+                class="bulk-action-bar px-3 px-md-4 py-3"
+                id="bulkActionBar"
+            >
+
+                <div class="d-flex align-items-center gap-3">
+
+                    {{-- PILIH SEMUA --}}
+
+                    <div class="form-check m-0">
+
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="checkAll"
+                        >
+
+                        <label
+                            class="form-check-label fw-semibold"
+                            for="checkAll"
+                        >
+                            Pilih Semua
+                        </label>
+
+                    </div>
+
+
+                    {{-- JUMLAH TERPILIH --}}
+
+                    <span
+                        class="selected-count"
+                        id="selectedCount"
+                    >
+                        0 barang dipilih
+                    </span>
+
+                </div>
+
+
+                {{-- BUTTON HAPUS TERPILIH --}}
+
+                <button
+                    type="submit"
+                    id="bulkDeleteButton"
+                    class="btn btn-danger bulk-delete-btn"
+                    disabled
                 >
+                    🗑️
+                    <span id="bulkDeleteText">
+                        Hapus Terpilih
+                    </span>
+                </button>
 
-                    <thead>
-
-                        <tr>
-
-                            {{-- NO --}}
-                            <th
-                                class="text-center no-column"
-                            >
-                                No
-                            </th>
+            </div>
 
 
-                            {{-- NAMA BARANG --}}
-                            <th class="barang-column">
-                                Nama Barang
-                            </th>
+            {{-- =================================================
+                 TABLE
+            ================================================== --}}
 
+            <div class="card-body p-0">
 
-                            {{-- KOLI --}}
-                            <th
-                                class="text-center koli-column"
-                            >
-                                Koli
-                            </th>
+                <div class="table-responsive">
 
+                    <table
+                        class="table align-middle mb-0 modern-table"
+                    >
 
-                            {{-- PCS --}}
-                            <th
-                                class="text-center pcs-column"
-                            >
-                                PCS
-                            </th>
-
-
-                            {{-- SATUAN --}}
-                            <th class="satuan-column">
-                                Satuan
-                            </th>
-
-
-                            {{-- AKSI --}}
-                            <th
-                                class="text-center aksi-column"
-                            >
-                                Aksi
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        @forelse($barangs as $barang)
+                        <thead>
 
                             <tr>
 
-                                {{-- ================================================= --}}
-                                {{-- NO --}}
-                                {{-- ================================================= --}}
+                                {{-- CHECKBOX --}}
 
-                                <td class="text-center">
+                                <th
+                                    class="text-center check-column"
+                                >
 
-                                    <span class="row-number">
-
-                                        {{ $barangs->firstItem() + $loop->index }}
-
+                                    <span class="visually-hidden">
+                                        Pilih
                                     </span>
 
-                                </td>
+                                </th>
 
 
-                                {{-- ================================================= --}}
-                                {{-- NAMA BARANG --}}
-                                {{-- ================================================= --}}
+                                {{-- NO --}}
 
-                                <td>
-
-                                    <div class="product-name">
-
-                                        {{ $barang->nama_barang }}
-
-                                    </div>
-
-                                    <small class="product-label">
-                                        Data Master Barang
-                                    </small>
-
-                                </td>
+                                <th
+                                    class="text-center no-column"
+                                >
+                                    No
+                                </th>
 
 
-                                {{-- ================================================= --}}
+                                {{-- NAMA --}}
+
+                                <th class="barang-column">
+                                    Nama Barang
+                                </th>
+
+
                                 {{-- KOLI --}}
-                                {{-- ================================================= --}}
 
-                                <td class="text-center">
-
-                                    <div class="quantity-box">
-
-                                        <strong>
-
-                                            {{ number_format(
-                                                $barang->jumlah_koli ?? 1
-                                            ) }}
-
-                                        </strong>
-
-                                        <small>
-                                            Koli
-                                        </small>
-
-                                    </div>
-
-                                </td>
+                                <th
+                                    class="text-center koli-column"
+                                >
+                                    Koli
+                                </th>
 
 
-                                {{-- ================================================= --}}
                                 {{-- PCS --}}
-                                {{-- ================================================= --}}
 
-                                <td class="text-center">
+                                <th
+                                    class="text-center pcs-column"
+                                >
+                                    PCS
+                                </th>
 
-                                    <div class="quantity-box pcs-box">
 
-                                        <strong>
+                                {{-- SATUAN --}}
 
-                                            {{ number_format(
-                                                $barang->pcs_per_koli ?? 0
-                                            ) }}
+                                <th class="satuan-column">
+                                    Satuan
+                                </th>
 
-                                        </strong>
 
-                                        <small>
-                                            PCS
+                                {{-- AKSI --}}
+
+                                <th
+                                    class="text-center aksi-column"
+                                >
+                                    Aksi
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @forelse($barangs as $barang)
+
+                                <tr>
+
+                                    {{-- =================================================
+                                         CHECKBOX BARANG
+                                    ================================================== --}}
+
+                                    <td class="text-center">
+
+                                        <div
+                                            class="form-check d-flex justify-content-center m-0"
+                                        >
+
+                                            <input
+                                                class="form-check-input barang-checkbox"
+                                                type="checkbox"
+                                                name="ids[]"
+                                                value="{{ $barang->id }}"
+                                                id="barang-{{ $barang->id }}"
+                                            >
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- =================================================
+                                         NO
+                                    ================================================== --}}
+
+                                    <td class="text-center">
+
+                                        <span class="row-number">
+
+                                            {{ $barangs->firstItem() + $loop->index }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    {{-- =================================================
+                                         NAMA BARANG
+                                    ================================================== --}}
+
+                                    <td>
+
+                                        <div class="product-name">
+
+                                            {{ $barang->nama_barang }}
+
+                                        </div>
+
+                                        <small class="product-label">
+
+                                            Data Master Barang
+
                                         </small>
 
-                                    </div>
-
-                                </td>
+                                    </td>
 
 
-                                {{-- ================================================= --}}
-                                {{-- SATUAN --}}
-                                {{-- ================================================= --}}
+                                    {{-- =================================================
+                                         KOLI
+                                    ================================================== --}}
 
-                                <td>
+                                    <td class="text-center">
 
-                                    @if($barang->satuan)
+                                        <div class="quantity-box">
 
-                                        <span class="unit-badge">
+                                            <strong>
 
-                                            {{ strtoupper($barang->satuan) }}
+                                                {{ number_format($barang->jumlah_koli ?? 1) }}
 
-                                        </span>
+                                            </strong>
 
-                                    @else
+                                            <small>
+                                                Koli
+                                            </small>
 
-                                        <span class="text-muted no-data">
-                                            —
-                                        </span>
+                                        </div>
 
-                                    @endif
-
-                                </td>
+                                    </td>
 
 
-                                {{-- ================================================= --}}
-                                {{-- AKSI --}}
-                                {{-- ================================================= --}}
+                                    {{-- =================================================
+                                         PCS
+                                    ================================================== --}}
 
-                                <td>
+                                    <td class="text-center">
 
-                                    <div class="action-buttons">
+                                        <div class="quantity-box pcs-box">
 
-                                        {{-- EDIT --}}
+                                            <strong>
 
-                                        <a
-                                            href="{{ route(
-                                                'barangs.edit',
-                                                $barang
-                                            ) }}"
-                                            class="action-btn edit-btn"
-                                            title="Edit barang"
-                                        >
-                                            ✏️
-                                        </a>
+                                                {{ number_format($barang->pcs_per_koli ?? 0) }}
+
+                                            </strong>
+
+                                            <small>
+                                                PCS
+                                            </small>
+
+                                        </div>
+
+                                    </td>
 
 
-                                        {{-- DELETE --}}
+                                    {{-- =================================================
+                                         SATUAN
+                                    ================================================== --}}
 
-                                        <form
-                                            action="{{ route(
-                                                'barangs.destroy',
-                                                $barang
-                                            ) }}"
-                                            method="POST"
-                                            class="d-inline"
-                                            onsubmit="return confirm(
-                                                'Apakah kamu yakin ingin menghapus barang ini?'
-                                            )"
-                                        >
+                                    <td>
 
-                                            @csrf
+                                        @if($barang->satuan)
 
-                                            @method('DELETE')
+                                            <span class="unit-badge">
+
+                                                {{ strtoupper($barang->satuan) }}
+
+                                            </span>
+
+                                        @else
+
+                                            <span class="text-muted no-data">
+                                                —
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+
+                                    {{-- =================================================
+                                         AKSI
+                                    ================================================== --}}
+
+                                    <td>
+
+                                        <div class="action-buttons">
+
+                                            {{-- EDIT --}}
+
+                                            <a
+                                                href="{{ route('barangs.edit', $barang) }}"
+                                                class="action-btn edit-btn"
+                                                title="Edit barang"
+                                            >
+                                                ✏️
+                                            </a>
+
+
+                                            {{-- DELETE SATU BARANG --}}
 
                                             <button
-                                                type="submit"
+                                                type="button"
                                                 class="action-btn delete-btn"
                                                 title="Hapus barang"
+                                                onclick="deleteSingleBarang({{ $barang->id }})"
                                             >
                                                 🗑️
                                             </button>
 
-                                        </form>
+                                        </div>
 
-                                    </div>
+                                    </td>
 
-                                </td>
-
-                            </tr>
+                                </tr>
 
 
-                        @empty
+                            @empty
 
-                            {{-- ================================================= --}}
-                            {{-- EMPTY STATE --}}
-                            {{-- ================================================= --}}
+                                {{-- =================================================
+                                     EMPTY
+                                ================================================== --}}
 
-                            <tr>
+                                <tr>
 
-                                <td
-                                    colspan="6"
-                                    class="empty-state"
-                                >
-
-                                    <div class="empty-icon">
-                                        📦
-                                    </div>
-
-                                    <h6 class="fw-bold mb-1">
-                                        Belum Ada Master Barang
-                                    </h6>
-
-                                    <p class="text-muted mb-3">
-                                        Belum ada data barang yang tersedia
-                                        di dalam master barang.
-                                    </p>
-
-                                    <a
-                                        href="{{ route('barangs.create') }}"
-                                        class="btn btn-primary btn-sm px-3"
+                                    <td
+                                        colspan="7"
+                                        class="empty-state"
                                     >
-                                        ＋ Tambah Barang
-                                    </a>
 
-                                </td>
+                                        <div class="empty-icon">
+                                            📦
+                                        </div>
 
-                            </tr>
+                                        <h6 class="fw-bold mb-1">
+                                            Belum Ada Master Barang
+                                        </h6>
 
-                        @endforelse
+                                        <p class="text-muted mb-3">
+                                            Belum ada data barang yang tersedia
+                                            di dalam master barang.
+                                        </p>
 
-                    </tbody>
+                                        <a
+                                            href="{{ route('barangs.create') }}"
+                                            class="btn btn-primary btn-sm px-3"
+                                        >
+                                            ＋ Tambah Barang
+                                        </a>
 
-                </table>
+                                    </td>
+
+                                </tr>
+
+                            @endforelse
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
-        </div>
+        </form>
 
 
-        {{-- ================================================= --}}
-        {{-- PAGINATION --}}
-        {{-- ================================================= --}}
+        {{-- =================================================
+             PAGINATION
+        ================================================== --}}
 
         @if($barangs->hasPages())
 
             <div class="card-footer bg-white border-0 px-3 px-md-4 py-3">
 
-                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                <div class="pagination-wrapper">
 
-                    <div>
+                    {{-- INFO --}}
 
-                        <small class="pagination-info">
+                    <div class="pagination-info">
 
-                            Menampilkan
+                        Menampilkan
 
-                            <strong>
-                                {{ $barangs->firstItem() }}
-                            </strong>
+                        <strong>
+                            {{ $barangs->firstItem() }}
+                        </strong>
 
-                            sampai
+                        sampai
 
-                            <strong>
-                                {{ $barangs->lastItem() }}
-                            </strong>
+                        <strong>
+                            {{ $barangs->lastItem() }}
+                        </strong>
 
-                            dari
+                        dari
 
-                            <strong>
-                                {{ $barangs->total() }}
-                            </strong>
+                        <strong>
+                            {{ $barangs->total() }}
+                        </strong>
 
-                            barang
-
-                        </small>
+                        barang
 
                     </div>
 
 
-                    <div class="mt-2 mt-md-0">
+                    {{-- PAGINATION --}}
 
-                        {{ $barangs->withQueryString()->links() }}
+                    <nav
+                        class="pagination-nav"
+                        aria-label="Navigasi halaman"
+                    >
 
-                    </div>
+                        <ul class="pagination custom-pagination mb-0">
+
+                            {{-- PREVIOUS --}}
+
+                            @if($barangs->onFirstPage())
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link pagination-arrow">
+                                        ‹
+                                    </span>
+
+                                </li>
+
+                            @else
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link pagination-arrow"
+                                        href="{{ $barangs->previousPageUrl() }}"
+                                        rel="prev"
+                                        aria-label="Halaman sebelumnya"
+                                    >
+                                        ‹
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+
+                            @php
+
+                                $current = $barangs->currentPage();
+                                $last = $barangs->lastPage();
+
+                                $range = 2;
+
+                                $start = max(
+                                    1,
+                                    $current - $range
+                                );
+
+                                $end = min(
+                                    $last,
+                                    $current + $range
+                                );
+
+                            @endphp
+
+
+                            {{-- HALAMAN 1 --}}
+
+                            @if($start > 1)
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="{{ $barangs->url(1) }}"
+                                    >
+                                        1
+                                    </a>
+
+                                </li>
+
+
+                                @if($start > 2)
+
+                                    <li class="page-item disabled">
+
+                                        <span class="page-link pagination-dots">
+                                            ...
+                                        </span>
+
+                                    </li>
+
+                                @endif
+
+                            @endif
+
+
+                            {{-- NOMOR HALAMAN --}}
+
+                            @for(
+                                $page = $start;
+                                $page <= $end;
+                                $page++
+                            )
+
+                                @if($page == $current)
+
+                                    <li
+                                        class="page-item active"
+                                        aria-current="page"
+                                    >
+
+                                        <span class="page-link current-page">
+                                            {{ $page }}
+                                        </span>
+
+                                    </li>
+
+                                @else
+
+                                    <li class="page-item">
+
+                                        <a
+                                            class="page-link"
+                                            href="{{ $barangs->url($page) }}"
+                                        >
+                                            {{ $page }}
+                                        </a>
+
+                                    </li>
+
+                                @endif
+
+                            @endfor
+
+
+                            {{-- HALAMAN TERAKHIR --}}
+
+                            @if($end < $last)
+
+                                @if($end < $last - 1)
+
+                                    <li class="page-item disabled">
+
+                                        <span class="page-link pagination-dots">
+                                            ...
+                                        </span>
+
+                                    </li>
+
+                                @endif
+
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="{{ $barangs->url($last) }}"
+                                    >
+                                        {{ $last }}
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+
+                            {{-- NEXT --}}
+
+                            @if($barangs->hasMorePages())
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link pagination-arrow"
+                                        href="{{ $barangs->nextPageUrl() }}"
+                                        rel="next"
+                                        aria-label="Halaman berikutnya"
+                                    >
+                                        ›
+                                    </a>
+
+                                </li>
+
+                            @else
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link pagination-arrow">
+                                        ›
+                                    </span>
+
+                                </li>
+
+                            @endif
+
+                        </ul>
+
+                    </nav>
 
                 </div>
 
@@ -657,9 +946,23 @@
 </div>
 
 
-{{-- ========================================================= --}}
-{{-- STYLE --}}
-{{-- ========================================================= --}}
+{{-- =========================================================
+     FORM DELETE SATU BARANG
+========================================================= --}}
+
+<form
+    id="singleDeleteForm"
+    method="POST"
+    style="display: none;"
+>
+    @csrf
+    @method('DELETE')
+</form>
+
+
+{{-- =========================================================
+     STYLE
+========================================================= --}}
 
 <style>
 
@@ -763,9 +1066,7 @@
     border-radius: 50%;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     margin-right: 12px;
@@ -910,6 +1211,163 @@
 
 
 /* =========================================================
+   BULK ACTION BAR
+========================================================= */
+
+.bulk-action-bar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    min-height: 62px;
+
+    background: #f8fafc;
+
+    border-top: 1px solid #f1f3f5;
+
+    border-bottom: 1px solid #e9ecef;
+
+}
+
+
+.bulk-action-bar .form-check-label {
+
+    font-size: 14px;
+
+    color: #334155;
+
+    cursor: pointer;
+
+}
+
+
+.selected-count {
+
+    display: none;
+
+    padding: 5px 11px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 20px;
+
+    color: #dc3545;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.selected-count.show {
+
+    display: inline-block;
+
+}
+
+
+.bulk-delete-btn {
+
+    min-width: 145px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    border-radius: 8px;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.bulk-delete-btn:disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+}
+
+
+.bulk-delete-btn:not(:disabled):hover {
+
+    transform: translateY(-1px);
+
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.check-column {
+
+    width: 55px;
+
+    min-width: 55px;
+
+}
+
+
+.barang-checkbox,
+#checkAll {
+
+    width: 18px;
+
+    height: 18px;
+
+    cursor: pointer;
+
+    border-color: #cbd5e1;
+
+}
+
+
+.barang-checkbox:checked,
+#checkAll:checked {
+
+    background-color: #0d6efd;
+
+    border-color: #0d6efd;
+
+}
+
+
+.barang-checkbox:focus,
+#checkAll:focus {
+
+    box-shadow:
+        0 0 0 3px rgba(13, 110, 253, 0.12);
+
+}
+
+
+/* =========================================================
+   SELECTED ROW
+========================================================= */
+
+.modern-table tbody tr.selected-row {
+
+    background: #eef6ff;
+
+}
+
+
+.modern-table tbody tr.selected-row:hover {
+
+    background: #e5f1ff;
+
+}
+
+
+/* =========================================================
    TABLE
 ========================================================= */
 
@@ -928,6 +1386,15 @@
    COLUMN WIDTH
 ========================================================= */
 
+.check-column {
+
+    width: 55px;
+
+    min-width: 55px;
+
+}
+
+
 .no-column {
 
     width: 8%;
@@ -939,7 +1406,7 @@
 
 .barang-column {
 
-    width: 34%;
+    width: 30%;
 
     min-width: 220px;
 
@@ -948,7 +1415,7 @@
 
 .koli-column {
 
-    width: 14%;
+    width: 13%;
 
     min-width: 110px;
 
@@ -957,7 +1424,7 @@
 
 .pcs-column {
 
-    width: 14%;
+    width: 13%;
 
     min-width: 110px;
 
@@ -966,7 +1433,7 @@
 
 .satuan-column {
 
-    width: 15%;
+    width: 14%;
 
     min-width: 120px;
 
@@ -975,7 +1442,7 @@
 
 .aksi-column {
 
-    width: 15%;
+    width: 14%;
 
     min-width: 120px;
 
@@ -1271,6 +1738,8 @@
 
     background: #f8d7da;
 
+    cursor: pointer;
+
 }
 
 
@@ -1337,11 +1806,28 @@
    PAGINATION
 ========================================================= */
 
+.pagination-wrapper {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    min-height: 42px;
+
+}
+
+
 .pagination-info {
 
     font-size: 13px;
 
     color: #64748b;
+
+    white-space: nowrap;
 
 }
 
@@ -1350,12 +1836,158 @@
 
     color: #334155;
 
+    font-weight: 700;
+
 }
 
 
-.card-footer .pagination {
+.pagination-nav {
 
-    margin-bottom: 0;
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+.custom-pagination {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+.custom-pagination .page-item {
+
+    margin: 0;
+
+    flex: 0 0 auto;
+
+}
+
+
+.custom-pagination .page-link {
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 8px !important;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    box-shadow: none;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.15s ease;
+
+}
+
+
+.custom-pagination .page-link:hover {
+
+    background: #f1f5f9;
+
+    border-color: #cbd5e1;
+
+    color: #0d6efd;
+
+    transform: translateY(-1px);
+
+}
+
+
+.custom-pagination .page-item.active .page-link {
+
+    background: #0d6efd;
+
+    border-color: #0d6efd;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 2px 7px rgba(13, 110, 253, 0.20);
+
+}
+
+
+.custom-pagination .page-item.disabled .page-link {
+
+    background: #f8fafc;
+
+    border-color: #e2e8f0;
+
+    color: #cbd5e1;
+
+    cursor: default;
+
+}
+
+
+.custom-pagination .pagination-arrow {
+
+    font-size: 21px;
+
+    font-weight: 400;
+
+    line-height: 1;
+
+}
+
+
+.custom-pagination .pagination-dots {
+
+    border-color: transparent;
+
+    background: transparent;
+
+    color: #94a3b8;
+
+    cursor: default;
+
+}
+
+
+.custom-pagination .pagination-dots:hover {
+
+    transform: none;
+
+    background: transparent;
+
+    border-color: transparent;
+
+    color: #94a3b8;
 
 }
 
@@ -1368,7 +2000,7 @@
 
     .modern-table {
 
-        min-width: 850px;
+        min-width: 900px;
 
         table-layout: auto;
 
@@ -1412,9 +2044,39 @@
     }
 
 
+    .bulk-action-bar {
+
+        flex-wrap: wrap;
+
+        gap: 12px;
+
+    }
+
+
+    .bulk-action-bar > div:first-child {
+
+        width: 100%;
+
+    }
+
+
+    .bulk-delete-btn {
+
+        width: 100%;
+
+    }
+
+
+    .selected-count {
+
+        font-size: 12px;
+
+    }
+
+
     .modern-table {
 
-        min-width: 850px;
+        min-width: 900px;
 
         font-size: 14px;
 
@@ -1484,8 +2146,398 @@
 
     }
 
+
+    .pagination-wrapper {
+
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 12px;
+
+    }
+
+
+    .pagination-info {
+
+        font-size: 12px;
+
+    }
+
+
+    .custom-pagination {
+
+        gap: 4px;
+
+    }
+
+
+    .custom-pagination .page-link {
+
+        width: 34px;
+
+        height: 34px;
+
+        font-size: 12px;
+
+    }
+
+
+    .custom-pagination .pagination-arrow {
+
+        font-size: 19px;
+
+    }
+
 }
 
 </style>
+
+
+{{-- =========================================================
+     JAVASCRIPT
+========================================================= --}}
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | ELEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    const checkAll =
+        document.getElementById('checkAll');
+
+    const checkboxes =
+        document.querySelectorAll('.barang-checkbox');
+
+    const selectedCount =
+        document.getElementById('selectedCount');
+
+    const deleteButton =
+        document.getElementById('bulkDeleteButton');
+
+    const bulkForm =
+        document.getElementById('bulkDeleteForm');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE SELECTION
+    |--------------------------------------------------------------------------
+    */
+
+    function updateSelection() {
+
+        const checked =
+            document.querySelectorAll(
+                '.barang-checkbox:checked'
+            );
+
+        const total =
+            checkboxes.length;
+
+        const jumlah =
+            checked.length;
+
+
+        /*
+        |----------------------------------------------------------------------
+        | JUMLAH TERPILIH
+        |----------------------------------------------------------------------
+        */
+
+        selectedCount.textContent =
+            jumlah + ' barang dipilih';
+
+
+        /*
+        |----------------------------------------------------------------------
+        | TAMPILKAN / SEMBUNYIKAN COUNTER
+        |----------------------------------------------------------------------
+        */
+
+        if (jumlah > 0) {
+
+            selectedCount.classList.add('show');
+
+        } else {
+
+            selectedCount.classList.remove('show');
+
+        }
+
+
+        /*
+        |----------------------------------------------------------------------
+        | TOMBOL HAPUS
+        |----------------------------------------------------------------------
+        */
+
+        deleteButton.disabled =
+        
+            jumlah === 0;
+
+
+        /*
+        |----------------------------------------------------------------------
+        | CHECKBOX PILIH SEMUA
+        |----------------------------------------------------------------------
+        */
+
+        if (total === 0) {
+
+            checkAll.checked = false;
+
+            checkAll.indeterminate = false;
+
+        }
+
+        else if (jumlah === total) {
+
+            checkAll.checked = true;
+
+            checkAll.indeterminate = false;
+
+        }
+
+        else if (jumlah > 0) {
+
+            checkAll.checked = false;
+
+            checkAll.indeterminate = true;
+
+        }
+
+        else {
+
+            checkAll.checked = false;
+
+            checkAll.indeterminate = false;
+
+        }
+
+
+        /*
+        |----------------------------------------------------------------------
+        | HIGHLIGHT BARIS TERPILIH
+        |----------------------------------------------------------------------
+        */
+
+        checkboxes.forEach(function (checkbox) {
+
+            const row =
+                checkbox.closest('tr');
+
+            if (!row) {
+
+                return;
+
+            }
+
+
+            if (checkbox.checked) {
+
+                row.classList.add(
+                    'selected-row'
+                );
+
+            } else {
+
+                row.classList.remove(
+                    'selected-row'
+                );
+
+            }
+
+        });
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PILIH SEMUA
+    |--------------------------------------------------------------------------
+    */
+
+    if (checkAll) {
+
+        checkAll.addEventListener(
+            'change',
+            function () {
+
+                checkboxes.forEach(
+                    function (checkbox) {
+
+                        checkbox.checked =
+                            checkAll.checked;
+
+                    }
+                );
+
+
+                updateSelection();
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECKBOX INDIVIDUAL
+    |--------------------------------------------------------------------------
+    */
+
+    checkboxes.forEach(function (checkbox) {
+
+        checkbox.addEventListener(
+            'change',
+            function () {
+
+                updateSelection();
+
+            }
+        );
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KONFIRMASI BULK DELETE
+    |--------------------------------------------------------------------------
+    */
+
+    if (bulkForm) {
+
+        bulkForm.addEventListener(
+            'submit',
+            function (event) {
+
+                const checked =
+                    document.querySelectorAll(
+                        '.barang-checkbox:checked'
+                    );
+
+                const jumlah =
+                    checked.length;
+
+
+                /*
+                |--------------------------------------------------------------
+                | BELUM MEMILIH
+                |--------------------------------------------------------------
+                */
+
+                if (jumlah === 0) {
+
+                    event.preventDefault();
+
+                    alert(
+                        'Silakan pilih minimal satu barang.'
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------
+                | KONFIRMASI
+                |--------------------------------------------------------------
+                */
+
+                const yakin =
+                    confirm(
+                        'Apakah kamu yakin ingin menghapus ' +
+                        jumlah +
+                        ' barang yang dipilih?'
+                    );
+
+
+                if (!yakin) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INITIAL STATE
+    |--------------------------------------------------------------------------
+    */
+
+    updateSelection();
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| HAPUS SATU BARANG
+|--------------------------------------------------------------------------
+*/
+
+function deleteSingleBarang(id) {
+
+    const yakin =
+        confirm(
+            'Apakah kamu yakin ingin menghapus barang ini?'
+        );
+
+
+    if (!yakin) {
+
+        return;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORM
+    |--------------------------------------------------------------------------
+    */
+
+    const form =
+        document.getElementById(
+            'singleDeleteForm'
+        );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACTION
+    |--------------------------------------------------------------------------
+    */
+
+    form.action =
+        '/barangs/' + id;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUBMIT
+    |--------------------------------------------------------------------------
+    */
+
+    form.submit();
+
+}
+
+</script>
 
 @endsection

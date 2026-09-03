@@ -8,9 +8,6 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class BarangMasukExport implements FromCollection, WithHeadings
 {
-    /**
-     * Data yang akan diexport
-     */
     public function collection()
     {
         return BarangMasuk::with('barang')
@@ -25,6 +22,9 @@ class BarangMasukExport implements FromCollection, WithHeadings
 
                     'nama_barang' =>
                         $item->barang->nama_barang ?? '',
+
+                    'edisi' =>
+                        $item->edisi ?? '',
 
                     'satuan' =>
                         $item->barang->satuan ?? '',
@@ -51,10 +51,6 @@ class BarangMasukExport implements FromCollection, WithHeadings
             });
     }
 
-
-    /**
-     * Header Excel
-     */
     public function headings(): array
     {
         return [
@@ -62,6 +58,8 @@ class BarangMasukExport implements FromCollection, WithHeadings
             'tanggal_input',
 
             'nama_barang',
+
+            'edisi',
 
             'satuan',
 

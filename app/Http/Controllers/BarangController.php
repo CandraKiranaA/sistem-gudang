@@ -17,21 +17,10 @@ class BarangController extends Controller
      */
     public function index(Request $request)
     {
-        /*
-         * Ambil keyword search
-         */
         $search = $request->input('search');
 
-
-        /*
-         * Query barang
-         */
         $query = Barang::query();
 
-
-        /*
-         * Jika ada search
-         */
         if ($search) {
 
             $query->where(function ($q) use ($search) {
@@ -49,19 +38,12 @@ class BarangController extends Controller
                 );
 
             });
-
         }
 
-
-        /*
-         * Urutkan terbaru
-         * dan pagination
-         */
         $barangs = $query
             ->latest()
             ->paginate(10)
             ->withQueryString();
-
 
         return view(
             'barangs.index',
@@ -119,9 +101,7 @@ class BarangController extends Controller
 
         ]);
 
-
         Barang::create($validated);
-
 
         return redirect()
             ->route('barangs.index')
@@ -184,9 +164,7 @@ class BarangController extends Controller
 
         ]);
 
-
         $barang->update($validated);
-
 
         return redirect()
             ->route('barangs.index')
@@ -199,13 +177,12 @@ class BarangController extends Controller
 
     /**
      * =========================================================
-     * HAPUS BARANG
+     * HAPUS SATU BARANG
      * =========================================================
      */
     public function destroy(Barang $barang)
     {
         $barang->delete();
-
 
         return redirect()
             ->route('barangs.index')
@@ -235,9 +212,8 @@ class BarangController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-        'file' => 'required|mimes:xlsx,xls,csv|max:102400',
-    ]);
-
+            'file' => 'required|mimes:xlsx,xls,csv|max:102400',
+        ]);
 
         try {
 
@@ -245,7 +221,6 @@ class BarangController extends Controller
                 new BarangImport(),
                 $request->file('file')
             );
-
 
             return redirect()
                 ->route('barangs.index')
@@ -268,7 +243,7 @@ class BarangController extends Controller
 
     /**
      * =========================================================
-     * EXPORT DATA BARANG
+     * EXPORT BARANG KE EXCEL
      * =========================================================
      */
     public function export()
@@ -277,5 +252,40 @@ class BarangController extends Controller
             new BarangExport(),
             'data-barang.xlsx'
         );
+    }
+
+
+    /**
+     * =========================================================
+     * HAPUS BARANG TERPILIH
+     * =========================================================
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'ids' => [
+                'required',
+                'array',
+                'min:1'
+            ],
+
+            'ids.*' => [
+                'integer',
+                'exists:barangs,id'
+            ],
+        ]);
+
+        $ids = $request->input('ids');
+
+        $jumlah = count($ids);
+
+        Barang::whereIn('id', $ids)->delete();
+
+        return redirect()
+            ->route('barangs.index')
+            ->with(
+                'success',
+                $jumlah . ' barang berhasil dihapus.'
+            );
     }
 }

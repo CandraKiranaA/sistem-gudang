@@ -234,7 +234,7 @@ class BarangMasukController extends Controller
 
 
     /**
-     * Hapus barang masuk
+     * Hapus satu barang masuk
      */
     public function destroy(
         BarangMasuk $barangMasuk
@@ -246,6 +246,67 @@ class BarangMasukController extends Controller
             ->with(
                 'success',
                 'Data barang masuk berhasil dihapus.'
+            );
+    }
+
+
+    /**
+     * =========================================================
+     * BULK DELETE
+     * =========================================================
+     *
+     * Menghapus beberapa data barang masuk sekaligus
+     */
+    public function bulkDelete(Request $request)
+    {
+        // Validasi ID yang dikirim dari checkbox
+        $request->validate([
+            'ids' => [
+                'required',
+                'array',
+                'min:1'
+            ],
+
+            'ids.*' => [
+                'integer',
+                'exists:barang_masuks,id'
+            ],
+
+        ], [
+
+            'ids.required' =>
+                'Silakan pilih data yang ingin dihapus.',
+
+            'ids.array' =>
+                'Data yang dipilih tidak valid.',
+
+            'ids.min' =>
+                'Pilih minimal satu data.',
+
+            'ids.*.exists' =>
+                'Ada data yang dipilih sudah tidak tersedia.',
+
+        ]);
+
+        // Ambil ID yang dipilih
+        $ids = $request->input('ids');
+
+        // Hitung jumlah data sebelum dihapus
+        $jumlahData = count($ids);
+
+        // Hapus semua data yang dipilih
+        BarangMasuk::whereIn(
+            'id',
+            $ids
+        )->delete();
+
+        // Kembali ke halaman barang masuk
+        return redirect()
+            ->route('barang-masuk.index')
+            ->with(
+                'success',
+                $jumlahData .
+                ' data barang masuk berhasil dihapus.'
             );
     }
 
@@ -274,7 +335,9 @@ class BarangMasukController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-        'file' => 'required|mimes:xlsx,xls,csv|max:102400',
+
+            'file' =>
+                'required|mimes:xlsx,xls,csv|max:102400',
 
         ], [
 

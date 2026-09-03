@@ -11,6 +11,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
         <div>
+
             <h3 class="mb-1">
                 Import Barang Masuk
             </h3>
@@ -18,7 +19,9 @@
             <p class="text-muted mb-0">
                 Tambahkan banyak data barang masuk ke gudang menggunakan file Excel.
             </p>
+
         </div>
+
 
         <div class="d-flex gap-2">
 
@@ -29,6 +32,7 @@
             >
                 ← Kembali
             </a>
+
 
             {{-- TAMBAH MANUAL --}}
             <a
@@ -132,6 +136,7 @@
 
     <div class="card shadow-sm border-0">
 
+
         {{-- ================================================= --}}
         {{-- HEADER CARD --}}
         {{-- ================================================= --}}
@@ -144,10 +149,13 @@
                     class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3"
                     style="width: 48px; height: 48px;"
                 >
+
                     <span style="font-size: 24px;">
                         📥
                     </span>
+
                 </div>
+
 
                 <div>
 
@@ -194,6 +202,7 @@
                         File Excel
                     </label>
 
+
                     <div
                         class="border rounded-3 p-4 text-center bg-light"
                     >
@@ -205,13 +214,16 @@
                             📊
                         </div>
 
+
                         <h6 class="fw-semibold mb-2">
                             Pilih file Excel
                         </h6>
 
+
                         <p class="text-muted small mb-3">
                             Format XLSX, XLS, atau CSV
                         </p>
+
 
                         <input
                             type="file"
@@ -222,6 +234,7 @@
                             required
                         >
 
+
                         @error('file')
 
                             <div class="invalid-feedback text-start">
@@ -230,11 +243,17 @@
 
                         @enderror
 
+
                         <div class="mt-3">
 
                             <small class="text-muted">
+
                                 Ukuran maksimal:
-                                <strong>100 MB</strong>
+
+                                <strong>
+                                    100 MB
+                                </strong>
+
                             </small>
 
                         </div>
@@ -259,16 +278,21 @@
                             📋
                         </div>
 
+
                         <div class="w-100">
 
                             <h6 class="fw-bold mb-2">
                                 Format Kolom Excel
                             </h6>
 
+
                             <p class="small mb-3">
+
                                 Pastikan baris pertama pada file Excel
                                 menggunakan nama kolom berikut:
+
                             </p>
+
 
                             <div class="table-responsive">
 
@@ -278,26 +302,43 @@
 
                                         <tr>
 
+                                            {{-- TANGGAL --}}
                                             <th>
                                                 tanggal_input
                                             </th>
 
+
+                                            {{-- BARANG --}}
                                             <th>
                                                 nama_barang
                                             </th>
 
+
+                                            {{-- EDISI --}}
+                                            <th>
+                                                edisi
+                                            </th>
+
+
+                                            {{-- KOLI --}}
                                             <th>
                                                 jumlah_koli
                                             </th>
 
+
+                                            {{-- HARGA BELI --}}
                                             <th>
                                                 harga_beli_koli
                                             </th>
 
+
+                                            {{-- HARGA JUAL KOLI --}}
                                             <th>
                                                 harga_jual_koli
                                             </th>
 
+
+                                            {{-- HARGA JUAL PCS --}}
                                             <th>
                                                 harga_jual_pcs
                                             </th>
@@ -306,16 +347,25 @@
 
                                     </thead>
 
+
                                     <tbody>
+
+                                        {{-- ================================================= --}}
+                                        {{-- CONTOH 1 --}}
+                                        {{-- ================================================= --}}
 
                                         <tr>
 
                                             <td>
-                                                2026-08-25
+                                                2026-08-25 08:30:00
                                             </td>
 
                                             <td>
                                                 Kipas Angin
+                                            </td>
+
+                                            <td>
+                                                Edisi A
                                             </td>
 
                                             <td>
@@ -336,14 +386,23 @@
 
                                         </tr>
 
+
+                                        {{-- ================================================= --}}
+                                        {{-- CONTOH 2 --}}
+                                        {{-- ================================================= --}}
+
                                         <tr>
 
                                             <td>
-                                                2026-08-25
+                                                2026-08-25 09:15:00
                                             </td>
 
                                             <td>
                                                 Lemari
+                                            </td>
+
+                                            <td>
+                                                Edisi B
                                             </td>
 
                                             <td>
@@ -364,14 +423,23 @@
 
                                         </tr>
 
+
+                                        {{-- ================================================= --}}
+                                        {{-- CONTOH 3 --}}
+                                        {{-- ================================================= --}}
+
                                         <tr>
 
                                             <td>
-                                                2026-08-25
+                                                2026-08-25 10:00:00
                                             </td>
 
                                             <td>
                                                 Meja
+                                            </td>
+
+                                            <td>
+                                                Edisi C
                                             </td>
 
                                             <td>
@@ -398,6 +466,29 @@
 
                             </div>
 
+
+                            {{-- ================================================= --}}
+                            {{-- KETERANGAN FORMAT --}}
+                            {{-- ================================================= --}}
+
+                            <div class="mt-3">
+
+                                <small class="text-muted">
+
+                                    <strong>Urutan kolom:</strong>
+
+                                    tanggal_input →
+                                    nama_barang →
+                                    edisi →
+                                    jumlah_koli →
+                                    harga_beli_koli →
+                                    harga_jual_koli →
+                                    harga_jual_pcs
+
+                                </small>
+
+                            </div>
+
                         </div>
 
                     </div>
@@ -420,18 +511,30 @@
                             ⚠️
                         </div>
 
+
                         <div>
 
                             <h6 class="fw-bold mb-2">
                                 Perhitungan PCS Otomatis
                             </h6>
 
+
                             <p class="small mb-0">
 
                                 Jumlah PCS tidak perlu dimasukkan ke Excel.
+
                                 Sistem akan menghitung otomatis berdasarkan
-                                <strong>jumlah_koli</strong> dan
-                                <strong>pcs_per_koli</strong>
+
+                                <strong>
+                                    jumlah_koli
+                                </strong>
+
+                                dan
+
+                                <strong>
+                                    pcs_per_koli
+                                </strong>
+
                                 dari Master Barang.
 
                             </p>
@@ -455,6 +558,7 @@
                     >
                         Batal
                     </a>
+
 
                     <button
                         type="submit"

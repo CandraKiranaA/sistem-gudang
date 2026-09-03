@@ -178,7 +178,6 @@
 
                     </div>
 
-
                     {{-- ================================================= --}}
                     {{-- JUMLAH KOLI --}}
                     {{-- ================================================= --}}
@@ -198,8 +197,8 @@
                             id="jumlah_koli"
                             name="jumlah_koli"
                             class="form-control @error('jumlah_koli') is-invalid @enderror"
-                            placeholder="Contoh: 10"
-                            value="{{ old('jumlah_koli', 1) }}"
+                            placeholder="Masukkan jumlah koli"
+                            value="{{ old('jumlah_koli') }}"
                             min="1"
                             step="1"
                             required

@@ -6,6 +6,10 @@
 
 <style>
 
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
 .page-header {
     margin-bottom: 25px;
 }
@@ -21,6 +25,11 @@
     font-size: 13px;
     color: #9ca3af;
 }
+
+
+/* =========================================================
+   REPORT CARD
+========================================================= */
 
 .report-card {
     background: #ffffff;
@@ -48,6 +57,11 @@
     color: #9ca3af;
     margin: 5px 0 0;
 }
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
 
 .report-toolbar {
     padding: 15px 20px;
@@ -78,6 +92,11 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
 }
 
+
+/* =========================================================
+   DOWNLOAD BUTTON
+========================================================= */
+
 .download-btn {
     display: inline-flex;
     align-items: center;
@@ -96,10 +115,49 @@
     color: #ffffff;
 }
 
+
+/* =========================================================
+   TABLE WRAPPER NORMAL
+========================================================= */
+
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
 }
+
+
+/* =========================================================
+   STOCK TABLE WRAPPER
+   KHUSUS TABEL STOK BARANG
+========================================================= */
+
+.stock-table-wrapper {
+    width: 100%;
+
+    /* Tinggi maksimal tabel */
+    max-height: 450px;
+
+    /* Scroll vertikal dan horizontal */
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+
+/* =========================================================
+   STOCK TABLE HEADER STICKY
+========================================================= */
+
+.stock-table-wrapper .report-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f8fafc;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
 
 .report-table {
     width: 100%;
@@ -129,6 +187,34 @@
 .report-table tbody tr:hover {
     background: #f8fafc;
 }
+
+
+/* =========================================================
+   SCROLLBAR TABEL STOK
+========================================================= */
+
+.stock-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.stock-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.stock-table-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.stock-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   TEXT
+========================================================= */
 
 .text-center {
     text-align: center !important;
@@ -179,6 +265,11 @@
     color: #16a34a !important;
 }
 
+
+/* =========================================================
+   STOCK COLORS
+========================================================= */
+
 .stock-in {
     color: #2563eb !important;
     font-weight: 600;
@@ -193,6 +284,11 @@
     color: #475569 !important;
     font-weight: 600;
 }
+
+
+/* =========================================================
+   DETAIL BUTTON
+========================================================= */
 
 .detail-btn {
     display: inline-flex;
@@ -217,11 +313,21 @@
     text-align: center;
 }
 
+
+/* =========================================================
+   EMPTY DATA
+========================================================= */
+
 .empty-data {
     padding: 40px 20px !important;
     text-align: center;
     color: #9ca3af !important;
 }
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
 
 .table-footer {
     padding: 13px 20px;
@@ -230,6 +336,11 @@
     color: #6b7280;
     font-size: 13px;
 }
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 768px) {
 
@@ -250,6 +361,14 @@
         justify-content: center;
     }
 
+    /*
+     * Di HP tabel tetap dibatasi tingginya
+     * supaya halaman tidak terlalu panjang.
+     */
+    .stock-table-wrapper {
+        max-height: 400px;
+    }
+
 }
 
 </style>
@@ -268,8 +387,9 @@
 </div>
 
 
+
 {{-- =========================================================
-STOK BARANG
+     STOK BARANG
 ========================================================= --}}
 
 <div class="report-card">
@@ -286,6 +406,10 @@ STOK BARANG
 
     </div>
 
+
+    {{-- =====================================================
+         TOOLBAR
+    ====================================================== --}}
 
     <div class="report-toolbar">
 
@@ -315,7 +439,12 @@ STOK BARANG
     </div>
 
 
-    <div class="table-wrapper">
+    {{-- =====================================================
+         TABLE STOK BARANG
+         SEKARANG ADA SCROLL VERTIKAL
+    ====================================================== --}}
+
+    <div class="stock-table-wrapper">
 
         <table class="report-table">
 
@@ -384,51 +513,61 @@ STOK BARANG
 
                     <tr>
 
+                        {{-- NO --}}
                         <td class="number-cell">
                             {{ $index + 1 }}
                         </td>
 
 
+                        {{-- NAMA BARANG --}}
                         <td class="name-cell">
-                            {{ $data['nama_barang'] }}
+                            {{ $data['nama_barang'] ?? '-' }}
                         </td>
 
 
+                        {{-- SATUAN --}}
                         <td class="number-cell">
                             {{ $data['satuan'] ?? '-' }}
                         </td>
 
 
+                        {{-- BARANG MASUK KOLI --}}
                         <td class="number-cell stock-in">
                             {{ number_format($data['barang_masuk_koli'] ?? 0) }}
                         </td>
 
 
+                        {{-- BARANG MASUK PCS --}}
                         <td class="number-cell stock-in">
                             {{ number_format($data['barang_masuk_pcs'] ?? 0) }}
                         </td>
 
 
+                        {{-- BARANG KELUAR KOLI --}}
                         <td class="number-cell stock-out">
                             {{ number_format($data['barang_keluar_koli'] ?? 0) }}
                         </td>
 
 
+                        {{-- BARANG KELUAR PCS --}}
                         <td class="number-cell stock-out">
                             {{ number_format($data['barang_keluar_pcs'] ?? 0) }}
                         </td>
 
 
+                        {{-- SISA KOLI --}}
                         <td class="number-cell stock-sisa">
                             {{ number_format($data['sisa_koli'] ?? 0) }}
                         </td>
 
 
+                        {{-- SISA PCS --}}
                         <td class="number-cell stock-sisa">
                             {{ number_format($data['sisa_pcs'] ?? 0) }}
                         </td>
 
 
+                        {{-- KEUNTUNGAN --}}
                         <td class="profit-cell">
 
                             Rp
@@ -442,6 +581,7 @@ STOK BARANG
                         </td>
 
 
+                        {{-- AKSI --}}
                         <td class="action-cell">
 
                             <a
@@ -482,6 +622,10 @@ STOK BARANG
     </div>
 
 
+    {{-- =====================================================
+         FOOTER STOK
+    ====================================================== --}}
+
     <div class="table-footer">
 
         Menampilkan
@@ -497,8 +641,9 @@ STOK BARANG
 </div>
 
 
+
 {{-- =========================================================
-BARANG KELUAR
+     BARANG KELUAR
 ========================================================= --}}
 
 <div class="report-card">
@@ -515,6 +660,10 @@ BARANG KELUAR
 
     </div>
 
+
+    {{-- =====================================================
+         TABLE BARANG KELUAR
+    ====================================================== --}}
 
     <div class="table-wrapper">
 
@@ -575,11 +724,13 @@ BARANG KELUAR
 
                     <tr>
 
+                        {{-- NO --}}
                         <td class="number-cell">
                             {{ $index + 1 }}
                         </td>
 
 
+                        {{-- TANGGAL KELUAR --}}
                         <td>
 
                             @if($detail->penjualan?->tanggal_penjualan)
@@ -597,6 +748,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- NO NOTA --}}
                         <td class="name-cell">
 
                             {{ $detail->penjualan?->nomor_nota ?? '-' }}
@@ -604,6 +756,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- CUSTOMER --}}
                         <td class="name-cell">
 
                             {{ $detail->penjualan?->nama_customer ?? '-' }}
@@ -611,6 +764,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- BARANG --}}
                         <td class="name-cell">
 
                             {{ $detail->barang?->nama_barang ?? '-' }}
@@ -618,6 +772,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- KOLI --}}
                         <td class="number-cell">
 
                             {{ number_format(
@@ -627,6 +782,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- PCS --}}
                         <td class="number-cell">
 
                             {{ number_format(
@@ -636,6 +792,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- TOTAL HARGA --}}
                         <td class="price-cell">
 
                             Rp
@@ -649,6 +806,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- DISKON --}}
                         <td class="discount-cell">
 
                             {{ number_format(
@@ -679,6 +837,7 @@ BARANG KELUAR
                         </td>
 
 
+                        {{-- TOTAL SETELAH DISKON --}}
                         <td class="total-cell">
 
                             Rp
@@ -716,6 +875,10 @@ BARANG KELUAR
 
     </div>
 
+
+    {{-- =====================================================
+         FOOTER BARANG KELUAR
+    ====================================================== --}}
 
     <div class="table-footer">
 
