@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Nota Penjualan')
@@ -118,7 +117,9 @@
             </div>
 
 
-            {{-- DETAIL BARANG --}}
+            {{-- =================================================
+                DETAIL BARANG
+            ================================================== --}}
 
             <div class="table-responsive">
 
@@ -153,6 +154,7 @@
 
                         </tr>
                     </thead>
+
 
                     <tbody>
 
@@ -218,9 +220,11 @@
                         @empty
 
                             <tr>
+
                                 <td colspan="6" class="text-center text-muted py-4">
                                     Belum ada detail barang.
                                 </td>
+
                             </tr>
 
                         @endforelse
@@ -229,7 +233,7 @@
 
 
                     {{-- =================================================
-                        TOTAL + PEMBAYARAN
+                        RINGKASAN PEMBAYARAN
                     ================================================== --}}
 
                     <tfoot>
@@ -246,6 +250,54 @@
 
                                 Rp {{ number_format(
                                     $penjualan->total ?? 0,
+                                    0,
+                                    ',',
+                                    '.'
+                                ) }}
+
+                            </th>
+
+                        </tr>
+
+
+                        {{-- DISKON --}}
+
+                        <tr>
+
+                            <th colspan="5" class="text-end">
+                                DISKON
+                            </th>
+
+                            <th class="text-end">
+
+                                Rp {{ number_format(
+                                    $penjualan->diskon ?? 0,
+                                    0,
+                                    ',',
+                                    '.'
+                                ) }}
+
+                            </th>
+
+                        </tr>
+
+
+                        {{-- TOTAL SETELAH DISKON --}}
+
+                        <tr class="total-final">
+
+                            <th colspan="5" class="text-end">
+                                TOTAL SETELAH DISKON
+                            </th>
+
+                            <th class="text-end">
+
+                                Rp {{ number_format(
+                                    $penjualan->total_setelah_diskon
+                                    ?? (
+                                        ($penjualan->total ?? 0)
+                                        - ($penjualan->diskon ?? 0)
+                                    ),
                                     0,
                                     ',',
                                     '.'
@@ -370,11 +422,13 @@
 
 }
 
+
 .nota-table {
 
     font-size: 14px;
 
 }
+
 
 .nota-table thead th {
 
@@ -392,11 +446,13 @@
 
 }
 
+
 .nota-table tbody td {
 
     padding: 13px 12px;
 
 }
+
 
 .nota-table tfoot th {
 
@@ -405,6 +461,84 @@
     padding: 14px 12px;
 
     font-size: 15px;
+
+}
+
+
+.total-final th {
+
+    font-size: 16px !important;
+
+}
+
+
+/* =========================================================
+   DETAIL NOTA
+========================================================= */
+
+.detail-nota {
+
+    border: 1px solid #e9ecef;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    background: #f8fafc;
+
+}
+
+
+.detail-nota-title {
+
+    font-weight: 700;
+
+    font-size: 16px;
+
+    margin-bottom: 15px;
+
+    color: #1f2937;
+
+}
+
+
+.detail-item {
+
+    background: white;
+
+    border: 1px solid #e9ecef;
+
+    border-radius: 8px;
+
+    padding: 12px 15px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.detail-item span {
+
+    color: #6b7280;
+
+    font-size: 13px;
+
+}
+
+
+.detail-item strong {
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    text-align: right;
 
 }
 
@@ -423,11 +557,13 @@
 
     }
 
+
     body {
 
         background: white !important;
 
     }
+
 
     .sidebar,
     nav,
@@ -439,22 +575,30 @@
 
     }
 
+
     .container-fluid {
 
         width: 100% !important;
+
         max-width: 100% !important;
+
         padding: 0 !important;
+
         margin: 0 !important;
 
     }
 
+
     #nota {
 
         border: 0 !important;
+
         box-shadow: none !important;
+
         width: 100% !important;
 
     }
+
 
     #nota .card-body {
 
@@ -462,9 +606,19 @@
 
     }
 
+
     .nota-table {
 
         width: 100% !important;
+
+    }
+
+
+    .detail-nota {
+
+        break-inside: avoid;
+
+        page-break-inside: avoid;
 
     }
 
@@ -473,4 +627,3 @@
 </style>
 
 @endsection
-

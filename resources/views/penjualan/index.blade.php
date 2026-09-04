@@ -4,1794 +4,1713 @@
 
 @section('content')
 
-<style>
-
-/* =========================================================
-   PAGE
-========================================================= */
-
-.stockout-page {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    overflow-x: hidden;
-}
+    <style>
+        /* =========================================================
+       PAGE
+    ========================================================= */
+
+        .stockout-page {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow-x: hidden;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
 
-.page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 25px;
-}
+        .stock-title {
+            margin: 0 0 6px;
+            color: #1e293b;
+            font-size: 26px;
+            font-weight: 700;
+        }
 
-.stock-title {
-    margin: 0 0 6px;
-    color: #1e293b;
-    font-size: 26px;
-    font-weight: 700;
-}
+        .stock-subtitle {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
 
-.stock-subtitle {
-    margin: 0;
-    color: #64748b;
-    font-size: 14px;
-}
 
+        /* =========================================================
+       BUTTON BUAT NOTA
+    ========================================================= */
 
-/* =========================================================
-   BUTTON BUAT NOTA
-========================================================= */
+        .btn-create {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
 
-.btn-create {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
+            padding: 11px 18px;
 
-    padding: 11px 18px;
+            background: #0d6efd;
+            color: #ffffff;
 
-    background: #0d6efd;
-    color: #ffffff;
+            border: 0;
+            border-radius: 8px;
 
-    border: 0;
-    border-radius: 8px;
+            text-decoration: none;
 
-    text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
 
-    font-size: 14px;
-    font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
 
-    white-space: nowrap;
-    flex-shrink: 0;
+            transition: .2s ease;
+        }
 
-    transition: .2s ease;
-}
+        .btn-create:hover {
+            background: #0b5ed7;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
 
-.btn-create:hover {
-    background: #0b5ed7;
-    color: #ffffff;
-    transform: translateY(-1px);
-}
 
+        /* =========================================================
+       ALERT
+    ========================================================= */
 
-/* =========================================================
-   ALERT
-========================================================= */
+        .alert-custom {
+            display: flex;
+            align-items: center;
+            gap: 10px;
 
-.alert-custom {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+            padding: 12px 15px;
+            margin-bottom: 18px;
 
-    padding: 12px 15px;
-    margin-bottom: 18px;
+            border-radius: 9px;
 
-    border-radius: 9px;
+            font-size: 14px;
+        }
 
-    font-size: 14px;
-}
+        .alert-success-custom {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
 
-.alert-success-custom {
-    background: #ecfdf5;
-    color: #047857;
-    border: 1px solid #a7f3d0;
-}
+        .alert-danger-custom {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
 
-.alert-danger-custom {
-    background: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
-}
+        .alert-icon {
+            font-weight: 700;
+            flex-shrink: 0;
+        }
 
-.alert-icon {
-    font-weight: 700;
-    flex-shrink: 0;
-}
+        .alert-close {
+            margin-left: auto;
 
-.alert-close {
-    margin-left: auto;
+            border: 0;
+            background: transparent;
 
-    border: 0;
-    background: transparent;
+            color: inherit;
 
-    color: inherit;
+            font-size: 21px;
+            line-height: 1;
 
-    font-size: 21px;
-    line-height: 1;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
 
-    cursor: pointer;
-    flex-shrink: 0;
-}
 
+        /* =========================================================
+       CARD
+    ========================================================= */
 
-/* =========================================================
-   CARD
-========================================================= */
+        .stock-card {
+            width: 100%;
+            max-width: 100%;
 
-.stock-card {
-    width: 100%;
-    max-width: 100%;
+            background: #ffffff;
 
-    background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
 
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
 
-    box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+            overflow: hidden;
 
-    overflow: hidden;
+            box-sizing: border-box;
+        }
 
-    box-sizing: border-box;
-}
 
+        /* =========================================================
+       SEARCH AREA
+    ========================================================= */
 
-/* =========================================================
-   SEARCH AREA
-========================================================= */
+        .search-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-.search-area {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+            gap: 20px;
 
-    gap: 20px;
+            padding: 18px 20px;
 
-    padding: 18px 20px;
+            border-bottom: 1px solid #eef2f7;
 
-    border-bottom: 1px solid #eef2f7;
+            background: #ffffff;
+        }
 
-    background: #ffffff;
-}
+        .search-box {
+            position: relative;
 
-.search-box {
-    position: relative;
+            width: 390px;
+            max-width: 100%;
+        }
 
-    width: 390px;
-    max-width: 100%;
-}
+        .search-icon {
+            position: absolute;
 
-.search-icon {
-    position: absolute;
+            left: 14px;
+            top: 50%;
 
-    left: 14px;
-    top: 50%;
+            transform: translateY(-50%);
 
-    transform: translateY(-50%);
+            font-size: 15px;
 
-    font-size: 15px;
+            pointer-events: none;
+        }
 
-    pointer-events: none;
-}
+        .search-input {
+            width: 100%;
+            height: 42px;
 
-.search-input {
-    width: 100%;
-    height: 42px;
+            padding: 0 42px 0 40px;
 
-    padding: 0 42px 0 40px;
+            border: 1px solid #dbe2ea;
+            border-radius: 8px;
 
-    border: 1px solid #dbe2ea;
-    border-radius: 8px;
+            outline: none;
 
-    outline: none;
+            color: #334155;
+            background: #ffffff;
 
-    color: #334155;
-    background: #ffffff;
+            font-size: 14px;
 
-    font-size: 14px;
+            box-sizing: border-box;
+        }
 
-    box-sizing: border-box;
-}
+        .search-input::placeholder {
+            color: #94a3b8;
+        }
 
-.search-input::placeholder {
-    color: #94a3b8;
-}
+        .search-input:focus {
+            border-color: #86b7fe;
 
-.search-input:focus {
-    border-color: #86b7fe;
+            box-shadow:
+                0 0 0 3px rgba(13, 110, 253, .10);
+        }
 
-    box-shadow:
-        0 0 0 3px
-        rgba(13, 110, 253, .10);
-}
+        .clear-search {
+            position: absolute;
 
-.clear-search {
-    position: absolute;
+            right: 8px;
+            top: 50%;
 
-    right: 8px;
-    top: 50%;
+            transform: translateY(-50%);
 
-    transform: translateY(-50%);
+            width: 27px;
+            height: 27px;
 
-    width: 27px;
-    height: 27px;
+            display: none;
 
-    display: none;
+            align-items: center;
+            justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+            border: 0;
+            border-radius: 50%;
 
-    border: 0;
-    border-radius: 50%;
+            background: transparent;
 
-    background: transparent;
+            color: #94a3b8;
 
-    color: #94a3b8;
+            font-size: 18px;
 
-    font-size: 18px;
+            cursor: pointer;
+        }
 
-    cursor: pointer;
-}
+        .clear-search:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
 
-.clear-search:hover {
-    background: #f1f5f9;
-    color: #334155;
-}
+        .search-info {
+            color: #94a3b8;
 
-.search-info {
-    color: #94a3b8;
+            font-size: 13px;
 
-    font-size: 13px;
+            white-space: nowrap;
+        }
 
-    white-space: nowrap;
-}
 
+        /* =========================================================
+       TABLE
+       BESAR + RAPI + TANPA GESER
+    ========================================================= */
 
-/* =========================================================
-   TABLE
-   BESAR + RAPI + TANPA GESER
-========================================================= */
+        .table-wrapper {
+            width: 100%;
+            max-width: 100%;
 
-.table-wrapper {
-    width: 100%;
-    max-width: 100%;
+            overflow: hidden;
+        }
 
-    overflow: hidden;
-}
+        .stock-table {
+            width: 100%;
+            max-width: 100%;
 
-.stock-table {
-    width: 100%;
-    max-width: 100%;
+            border-collapse: collapse;
 
-    border-collapse: collapse;
+            table-layout: fixed;
 
-    table-layout: fixed;
+            margin: 0;
 
-    margin: 0;
+            font-size: 13px;
+        }
 
-    font-size: 13px;
-}
 
+        /* =========================================================
+       TABLE HEADER
+    ========================================================= */
 
-/* =========================================================
-   TABLE HEADER
-========================================================= */
+        .stock-table thead th {
+            padding: 14px 8px;
 
-.stock-table thead th {
-    padding: 14px 8px;
+            background: #f8fafc;
 
-    background: #f8fafc;
+            color: #475569;
 
-    color: #475569;
+            border-bottom: 1px solid #e2e8f0;
 
-    border-bottom: 1px solid #e2e8f0;
+            font-size: 12px;
+            font-weight: 700;
 
-    font-size: 12px;
-    font-weight: 700;
+            vertical-align: middle;
 
-    vertical-align: middle;
+            text-align: center;
 
-    text-align: center;
+            white-space: normal;
 
-    white-space: normal;
+            overflow-wrap: break-word;
+            word-break: normal;
 
-    overflow-wrap: break-word;
-    word-break: normal;
+            line-height: 1.35;
+        }
 
-    line-height: 1.35;
-}
 
+        /* =========================================================
+       TABLE BODY
+    ========================================================= */
 
-/* =========================================================
-   TABLE BODY
-========================================================= */
+        .stock-table tbody td {
+            padding: 15px 8px;
 
-.stock-table tbody td {
-    padding: 15px 8px;
+            border-bottom: 1px solid #f1f5f9;
 
-    border-bottom: 1px solid #f1f5f9;
+            color: #334155;
 
-    color: #334155;
+            vertical-align: middle;
 
-    vertical-align: middle;
+            white-space: normal;
 
-    white-space: normal;
+            overflow-wrap: break-word;
+            word-break: normal;
 
-    overflow-wrap: break-word;
-    word-break: normal;
+            line-height: 1.45;
+        }
 
-    line-height: 1.45;
-}
+        .stock-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
 
-.stock-table tbody tr:last-child td {
-    border-bottom: 0;
-}
+        .stock-table tbody tr:hover {
+            background: #f8fbff;
+        }
 
-.stock-table tbody tr:hover {
-    background: #f8fbff;
-}
 
+        /* =========================================================
+       COLUMN WIDTH
+       TOTAL = 100%
+    ========================================================= */
 
-/* =========================================================
-   COLUMN WIDTH
-   TOTAL = 100%
-========================================================= */
+        .col-no {
+            width: 5%;
+        }
 
-.col-no {
-    width: 5%;
-}
+        .col-nota {
+            width: 14%;
+        }
 
-.col-nota {
-    width: 14%;
-}
+        .col-tanggal {
+            width: 11%;
+        }
 
-.col-tanggal {
-    width: 11%;
-}
+        .col-customer {
+            width: 15%;
+        }
 
-.col-customer {
-    width: 15%;
-}
+        .col-barang {
+            width: 7%;
+        }
 
-.col-barang {
-    width: 7%;
-}
+        .col-diskon {
+            width: 7%;
+        }
 
-.col-diskon {
-    width: 7%;
-}
+        .col-harga {
+            width: 14%;
+        }
 
-.col-harga {
-    width: 14%;
-}
+        .col-total {
+            width: 14%;
+        }
 
-.col-total {
-    width: 14%;
-}
+        .col-status {
+            width: 7%;
+        }
 
-.col-status {
-    width: 7%;
-}
+        .col-aksi {
+            width: 6%;
+        }
 
-.col-aksi {
-    width: 6%;
-}
 
+        /* =========================================================
+       NUMBER
+    ========================================================= */
 
-/* =========================================================
-   NUMBER
-========================================================= */
+        .number-badge {
+            display: inline-flex;
 
-.number-badge {
-    display: inline-flex;
+            align-items: center;
+            justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+            width: 31px;
+            height: 31px;
 
-    width: 31px;
-    height: 31px;
+            border-radius: 50%;
 
-    border-radius: 50%;
+            background: #f1f5f9;
 
-    background: #f1f5f9;
+            color: #475569;
 
-    color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+        }
 
-    font-size: 12px;
-    font-weight: 600;
-}
 
+        /* =========================================================
+       NOTA
+    ========================================================= */
 
-/* =========================================================
-   NOTA
-========================================================= */
+        .nota-text {
+            display: block;
 
-.nota-text {
-    display: block;
+            color: #0d6efd;
 
-    color: #0d6efd;
+            font-weight: 700;
+            font-size: 12px;
 
-    font-weight: 700;
-    font-size: 12px;
+            line-height: 1.5;
 
-    line-height: 1.5;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
 
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
 
+        /* =========================================================
+       TANGGAL
+    ========================================================= */
 
-/* =========================================================
-   TANGGAL
-========================================================= */
+        .date-text {
+            color: #334155;
 
-.date-text {
-    color: #334155;
+            font-size: 12px;
 
-    font-size: 12px;
+            font-weight: 600;
 
-    font-weight: 600;
+            white-space: nowrap;
+        }
 
-    white-space: nowrap;
-}
+        .time-text {
+            margin-top: 3px;
 
-.time-text {
-    margin-top: 3px;
+            color: #94a3b8;
 
-    color: #94a3b8;
+            font-size: 11px;
+        }
 
-    font-size: 11px;
-}
 
+        /* =========================================================
+       CUSTOMER
+    ========================================================= */
 
-/* =========================================================
-   CUSTOMER
-========================================================= */
+        .customer-text {
+            display: block;
 
-.customer-text {
-    display: block;
+            max-width: 100%;
 
-    max-width: 100%;
+            color: #334155;
 
-    color: #334155;
+            font-size: 12px;
 
-    font-size: 12px;
+            font-weight: 500;
 
-    font-weight: 500;
+            line-height: 1.45;
 
-    line-height: 1.45;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
 
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
 
+        /* =========================================================
+       BARANG
+    ========================================================= */
 
-/* =========================================================
-   BARANG
-========================================================= */
+        .barang-badge {
+            display: inline-flex;
 
-.barang-badge {
-    display: inline-flex;
+            align-items: center;
+            justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+            min-width: 32px;
+            height: 31px;
 
-    min-width: 32px;
-    height: 31px;
+            padding: 0 8px;
 
-    padding: 0 8px;
+            border-radius: 8px;
 
-    border-radius: 8px;
+            background: #eff6ff;
 
-    background: #eff6ff;
+            color: #2563eb;
 
-    color: #2563eb;
+            border: 1px solid #dbeafe;
 
-    border: 1px solid #dbeafe;
+            font-size: 12px;
 
-    font-size: 12px;
+            font-weight: 700;
+        }
 
-    font-weight: 700;
-}
 
+        /* =========================================================
+       MONEY
+    ========================================================= */
 
-/* =========================================================
-   MONEY
-========================================================= */
+        .money-text {
+            display: block;
 
-.money-text {
-    display: block;
+            color: #334155;
 
-    color: #334155;
+            font-size: 12px;
 
-    font-size: 12px;
+            font-weight: 600;
 
-    font-weight: 600;
+            white-space: nowrap;
+        }
 
-    white-space: nowrap;
-}
+        .diskon-text {
+            color: #64748b;
+        }
 
-.diskon-text {
-    color: #64748b;
-}
+        .total-text {
+            display: block;
 
-.total-text {
-    display: block;
+            color: #0d6efd;
 
-    color: #0d6efd;
+            font-size: 12px;
 
-    font-size: 12px;
+            font-weight: 700;
 
-    font-weight: 700;
+            white-space: nowrap;
+        }
 
-    white-space: nowrap;
-}
 
+        /* =========================================================
+       STATUS
+    ========================================================= */
 
-/* =========================================================
-   STATUS
-========================================================= */
+        .payment-status {
+            display: inline-flex;
 
-.payment-status {
-    display: inline-flex;
+            align-items: center;
+            justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+            min-width: 62px;
 
-    min-width: 62px;
+            padding: 6px 7px;
 
-    padding: 6px 7px;
+            border-radius: 7px;
 
-    border-radius: 7px;
+            font-size: 10px;
 
-    font-size: 10px;
+            font-weight: 700;
 
-    font-weight: 700;
+            text-align: center;
 
-    text-align: center;
+            white-space: normal;
 
-    white-space: normal;
+            line-height: 1.2;
+        }
 
-    line-height: 1.2;
-}
+        .status-lunas {
+            background: #dcfce7;
 
-.status-lunas {
-    background: #dcfce7;
+            color: #166534;
 
-    color: #166534;
+            border: 1px solid #bbf7d0;
+        }
 
-    border: 1px solid #bbf7d0;
-}
+        .status-hutang {
+            background: #fef3c7;
 
-.status-hutang {
-    background: #fef3c7;
+            color: #92400e;
 
-    color: #92400e;
+            border: 1px solid #fde68a;
+        }
 
-    border: 1px solid #fde68a;
-}
 
+        /* =========================================================
+       ACTION
+    ========================================================= */
 
-/* =========================================================
-   ACTION
-========================================================= */
+        .action-buttons {
+            display: flex;
 
-.action-buttons {
-    display: flex;
+            align-items: center;
+            justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+            gap: 5px;
 
-    gap: 5px;
+            white-space: nowrap;
+        }
 
-    white-space: nowrap;
-}
+        .delete-form {
+            margin: 0;
+            padding: 0;
+        }
 
-.delete-form {
-    margin: 0;
-    padding: 0;
-}
+        .action-btn {
+            width: 32px;
+            height: 32px;
 
-.action-btn {
-    width: 32px;
-    height: 32px;
+            display: inline-flex;
 
-    display: inline-flex;
+            align-items: center;
+            justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+            padding: 0;
 
-    padding: 0;
+            border-radius: 7px;
 
-    border-radius: 7px;
+            background: #ffffff;
 
-    background: #ffffff;
+            font-size: 12px;
 
-    font-size: 12px;
+            line-height: 1;
 
-    line-height: 1;
+            text-decoration: none;
 
-    text-decoration: none;
+            cursor: pointer;
 
-    cursor: pointer;
+            transition: .2s ease;
+        }
 
-    transition: .2s ease;
-}
+        .detail-btn {
+            border: 1px solid #bfdbfe;
 
-.detail-btn {
-    border: 1px solid #bfdbfe;
+            color: #2563eb;
+        }
 
-    color: #2563eb;
-}
+        .detail-btn:hover {
+            background: #0d6efd;
 
-.detail-btn:hover {
-    background: #0d6efd;
+            color: #ffffff;
+        }
 
-    color: #ffffff;
-}
+        .delete-btn {
+            border: 1px solid #fecaca;
 
-.delete-btn {
-    border: 1px solid #fecaca;
+            color: #dc3545;
+        }
 
-    color: #dc3545;
-}
+        .delete-btn:hover {
+            background: #dc3545;
 
-.delete-btn:hover {
-    background: #dc3545;
+            color: #ffffff;
+        }
 
-    color: #ffffff;
-}
 
+        /* =========================================================
+       EMPTY
+    ========================================================= */
 
-/* =========================================================
-   EMPTY
-========================================================= */
+        .empty-cell {
+            padding: 0 !important;
 
-.empty-cell {
-    padding: 0 !important;
+            text-align: center;
+        }
 
-    text-align: center;
-}
+        .empty-state,
+        .search-empty-state {
+            padding: 50px 20px;
+        }
 
-.empty-state,
-.search-empty-state {
-    padding: 50px 20px;
-}
+        .empty-icon,
+        .search-empty-icon {
+            font-size: 40px;
 
-.empty-icon,
-.search-empty-icon {
-    font-size: 40px;
+            margin-bottom: 10px;
+        }
 
-    margin-bottom: 10px;
-}
+        .empty-title {
+            margin-bottom: 6px;
 
-.empty-title {
-    margin-bottom: 6px;
+            color: #334155;
 
-    color: #334155;
+            font-size: 14px;
 
-    font-size: 14px;
+            font-weight: 700;
+        }
 
-    font-weight: 700;
-}
+        .empty-text {
+            margin-bottom: 17px;
 
-.empty-text {
-    margin-bottom: 17px;
+            color: #94a3b8;
 
-    color: #94a3b8;
+            font-size: 12px;
+        }
 
-    font-size: 12px;
-}
+        .empty-button,
+        .reset-search-btn {
+            display: inline-flex;
 
-.empty-button,
-.reset-search-btn {
-    display: inline-flex;
+            align-items: center;
+            justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+            padding: 9px 14px;
 
-    padding: 9px 14px;
+            border: 0;
 
-    border: 0;
+            border-radius: 7px;
 
-    border-radius: 7px;
+            background: #0d6efd;
 
-    background: #0d6efd;
+            color: #ffffff;
 
-    color: #ffffff;
+            text-decoration: none;
 
-    text-decoration: none;
+            font-size: 12px;
 
-    font-size: 12px;
+            font-weight: 600;
 
-    font-weight: 600;
+            cursor: pointer;
 
-    cursor: pointer;
+            transition: .2s ease;
+        }
 
-    transition: .2s ease;
-}
+        .empty-button:hover,
+        .reset-search-btn:hover {
+            background: #0b5ed7;
 
-.empty-button:hover,
-.reset-search-btn:hover {
-    background: #0b5ed7;
+            color: #ffffff;
+        }
 
-    color: #ffffff;
-}
 
+        /* =========================================================
+       TABLET
+    ========================================================= */
 
-/* =========================================================
-   TABLET
-========================================================= */
+        @media (max-width: 1100px) {
 
-@media (max-width: 1100px) {
+            .stock-title {
+                font-size: 23px;
+            }
 
-    .stock-title {
-        font-size: 23px;
-    }
+            .stock-subtitle {
+                font-size: 13px;
+            }
 
-    .stock-subtitle {
-        font-size: 13px;
-    }
+            .search-area {
+                padding: 15px;
+            }
 
-    .search-area {
-        padding: 15px;
-    }
+            .stock-table {
+                font-size: 11px;
+            }
 
-    .stock-table {
-        font-size: 11px;
-    }
+            .stock-table thead th {
+                padding: 11px 5px;
 
-    .stock-table thead th {
-        padding: 11px 5px;
+                font-size: 10px;
+            }
 
-        font-size: 10px;
-    }
+            .stock-table tbody td {
+                padding: 11px 5px;
 
-    .stock-table tbody td {
-        padding: 11px 5px;
+                font-size: 10px;
+            }
 
-        font-size: 10px;
-    }
+            .nota-text,
+            .customer-text {
+                font-size: 10px;
+            }
 
-    .nota-text,
-    .customer-text {
-        font-size: 10px;
-    }
+            .date-text {
+                font-size: 10px;
+            }
 
-    .date-text {
-        font-size: 10px;
-    }
+            .time-text {
+                font-size: 9px;
+            }
 
-    .time-text {
-        font-size: 9px;
-    }
+            .money-text,
+            .total-text {
+                font-size: 9px;
+            }
 
-    .money-text,
-    .total-text {
-        font-size: 9px;
-    }
+            .number-badge {
+                width: 27px;
+                height: 27px;
 
-    .number-badge {
-        width: 27px;
-        height: 27px;
+                font-size: 10px;
+            }
 
-        font-size: 10px;
-    }
+            .barang-badge {
+                min-width: 28px;
+                height: 27px;
 
-    .barang-badge {
-        min-width: 28px;
-        height: 27px;
+                font-size: 10px;
+            }
 
-        font-size: 10px;
-    }
+            .payment-status {
+                min-width: 53px;
 
-    .payment-status {
-        min-width: 53px;
+                padding: 5px;
 
-        padding: 5px;
+                font-size: 8px;
+            }
 
-        font-size: 8px;
-    }
+            .action-btn {
+                width: 28px;
+                height: 28px;
 
-    .action-btn {
-        width: 28px;
-        height: 28px;
+                font-size: 10px;
+            }
 
-        font-size: 10px;
-    }
+            .action-buttons {
+                gap: 3px;
+            }
+        }
 
-    .action-buttons {
-        gap: 3px;
-    }
-}
 
+        /* =========================================================
+       MOBILE
+    ========================================================= */
 
-/* =========================================================
-   MOBILE
-========================================================= */
+        @media (max-width: 700px) {
 
-@media (max-width: 700px) {
+            .page-header {
+                flex-direction: column;
 
-    .page-header {
-        flex-direction: column;
+                align-items: flex-start;
 
-        align-items: flex-start;
+                gap: 12px;
+            }
 
-        gap: 12px;
-    }
+            .stock-title {
+                font-size: 21px;
+            }
 
-    .stock-title {
-        font-size: 21px;
-    }
+            .stock-subtitle {
+                font-size: 12px;
+            }
 
-    .stock-subtitle {
-        font-size: 12px;
-    }
+            .btn-create {
+                width: 100%;
+            }
 
-    .btn-create {
-        width: 100%;
-    }
+            .search-area {
+                flex-direction: column;
 
-    .search-area {
-        flex-direction: column;
+                align-items: stretch;
 
-        align-items: stretch;
+                padding: 14px;
+            }
 
-        padding: 14px;
-    }
+            .search-box {
+                width: 100%;
+            }
 
-    .search-box {
-        width: 100%;
-    }
+            .search-info {
+                white-space: normal;
 
-    .search-info {
-        white-space: normal;
+                font-size: 12px;
+            }
 
-        font-size: 12px;
-    }
+            .stock-table {
+                font-size: 9px;
+            }
 
-    .stock-table {
-        font-size: 9px;
-    }
+            .stock-table thead th {
+                padding: 8px 3px;
 
-    .stock-table thead th {
-        padding: 8px 3px;
+                font-size: 8px;
+            }
 
-        font-size: 8px;
-    }
+            .stock-table tbody td {
+                padding: 9px 3px;
 
-    .stock-table tbody td {
-        padding: 9px 3px;
+                font-size: 8px;
+            }
 
-        font-size: 8px;
-    }
+            .nota-text,
+            .customer-text {
+                font-size: 8px;
+            }
 
-    .nota-text,
-    .customer-text {
-        font-size: 8px;
-    }
+            .date-text {
+                font-size: 8px;
+            }
 
-    .date-text {
-        font-size: 8px;
-    }
+            .time-text {
+                font-size: 7px;
+            }
 
-    .time-text {
-        font-size: 7px;
-    }
+            .money-text,
+            .total-text {
+                font-size: 7px;
+            }
 
-    .money-text,
-    .total-text {
-        font-size: 7px;
-    }
+            .number-badge {
+                width: 23px;
+                height: 23px;
 
-    .number-badge {
-        width: 23px;
-        height: 23px;
+                font-size: 8px;
+            }
 
-        font-size: 8px;
-    }
+            .barang-badge {
+                min-width: 23px;
+                height: 23px;
 
-    .barang-badge {
-        min-width: 23px;
-        height: 23px;
+                padding: 0 4px;
 
-        padding: 0 4px;
+                font-size: 8px;
+            }
 
-        font-size: 8px;
-    }
+            .payment-status {
+                min-width: 42px;
 
-    .payment-status {
-        min-width: 42px;
+                padding: 4px 3px;
 
-        padding: 4px 3px;
+                font-size: 7px;
+            }
 
-        font-size: 7px;
-    }
+            .action-buttons {
+                flex-direction: row;
 
-    .action-buttons {
-        flex-direction: row;
+                gap: 2px;
+            }
 
-        gap: 2px;
-    }
+            .action-btn {
+                width: 23px;
+                height: 23px;
 
-    .action-btn {
-        width: 23px;
-        height: 23px;
+                font-size: 8px;
+            }
+        }
+    </style>
 
-        font-size: 8px;
-    }
-}
 
-</style>
+    <div class="stockout-page">
 
 
-<div class="stockout-page">
+        {{-- =====================================================
+        HEADER
+        ====================================================== --}}
 
+        <div class="page-header">
 
-{{-- =====================================================
-     HEADER
-====================================================== --}}
+            <div>
 
-<div class="page-header">
+                <h3 class="stock-title">
+                    📤 Stock Out
+                </h3>
 
-    <div>
+                <p class="stock-subtitle">
+                    Daftar barang yang terjual
+                </p>
 
-        <h3 class="stock-title">
-            📤 Stock Out
-        </h3>
+            </div>
 
-        <p class="stock-subtitle">
-            Daftar barang yang terjual
-        </p>
 
-    </div>
+            <a href="{{ route('penjualan.create') }}" class="btn-create">
 
+                <span>＋</span>
 
-    <a
-        href="{{ route('penjualan.create') }}"
-        class="btn-create"
-    >
+                <span>
+                    Buat Nota
+                </span>
 
-        <span>＋</span>
-
-        <span>
-            Buat Nota
-        </span>
-
-    </a>
-
-</div>
-
-
-
-{{-- =====================================================
-     SUCCESS
-====================================================== --}}
-
-@if(session('success'))
-
-    <div class="alert-custom alert-success-custom">
-
-        <span class="alert-icon">
-            ✓
-        </span>
-
-        <span>
-            {{ session('success') }}
-        </span>
-
-        <button
-            type="button"
-            class="alert-close"
-            onclick="this.parentElement.remove()"
-        >
-            ×
-        </button>
-
-    </div>
-
-@endif
-
-
-
-{{-- =====================================================
-     ERROR
-====================================================== --}}
-
-@if(session('error'))
-
-    <div class="alert-custom alert-danger-custom">
-
-        <span class="alert-icon">
-            ⚠
-        </span>
-
-        <span>
-            {{ session('error') }}
-        </span>
-
-        <button
-            type="button"
-            class="alert-close"
-            onclick="this.parentElement.remove()"
-        >
-            ×
-        </button>
-
-    </div>
-
-@endif
-
-
-
-{{-- =====================================================
-     STOCK OUT TABLE
-====================================================== --}}
-
-<div class="stock-card">
-
-
-    {{-- =================================================
-         SEARCH
-    ================================================== --}}
-
-    <div class="search-area">
-
-
-        <div class="search-box">
-
-            <span class="search-icon">
-                🔍
-            </span>
-
-
-            <input
-                type="text"
-                id="stockSearch"
-                class="search-input"
-                placeholder="Cari No. Nota atau Customer..."
-                autocomplete="off"
-            >
-
-
-            <button
-                type="button"
-                id="clearSearch"
-                class="clear-search"
-                title="Hapus pencarian"
-            >
-                ×
-            </button>
+            </a>
 
         </div>
 
 
-        <div
-            id="searchInfo"
-            class="search-info"
-        >
-            Menampilkan semua transaksi
-        </div>
 
-    </div>
+        {{-- =====================================================
+        SUCCESS
+        ====================================================== --}}
 
+        @if(session('success'))
 
+            <div class="alert-custom alert-success-custom">
 
-    {{-- =================================================
-         TABLE
-    ================================================== --}}
+                <span class="alert-icon">
+                    ✓
+                </span>
 
-    <div class="table-wrapper">
+                <span>
+                    {{ session('success') }}
+                </span>
 
-        <table
-            class="stock-table"
-            id="stockTable"
-        >
+                <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+                    ×
+                </button>
 
-            <thead>
+            </div>
 
-                <tr>
+        @endif
 
-                    <th class="col-no">
-                        No
-                    </th>
 
 
-                    <th class="col-nota">
-                        No. Nota
-                    </th>
+        {{-- =====================================================
+        ERROR
+        ====================================================== --}}
 
+        @if(session('error'))
 
-                    <th class="col-tanggal">
-                        Tanggal
-                    </th>
+            <div class="alert-custom alert-danger-custom">
 
+                <span class="alert-icon">
+                    ⚠
+                </span>
 
-                    <th class="col-customer">
-                        Customer
-                    </th>
+                <span>
+                    {{ session('error') }}
+                </span>
 
+                <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+                    ×
+                </button>
 
-                    <th class="col-barang">
-                        Barang
-                    </th>
+            </div>
 
+        @endif
 
-                    <th class="col-diskon">
-                        Diskon
-                    </th>
 
 
-                    <th class="col-harga">
-                        Harga
-                    </th>
+        {{-- =====================================================
+        STOCK OUT TABLE
+        ====================================================== --}}
 
+        <div class="stock-card">
 
-                    <th class="col-total">
-                        Total
-                    </th>
 
+            {{-- =================================================
+            SEARCH
+            ================================================== --}}
 
-                    <th class="col-status">
-                        Status
-                    </th>
+            <div class="search-area">
 
 
-                    <th class="col-aksi">
-                        Aksi
-                    </th>
+                <div class="search-box">
 
-                </tr>
+                    <span class="search-icon">
+                        🔍
+                    </span>
 
-            </thead>
 
+                    <input type="text" id="stockSearch" class="search-input" placeholder="Cari No. Nota atau Customer..."
+                        autocomplete="off">
 
 
-            <tbody id="stockTableBody">
+                    <button type="button" id="clearSearch" class="clear-search" title="Hapus pencarian">
+                        ×
+                    </button>
 
+                </div>
 
-                @forelse($penjualans as $index => $penjualan)
 
-                    <tr
-                        class="stock-row"
+                <div id="searchInfo" class="search-info">
+                    Menampilkan semua transaksi
+                </div>
 
-                        data-nota="{{ strtolower($penjualan->nomor_nota ?? '') }}"
+            </div>
 
-                        data-customer="{{ strtolower($penjualan->nama_customer ?? '') }}"
-                    >
 
 
-                        {{-- =================================
-                             NO
-                        ================================== --}}
+            {{-- =================================================
+            TABLE
+            ================================================== --}}
 
-                        <td class="text-center">
+            <div class="table-wrapper">
 
-                            <span class="number-badge">
+                <table class="stock-table" id="stockTable">
 
-                                {{ $index + 1 }}
+                    <thead>
 
-                            </span>
+                        <tr>
 
-                        </td>
+                            <th class="col-no">
+                                No
+                            </th>
 
 
+                            <th class="col-nota">
+                                No. Nota
+                            </th>
 
-                        {{-- =================================
-                             NO NOTA
-                        ================================== --}}
 
-                        <td>
+                            <th class="col-tanggal">
+                                Tanggal
+                            </th>
 
-                            <span class="nota-text">
 
-                                {{ $penjualan->nomor_nota ?? '-' }}
+                            <th class="col-customer">
+                                Customer
+                            </th>
 
-                            </span>
 
-                        </td>
+                            <th class="col-barang">
+                                Barang
+                            </th>
 
 
+                            <th class="col-diskon">
+                                Diskon
+                            </th>
 
-                        {{-- =================================
-                             TANGGAL
-                        ================================== --}}
 
-                        <td>
+                            <th class="col-harga">
+                                Harga
+                            </th>
 
-                            @if($penjualan->tanggal_penjualan)
 
-                                <div class="date-text">
+                            <th class="col-total">
+                                Total
+                            </th>
 
-                                    {{
-                                        $penjualan
-                                            ->tanggal_penjualan
-                                            ->format('d/m/Y')
-                                    }}
 
-                                </div>
+                            <th class="col-status">
+                                Status
+                            </th>
 
 
-                                <div class="time-text">
+                            <th class="col-aksi">
+                                Aksi
+                            </th>
 
-                                    {{
-                                        $penjualan
-                                            ->tanggal_penjualan
-                                            ->format('H:i')
-                                    }}
+                        </tr>
 
-                                </div>
+                    </thead>
 
-                            @else
 
-                                -
 
-                            @endif
+                    <tbody id="stockTableBody">
 
-                        </td>
 
+                        @forelse($penjualans as $index => $penjualan)
 
+                                            <tr class="stock-row" data-nota="{{ strtolower($penjualan->nomor_nota ?? '') }}"
+                                                data-customer="{{ strtolower($penjualan->nama_customer ?? '') }}">
 
-                        {{-- =================================
-                             CUSTOMER
-                        ================================== --}}
 
-                        <td>
+                                                {{-- =================================
+                                                NO
+                                                ================================== --}}
 
-                            <span
-                                class="customer-text"
-                                title="{{ $penjualan->nama_customer }}"
-                            >
+                                                <td class="text-center">
 
-                                {{
-                                    $penjualan->nama_customer
-                                    ?: '-'
-                                }}
+                                                    <span class="number-badge">
 
-                            </span>
+                                                        {{ $index + 1 }}
 
-                        </td>
+                                                    </span>
 
+                                                </td>
 
 
-                        {{-- =================================
-                             JUMLAH BARANG
-                        ================================== --}}
 
-                        <td class="text-center">
+                                                {{-- =================================
+                                                NO NOTA
+                                                ================================== --}}
 
-                            <span class="barang-badge">
+                                                <td>
 
-                                {{
+                                                    <span class="nota-text">
+
+                                                        {{ $penjualan->nomor_nota ?? '-' }}
+
+                                                    </span>
+
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                TANGGAL
+                                                ================================== --}}
+
+                                                <td>
+
+                                                    @if($penjualan->tanggal_penjualan)
+
+                                                                        <div class="date-text">
+
+                                                                            {{
+                                                        $penjualan
+                                                            ->tanggal_penjualan
+                                                            ->format('d/m/Y')
+                                                                                }}
+
+                                                                        </div>
+
+
+                                                                        <div class="time-text">
+
+                                                                            {{
+                                                        $penjualan
+                                                            ->tanggal_penjualan
+                                                            ->format('H:i')
+                                                                                }}
+
+                                                                        </div>
+
+                                                    @else
+
+                                                        -
+
+                                                    @endif
+
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                CUSTOMER
+                                                ================================== --}}
+
+                                                <td>
+
+                                                    <span class="customer-text" title="{{ $penjualan->nama_customer }}">
+
+                                                        {{
+                                $penjualan->nama_customer
+                                ?: '-'
+                                                        }}
+
+                                                    </span>
+
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                JUMLAH BARANG
+                                                ================================== --}}
+
+                                                <td class="text-center">
+
+                                                    <span class="barang-badge">
+
+                                                        {{
+                                $penjualan
+                                    ->details
+                                    ->count()
+                                                        }}
+
+                                                    </span>
+
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                DISKON
+                                                ================================== --}}
+
+                                                <td class="text-center">
+
+                                                    <span class="money-text diskon-text">
+                                                        Rp {{ number_format($penjualan->diskon ?? 0, 0, ',', '.') }}
+                                                    </span>
+
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                HARGA
+                                                ================================== --}}
+
+                                                <td class="text-end">
+
+                                                    <span class="money-text">
+
+                                                        Rp
+
+                                                        {{
+                                number_format(
                                     $penjualan
                                         ->details
-                                        ->count()
-                                }}
+                                        ->sum('subtotal'),
+                                    0,
+                                    ',',
+                                    '.'
+                                )
+                                                        }}
 
-                            </span>
+                                                    </span>
 
-                        </td>
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                TOTAL
+                                                ================================== --}}
+
+                                                <td class="text-end">
+
+                                                    <span class="total-text">
+
+                                                        Rp
+
+                                                        {{
+                                number_format(
+                                    $penjualan->total ?? 0,
+                                    0,
+                                    ',',
+                                    '.'
+                                )
+                                                        }}
+
+                                                    </span>
+
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                STATUS PEMBAYARAN
+                                                ================================== --}}
+
+                                                <td class="text-center">
+
+                                                    @if(($penjualan->hutang ?? 0) > 0)
+
+                                                        <span class="payment-status status-hutang">
+
+                                                            HUTANG
+
+                                                        </span>
+
+                                                    @else
+
+                                                        <span class="payment-status status-lunas">
+
+                                                            LUNAS
+
+                                                        </span>
+
+                                                    @endif
+
+                                                </td>
+
+
+
+                                                {{-- =================================
+                                                AKSI
+                                                ================================== --}}
+
+                                                <td>
+
+                                                    <div class="action-buttons">
+
+
+                                                        {{-- DETAIL --}}
+
+                                                        <a href="{{ route(
+                                'penjualan.show',
+                                $penjualan->id
+                            ) }}" class="action-btn detail-btn" title="Lihat Detail">
+
+                                                            👁️
+
+                                                        </a>
+
+
+
+                                                        {{-- HAPUS --}}
+
+                                                        <form action="{{ route(
+                                'penjualan.destroy',
+                                $penjualan->id
+                            ) }}" method="POST" class="delete-form" onsubmit="return confirmDelete(
+                                                                '{{ $penjualan->nomor_nota }}'
+                                                            )">
+
+                                                            @csrf
+
+                                                            @method('DELETE')
+
+
+                                                            <button type="submit" class="action-btn delete-btn" title="Hapus">
+
+                                                                🗑️
+
+                                                            </button>
+
+                                                        </form>
+
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+
+
+                        @empty
+
+
+                            {{-- =================================
+                            DATA KOSONG
+                            ================================== --}}
+
+                            <tr>
+
+                                <td colspan="10" class="empty-cell">
+
+                                    <div class="empty-state">
+
+
+                                        <div class="empty-icon">
+                                            📦
+                                        </div>
+
+
+                                        <div class="empty-title">
+
+                                            Belum ada transaksi penjualan
+
+                                        </div>
+
+
+                                        <div class="empty-text">
+
+                                            Data Stock Out akan muncul
+                                            setelah membuat nota.
+
+                                        </div>
+
+
+                                        <a href="{{ route('penjualan.create') }}" class="empty-button">
+
+                                            ＋ Buat Nota
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        @endforelse
 
 
 
                         {{-- =================================
-                             DISKON
+                        SEARCH EMPTY
                         ================================== --}}
 
-                        <td class="text-center">
+                        <tr id="searchEmptyRow" style="display: none;">
 
-                            <span class="money-text diskon-text">
+                            <td colspan="10" class="empty-cell">
 
-                                {{
-                                    number_format(
-                                        $penjualan->diskon ?? 0,
-                                        0,
-                                        ',',
-                                        '.'
-                                    )
-                                }}%
-
-                            </span>
-
-                        </td>
+                                <div class="search-empty-state">
 
 
-
-                        {{-- =================================
-                             HARGA
-                        ================================== --}}
-
-                        <td class="text-end">
-
-                            <span class="money-text">
-
-                                Rp
-
-                                {{
-                                    number_format(
-                                        $penjualan
-                                            ->details
-                                            ->sum('subtotal'),
-                                        0,
-                                        ',',
-                                        '.'
-                                    )
-                                }}
-
-                            </span>
-
-                        </td>
+                                    <div class="search-empty-icon">
+                                        🔍
+                                    </div>
 
 
+                                    <div class="empty-title">
 
-                        {{-- =================================
-                             TOTAL
-                        ================================== --}}
+                                        Data tidak ditemukan
 
-                        <td class="text-end">
-
-                            <span class="total-text">
-
-                                Rp
-
-                                {{
-                                    number_format(
-                                        $penjualan->total ?? 0,
-                                        0,
-                                        ',',
-                                        '.'
-                                    )
-                                }}
-
-                            </span>
-
-                        </td>
+                                    </div>
 
 
+                                    <div class="empty-text">
 
-                        {{-- =================================
-                             STATUS PEMBAYARAN
-                        ================================== --}}
+                                        Tidak ada No. Nota atau Customer
+                                        yang cocok.
 
-                        <td class="text-center">
-
-                            @if(($penjualan->hutang ?? 0) > 0)
-
-                                <span class="payment-status status-hutang">
-
-                                    HUTANG
-
-                                </span>
-
-                            @else
-
-                                <span class="payment-status status-lunas">
-
-                                    LUNAS
-
-                                </span>
-
-                            @endif
-
-                        </td>
+                                    </div>
 
 
+                                    <button type="button" class="reset-search-btn" onclick="resetSearch()">
 
-                        {{-- =================================
-                             AKSI
-                        ================================== --}}
-
-                        <td>
-
-                            <div class="action-buttons">
-
-
-                                {{-- DETAIL --}}
-
-                                <a
-                                    href="{{ route(
-                                        'penjualan.show',
-                                        $penjualan->id
-                                    ) }}"
-
-                                    class="action-btn detail-btn"
-
-                                    title="Lihat Detail"
-                                >
-
-                                    👁️
-
-                                </a>
-
-
-
-                                {{-- HAPUS --}}
-
-                                <form
-                                    action="{{ route(
-                                        'penjualan.destroy',
-                                        $penjualan->id
-                                    ) }}"
-
-                                    method="POST"
-
-                                    class="delete-form"
-
-                                    onsubmit="return confirmDelete(
-                                        '{{ $penjualan->nomor_nota }}'
-                                    )"
-                                >
-
-                                    @csrf
-
-                                    @method('DELETE')
-
-
-                                    <button
-                                        type="submit"
-                                        class="action-btn delete-btn"
-                                        title="Hapus"
-                                    >
-
-                                        🗑️
+                                        Tampilkan Semua
 
                                     </button>
 
-                                </form>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                @empty
-
-
-                    {{-- =================================
-                         DATA KOSONG
-                    ================================== --}}
-
-                    <tr>
-
-                        <td
-                            colspan="10"
-                            class="empty-cell"
-                        >
-
-                            <div class="empty-state">
-
-
-                                <div class="empty-icon">
-                                    📦
                                 </div>
 
+                            </td>
 
-                                <div class="empty-title">
+                        </tr>
 
-                                    Belum ada transaksi penjualan
+                    </tbody>
 
-                                </div>
+                </table>
 
+            </div>
 
-                                <div class="empty-text">
-
-                                    Data Stock Out akan muncul
-                                    setelah membuat nota.
-
-                                </div>
-
-
-                                <a
-                                    href="{{ route('penjualan.create') }}"
-                                    class="empty-button"
-                                >
-
-                                    ＋ Buat Nota
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                @endforelse
-
-
-
-                {{-- =================================
-                     SEARCH EMPTY
-                ================================== --}}
-
-                <tr
-                    id="searchEmptyRow"
-                    style="display: none;"
-                >
-
-                    <td
-                        colspan="10"
-                        class="empty-cell"
-                    >
-
-                        <div class="search-empty-state">
-
-
-                            <div class="search-empty-icon">
-                                🔍
-                            </div>
-
-
-                            <div class="empty-title">
-
-                                Data tidak ditemukan
-
-                            </div>
-
-
-                            <div class="empty-text">
-
-                                Tidak ada No. Nota atau Customer
-                                yang cocok.
-
-                            </div>
-
-
-                            <button
-                                type="button"
-                                class="reset-search-btn"
-                                onclick="resetSearch()"
-                            >
-
-                                Tampilkan Semua
-
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
+        </div>
 
     </div>
 
-</div>
-
-</div>
 
 
+    <script>
 
-<script>
-
-document.addEventListener('DOMContentLoaded', function () {
-
-
-    const searchInput =
-        document.getElementById('stockSearch');
+        document.addEventListener('DOMContentLoaded', function () {
 
 
-    const clearButton =
-        document.getElementById('clearSearch');
+            const searchInput =
+                document.getElementById('stockSearch');
 
 
-    const searchInfo =
-        document.getElementById('searchInfo');
+            const clearButton =
+                document.getElementById('clearSearch');
 
 
-    const searchEmptyRow =
-        document.getElementById('searchEmptyRow');
+            const searchInfo =
+                document.getElementById('searchInfo');
 
 
-    const rows =
-        document.querySelectorAll(
-            '#stockTableBody .stock-row'
-        );
+            const searchEmptyRow =
+                document.getElementById('searchEmptyRow');
+
+
+            const rows =
+                document.querySelectorAll(
+                    '#stockTableBody .stock-row'
+                );
 
 
 
-    /* =====================================================
-       SEARCH
-    ====================================================== */
+            /* =====================================================
+               SEARCH
+            ====================================================== */
 
-    function performSearch() {
-
-
-        const keyword =
-            searchInput.value
-                .toLowerCase()
-                .trim();
+            function performSearch() {
 
 
-        let found = 0;
+                const keyword =
+                    searchInput.value
+                        .toLowerCase()
+                        .trim();
 
 
-
-        rows.forEach(function (row) {
-
-
-            const nota =
-                row.dataset.nota || '';
-
-
-            const customer =
-                row.dataset.customer || '';
+                let found = 0;
 
 
 
-            const match =
-                nota.includes(keyword) ||
-                customer.includes(keyword);
+                rows.forEach(function (row) {
+
+
+                    const nota =
+                        row.dataset.nota || '';
+
+
+                    const customer =
+                        row.dataset.customer || '';
 
 
 
-            if (match) {
+                    const match =
+                        nota.includes(keyword) ||
+                        customer.includes(keyword);
 
-                row.style.display = '';
 
-                found++;
 
-            } else {
+                    if (match) {
 
-                row.style.display = 'none';
+                        row.style.display = '';
+
+                        found++;
+
+                    } else {
+
+                        row.style.display = 'none';
+
+                    }
+
+                });
+
+
+
+                /* =============================================
+                   CLEAR BUTTON
+                ============================================== */
+
+                if (keyword.length > 0) {
+
+                    clearButton.style.display = 'flex';
+
+                } else {
+
+                    clearButton.style.display = 'none';
+
+                }
+
+
+
+                /* =============================================
+                   SEARCH INFO
+                ============================================== */
+
+                if (keyword.length === 0) {
+
+                    searchInfo.textContent =
+                        'Menampilkan semua transaksi';
+
+                } else {
+
+                    searchInfo.textContent =
+                        found + ' transaksi ditemukan';
+
+                }
+
+
+
+                /* =============================================
+                   EMPTY SEARCH
+                ============================================== */
+
+                if (
+                    keyword.length > 0 &&
+                    found === 0
+                ) {
+
+                    searchEmptyRow.style.display = '';
+
+                } else {
+
+                    searchEmptyRow.style.display = 'none';
+
+                }
 
             }
+
+
+
+            /* =====================================================
+               INPUT SEARCH
+            ====================================================== */
+
+            searchInput.addEventListener(
+                'input',
+                performSearch
+            );
+
+
+
+            /* =====================================================
+               CLEAR SEARCH
+            ====================================================== */
+
+            clearButton.addEventListener(
+                'click',
+                function () {
+
+                    resetSearch();
+
+                }
+            );
+
+
+
+            /* =====================================================
+               RESET SEARCH
+            ====================================================== */
+
+            window.resetSearch = function () {
+
+                searchInput.value = '';
+
+                performSearch();
+
+                searchInput.focus();
+
+            };
+
+
+
+            /* =====================================================
+               ESCAPE
+            ====================================================== */
+
+            searchInput.addEventListener(
+                'keydown',
+                function (event) {
+
+                    if (event.key === 'Escape') {
+
+                        resetSearch();
+
+                    }
+
+                }
+            );
 
         });
 
 
 
-        /* =============================================
-           CLEAR BUTTON
-        ============================================== */
+        /* =========================================================
+           CONFIRM DELETE
+        ========================================================= */
 
-        if (keyword.length > 0) {
+        function confirmDelete(nomorNota) {
 
-            clearButton.style.display = 'flex';
+            return confirm(
 
-        } else {
+                'Yakin ingin menghapus nota ' +
+                nomorNota +
+                '?\n\n' +
 
-            clearButton.style.display = 'none';
+                'Data penjualan dan detail barang pada nota ini akan dihapus.'
 
-        }
-
-
-
-        /* =============================================
-           SEARCH INFO
-        ============================================== */
-
-        if (keyword.length === 0) {
-
-            searchInfo.textContent =
-                'Menampilkan semua transaksi';
-
-        } else {
-
-            searchInfo.textContent =
-                found + ' transaksi ditemukan';
+            );
 
         }
 
-
-
-        /* =============================================
-           EMPTY SEARCH
-        ============================================== */
-
-        if (
-            keyword.length > 0 &&
-            found === 0
-        ) {
-
-            searchEmptyRow.style.display = '';
-
-        } else {
-
-            searchEmptyRow.style.display = 'none';
-
-        }
-
-    }
-
-
-
-    /* =====================================================
-       INPUT SEARCH
-    ====================================================== */
-
-    searchInput.addEventListener(
-        'input',
-        performSearch
-    );
-
-
-
-    /* =====================================================
-       CLEAR SEARCH
-    ====================================================== */
-
-    clearButton.addEventListener(
-        'click',
-        function () {
-
-            resetSearch();
-
-        }
-    );
-
-
-
-    /* =====================================================
-       RESET SEARCH
-    ====================================================== */
-
-    window.resetSearch = function () {
-
-        searchInput.value = '';
-
-        performSearch();
-
-        searchInput.focus();
-
-    };
-
-
-
-    /* =====================================================
-       ESCAPE
-    ====================================================== */
-
-    searchInput.addEventListener(
-        'keydown',
-        function (event) {
-
-            if (event.key === 'Escape') {
-
-                resetSearch();
-
-            }
-
-        }
-    );
-
-});
-
-
-
-/* =========================================================
-   CONFIRM DELETE
-========================================================= */
-
-function confirmDelete(nomorNota) {
-
-    return confirm(
-
-        'Yakin ingin menghapus nota ' +
-        nomorNota +
-        '?\n\n' +
-
-        'Data penjualan dan detail barang pada nota ini akan dihapus.'
-
-    );
-
-}
-
-</script>
+    </script>
 
 @endsection

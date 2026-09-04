@@ -185,11 +185,10 @@ class PenjualanController extends Controller
             ],
 
             'diskon' => [
-                'nullable',
-                'numeric',
-                'min:0',
-                'max:100'
-            ],
+    'nullable',
+    'numeric',
+    'min:0'
+],
 
             'bayar_cash' => [
                 'nullable',
@@ -232,46 +231,46 @@ class PenjualanController extends Controller
 
 
             /*
-            |--------------------------------------------------------------------------
-            | DISKON
-            |--------------------------------------------------------------------------
-            */
+|--------------------------------------------------------------------------
+| DISKON
+|--------------------------------------------------------------------------
+*/
 
-            $diskon = (float) (
-                $request->diskon ?? 0
-            );
+$diskon = (float) (
+    $request->diskon ?? 0
+);
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | BUAT PENJUALAN SEMENTARA
-            |--------------------------------------------------------------------------
-            */
+/*
+|--------------------------------------------------------------------------
+| BUAT PENJUALAN SEMENTARA
+|--------------------------------------------------------------------------
+*/
 
-            $penjualan = Penjualan::create([
+$penjualan = Penjualan::create([
 
-                'nomor_nota' =>
-                    $nomorNota,
+    'nomor_nota' =>
+        $nomorNota,
 
-                'nama_customer' =>
-                    $request->nama_customer,
+    'nama_customer' =>
+        $request->nama_customer,
 
-                'tanggal_penjualan' =>
-                    $request->tanggal_penjualan,
+    'tanggal_penjualan' =>
+        $request->tanggal_penjualan,
 
-                'total' =>
-                    0,
+    'total' =>
+        0,
 
-                'diskon' =>
-                    $diskon,
+    'diskon' =>
+        $diskon,
 
-                'bayar_cash' =>
-                    0,
+    'bayar_cash' =>
+        0,
 
-                'hutang' =>
-                    0,
+    'hutang' =>
+        0,
 
-            ]);
+]);
 
 
             $subtotal = 0;
@@ -501,25 +500,23 @@ class PenjualanController extends Controller
 
 
             /*
-            |--------------------------------------------------------------------------
-            | HITUNG DISKON
-            |--------------------------------------------------------------------------
-            */
+|--------------------------------------------------------------------------
+| HITUNG DISKON
+|--------------------------------------------------------------------------
+*/
 
-            $jumlahDiskon =
-                $subtotal *
-                ($diskon / 100);
+$jumlahDiskon = min($diskon, $subtotal);
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | TOTAL SETELAH DISKON
-            |--------------------------------------------------------------------------
-            */
+/*
+|--------------------------------------------------------------------------
+| TOTAL SETELAH DISKON
+|--------------------------------------------------------------------------
+*/
 
-            $total =
-                $subtotal -
-                $jumlahDiskon;
+$total =
+    $subtotal -
+    $jumlahDiskon;
 
 
             /*

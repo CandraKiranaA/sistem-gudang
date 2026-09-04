@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\BarangMasuk;
+use App\Models\Penjualan;
 use App\Models\PenjualanDetail;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,11 @@ class LaporanBarangController extends Controller
 
         $barangs = Barang::query()
             ->when($search !== '', function ($query) use ($search) {
-                $query->where('nama_barang', 'like', '%' . $search . '%');
+                $query->where(
+                    'nama_barang',
+                    'like',
+                    '%' . $search . '%'
+                );
             })
             ->orderBy('nama_barang', 'asc')
             ->get();
@@ -161,7 +166,7 @@ class LaporanBarangController extends Controller
 
                 if ($detail->penjualan_id) {
 
-                    $penjualan = \App\Models\Penjualan::find(
+                    $penjualan = Penjualan::find(
                         $detail->penjualan_id
                     );
                 }
@@ -169,31 +174,18 @@ class LaporanBarangController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | DISKON
+                | DISKON NOMINAL
                 |--------------------------------------------------------------------------
                 */
 
-                $diskonPersen = 0;
+                $nominalDiskon = 0;
 
                 if ($penjualan) {
 
-                    $diskonPersen =
-                        (float) (
-                            $penjualan->getRawOriginal('diskon')
-                            ?? 0
-                        );
+                    $nominalDiskon = (float) (
+                        $penjualan->getRawOriginal('diskon') ?? 0
+                    );
                 }
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | NOMINAL DISKON
-                |--------------------------------------------------------------------------
-                */
-
-                $nominalDiskon =
-                    $subtotal *
-                    ($diskonPersen / 100);
 
 
                 /*
@@ -203,8 +195,10 @@ class LaporanBarangController extends Controller
                 */
 
                 $totalSetelahDiskon =
-                    $subtotal -
-                    $nominalDiskon;
+                    max(
+                        0,
+                        $subtotal - $nominalDiskon
+                    );
 
 
                 /*
@@ -237,6 +231,7 @@ class LaporanBarangController extends Controller
             */
 
             return [
+
                 'id' =>
                     $barang->id,
 
@@ -303,7 +298,6 @@ class LaporanBarangController extends Controller
                             'like',
                             '%' . $search . '%'
                         );
-
                     });
                 });
             })
@@ -313,7 +307,7 @@ class LaporanBarangController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | HITUNG DATA DISKON UNTUK BARANG KELUAR
+        | HITUNG DATA DISKON NOMINAL UNTUK BARANG KELUAR
         |--------------------------------------------------------------------------
         */
 
@@ -323,37 +317,57 @@ class LaporanBarangController extends Controller
                 (float) ($detail->subtotal ?? 0);
 
 
-            $diskonPersen = 0;
+            /*
+            |--------------------------------------------------------------------------
+            | DISKON NOMINAL
+            |--------------------------------------------------------------------------
+            */
 
+            $nominalDiskon = 0;
 
             if ($detail->penjualan) {
 
-                $diskonPersen =
-                    (float) (
-                        $detail
-                            ->penjualan
-                            ->getRawOriginal('diskon')
-                        ?? 0
-                    );
+                $nominalDiskon = (float) (
+                    $detail
+                        ->penjualan
+                        ->getRawOriginal('diskon')
+                    ?? 0
+                );
             }
 
 
-            $nominalDiskon =
-                $subtotal *
-                ($diskonPersen / 100);
+            /*
+            |--------------------------------------------------------------------------
+            | BATASI DISKON AGAR TIDAK MELEBIHI SUBTOTAL
+            |--------------------------------------------------------------------------
+            */
 
+            $nominalDiskon =
+                min(
+                    max(0, $nominalDiskon),
+                    $subtotal
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TOTAL SETELAH DISKON
+            |--------------------------------------------------------------------------
+            */
 
             $totalSetelahDiskon =
                 $subtotal -
                 $nominalDiskon;
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | DATA UNTUK VIEW
+            |--------------------------------------------------------------------------
+            */
+
             $detail->laporan_subtotal =
                 $subtotal;
-
-
-            $detail->laporan_diskon_persen =
-                $diskonPersen;
 
 
             $detail->laporan_diskon_nominal =
@@ -374,9 +388,14 @@ class LaporanBarangController extends Controller
         return view(
             'laporan.barang.index',
             [
-                'laporan' => $laporan,
-                'barangKeluar' => $barangKeluar,
-                'search' => $search,
+                'laporan' =>
+                    $laporan,
+
+                'barangKeluar' =>
+                    $barangKeluar,
+
+                'search' =>
+                    $search,
             ]
         );
     }
@@ -502,7 +521,6 @@ class LaporanBarangController extends Controller
 
         $rataRataModalPcs = 0;
 
-
         if ($totalMasukPcs > 0) {
 
             $rataRataModalPcs =
@@ -530,12 +548,17 @@ class LaporanBarangController extends Controller
                 (float) ($detail->subtotal ?? 0);
 
 
-            $diskonPersen = 0;
+            /*
+            |--------------------------------------------------------------------------
+            | DISKON NOMINAL
+            |--------------------------------------------------------------------------
+            */
 
+            $nominalDiskon = 0;
 
             if ($detail->penjualan) {
 
-                $diskonPersen =
+                $nominalDiskon =
                     (float) (
                         $detail
                             ->penjualan
@@ -545,32 +568,60 @@ class LaporanBarangController extends Controller
             }
 
 
-            $nominalDiskon =
-                $subtotal *
-                ($diskonPersen / 100);
+            /*
+            |--------------------------------------------------------------------------
+            | BATASI DISKON
+            |--------------------------------------------------------------------------
+            */
 
+            $nominalDiskon =
+                min(
+                    max(0, $nominalDiskon),
+                    $subtotal
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TOTAL SETELAH DISKON
+            |--------------------------------------------------------------------------
+            */
 
             $totalSetelahDiskon =
                 $subtotal -
                 $nominalDiskon;
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | MODAL BARANG TERJUAL
+            |--------------------------------------------------------------------------
+            */
+
             $modalTerjual =
                 $jumlahPcs *
                 $rataRataModalPcs;
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | KEUNTUNGAN
+            |--------------------------------------------------------------------------
+            */
 
             $keuntungan =
                 $totalSetelahDiskon -
                 $modalTerjual;
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | DATA UNTUK VIEW
+            |--------------------------------------------------------------------------
+            */
+
             $detail->laporan_subtotal =
                 $subtotal;
-
-
-            $detail->laporan_diskon_persen =
-                $diskonPersen;
 
 
             $detail->laporan_diskon_nominal =
@@ -646,6 +697,7 @@ class LaporanBarangController extends Controller
 
 
         $headers = [
+
             'Content-Type' =>
                 'text/csv; charset=UTF-8',
 
@@ -801,17 +853,22 @@ class LaporanBarangController extends Controller
 
 
                         $penjualan =
-                            \App\Models\Penjualan::find(
+                            Penjualan::find(
                                 $detail->penjualan_id
                             );
 
 
-                        $diskonPersen = 0;
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DISKON NOMINAL
+                        |--------------------------------------------------------------------------
+                        */
 
+                        $nominalDiskon = 0;
 
                         if ($penjualan) {
 
-                            $diskonPersen =
+                            $nominalDiskon =
                                 (float) (
                                     $penjualan
                                         ->getRawOriginal(
@@ -822,20 +879,46 @@ class LaporanBarangController extends Controller
                         }
 
 
-                        $diskon =
-                            $subtotal *
-                            ($diskonPersen / 100);
+                        /*
+                        |--------------------------------------------------------------------------
+                        | BATASI DISKON
+                        |--------------------------------------------------------------------------
+                        */
 
+                        $nominalDiskon =
+                            min(
+                                max(0, $nominalDiskon),
+                                $subtotal
+                            );
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | TOTAL SETELAH DISKON
+                        |--------------------------------------------------------------------------
+                        */
 
                         $bersih =
                             $subtotal -
-                            $diskon;
+                            $nominalDiskon;
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | MODAL
+                        |--------------------------------------------------------------------------
+                        */
 
                         $modal =
                             $jumlahPcs *
                             $modalPerPcs;
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | KEUNTUNGAN
+                        |--------------------------------------------------------------------------
+                        */
 
                         $keuntungan +=
                             $bersih -
@@ -867,9 +950,17 @@ class LaporanBarangController extends Controller
                 |--------------------------------------------------------------------------
                 */
 
-                fputcsv($handle, []);
+                fputcsv(
+                    $handle,
+                    []
+                );
 
-                fputcsv($handle, []);
+
+                fputcsv(
+                    $handle,
+                    []
+                );
+
 
                 fputcsv(
                     $handle,
@@ -910,12 +1001,17 @@ class LaporanBarangController extends Controller
                         );
 
 
-                    $diskonPersen = 0;
+                    /*
+                    |--------------------------------------------------------------------------
+                    | DISKON NOMINAL
+                    |--------------------------------------------------------------------------
+                    */
 
+                    $nominalDiskon = 0;
 
                     if ($penjualan) {
 
-                        $diskonPersen =
+                        $nominalDiskon =
                             (float) (
                                 $penjualan
                                     ->getRawOriginal(
@@ -926,15 +1022,35 @@ class LaporanBarangController extends Controller
                     }
 
 
-                    $diskon =
-                        $subtotal *
-                        ($diskonPersen / 100);
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BATASI DISKON
+                    |--------------------------------------------------------------------------
+                    */
 
+                    $nominalDiskon =
+                        min(
+                            max(0, $nominalDiskon),
+                            $subtotal
+                        );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | TOTAL SETELAH DISKON
+                    |--------------------------------------------------------------------------
+                    */
 
                     $total =
                         $subtotal -
-                        $diskon;
+                        $nominalDiskon;
 
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | TANGGAL
+                    |--------------------------------------------------------------------------
+                    */
 
                     $tanggal = '';
 
@@ -952,6 +1068,12 @@ class LaporanBarangController extends Controller
                     }
 
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | EXPORT CSV
+                    |--------------------------------------------------------------------------
+                    */
+
                     fputcsv(
                         $handle,
                         [
@@ -964,7 +1086,7 @@ class LaporanBarangController extends Controller
                             $detail->jumlah_pcs ?? 0,
                             $detail->harga ?? 0,
                             $subtotal,
-                            $diskonPersen . '%',
+                            $nominalDiskon,
                             $total
                         ]
                     );

@@ -806,35 +806,18 @@
                         </td>
 
 
-                        {{-- DISKON --}}
-                        <td class="discount-cell">
+                  {{-- DISKON --}}
+<td class="discount-cell">
 
-                            {{ number_format(
-                                $detail->laporan_diskon_persen ?? 0,
-                                0,
-                                ',',
-                                '.'
-                            ) }}%
+    Rp
+    {{ number_format(
+        $detail->laporan_diskon_nominal ?? 0,
+        0,
+        ',',
+        '.'
+    ) }}
 
-                            @if(
-                                ($detail->laporan_diskon_nominal ?? 0) > 0
-                            )
-
-                                <span class="discount-detail">
-
-                                    - Rp
-                                    {{ number_format(
-                                        $detail->laporan_diskon_nominal,
-                                        0,
-                                        ',',
-                                        '.'
-                                    ) }}
-
-                                </span>
-
-                            @endif
-
-                        </td>
+</td>
 
 
                         {{-- TOTAL SETELAH DISKON --}}

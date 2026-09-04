@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Buat Nota')
@@ -7,48 +6,51 @@
 
 <div class="mb-4">
 
-    <h3 class="fw-bold mb-1">
-        🧾 Buat Nota
-    </h3>
 
-    <p class="text-muted mb-0">
-        Masukkan data penjualan customer
-    </p>
+<h3 class="fw-bold mb-1">
+    🧾 Buat Nota
+</h3>
+
+<p class="text-muted mb-0">
+    Masukkan data penjualan customer
+</p>
+
 
 </div>
 
-
 {{-- =========================================================
-     PESAN ERROR
+PESAN ERROR
 ========================================================= --}}
 
 @if(session('error'))
 
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
+
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+
 
 @endif
-
 
 @if($errors->any())
 
-    <div class="alert alert-danger">
 
-        <ul class="mb-0">
+<div class="alert alert-danger">
 
-            @foreach($errors->all() as $error)
+    <ul class="mb-0">
 
-                <li>{{ $error }}</li>
+        @foreach($errors->all() as $error)
 
-            @endforeach
+            <li>{{ $error }}</li>
 
-        </ul>
+        @endforeach
 
-    </div>
+    </ul>
+
+</div>
+
 
 @endif
-
 
 <form
     action="{{ route('penjualan.store') }}"
@@ -58,64 +60,217 @@
 
 @csrf
 
-
 {{-- =========================================================
-     INFORMASI CUSTOMER
+INFORMASI CUSTOMER
 ========================================================= --}}
 
 <div class="card shadow-sm mb-4">
 
-    <div class="card-body">
 
-        <h5 class="section-title mb-3">
-            Informasi Customer
-        </h5>
+<div class="card-body">
 
-        <div class="row g-3">
+    <h5 class="section-title mb-3">
+        Informasi Customer
+    </h5>
 
-            {{-- NAMA CUSTOMER --}}
+    <div class="row g-3">
 
-            <div class="col-md-6">
+        {{-- NAMA CUSTOMER --}}
+
+        <div class="col-md-6">
+
+            <label class="form-label fw-semibold">
+                Nama Customer
+            </label>
+
+            <input
+                type="text"
+                name="nama_customer"
+                class="form-control input-tegas"
+                value="{{ old('nama_customer') }}"
+                placeholder="Contoh: Toko Jaya"
+                required
+            >
+
+        </div>
+
+
+        {{-- TANGGAL --}}
+
+        <div class="col-md-6">
+
+            <label class="form-label fw-semibold">
+                Tanggal & Jam Penjualan
+            </label>
+
+            <input
+                type="datetime-local"
+                name="tanggal_penjualan"
+                id="tanggal_penjualan"
+                class="form-control input-tegas"
+                value="{{ old(
+                    'tanggal_penjualan',
+                    now()->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')
+                ) }}"
+                required
+            >
+
+            <small class="text-muted">
+                Waktu Indonesia Barat (WIB)
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{{-- =========================================================
+BARANG YANG DIBELI
+========================================================= --}}
+
+<div class="card shadow-sm mb-4">
+
+
+<div class="card-body">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+
+            <h5 class="section-title mb-1">
+                Barang yang Dibeli
+            </h5>
+
+            <small class="text-muted">
+                Masukkan jumlah koli atau PCS yang dijual
+            </small>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-outline-primary btn-sm"
+            onclick="tambahBarang()"
+        >
+            + Tambah Barang
+        </button>
+
+    </div>
+
+
+    <div id="barang-container">
+
+        <div class="barang-row row g-2 mb-3 align-items-end">
+
+            {{-- BARANG --}}
+
+            <div class="col-lg-5 col-md-12">
 
                 <label class="form-label fw-semibold">
-                    Nama Customer
+                    Barang
+                </label>
+
+                <select
+                    name="barang_id[]"
+                    class="form-select barang-select input-tegas"
+                    required
+                >
+
+                    <option value="">
+                        -- Pilih Barang --
+                    </option>
+
+                    @foreach($barangs as $barang)
+
+                        <option
+                            value="{{ $barang->id }}"
+                            data-harga="{{ $barang->barangMasuks->sortByDesc('tanggal_input')->first()?->harga_jual_pcs ?? 0 }}"
+                            data-koli="{{ $barang->pcs_per_koli }}"
+                        >
+
+                            {{ $barang->nama_barang }}
+
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+            </div>
+
+
+            {{-- KOLI --}}
+
+            <div class="col-lg-2 col-md-4">
+
+                <label class="form-label fw-semibold">
+                    Koli
+                </label>
+
+                <input
+                    type="number"
+                    name="jumlah_koli[]"
+                    class="form-control jumlah-koli input-tegas angka-input"
+                    value="0"
+                    min="0"
+                >
+
+            </div>
+
+
+            {{-- PCS --}}
+
+            <div class="col-lg-2 col-md-4">
+
+                <label class="form-label fw-semibold">
+                    PCS
+                </label>
+
+                <input
+                    type="number"
+                    name="jumlah_pcs[]"
+                    class="form-control jumlah-pcs input-tegas angka-input"
+                    value="0"
+                    min="0"
+                >
+
+            </div>
+
+
+            {{-- HARGA PCS --}}
+
+            <div class="col-lg-2 col-md-4">
+
+                <label class="form-label fw-semibold">
+                    Harga / PCS
                 </label>
 
                 <input
                     type="text"
-                    name="nama_customer"
-                    class="form-control input-tegas"
-                    value="{{ old('nama_customer') }}"
-                    placeholder="Contoh: Toko Jaya"
-                    required
+                    class="form-control harga-display input-tegas harga-readonly"
+                    value="Rp 0"
+                    readonly
                 >
 
             </div>
 
 
-            {{-- TANGGAL --}}
+            {{-- RESET --}}
 
-            <div class="col-md-6">
+            <div class="col-lg-1 col-md-12">
 
-                <label class="form-label fw-semibold">
-                    Tanggal & Jam Penjualan
-                </label>
-
-                <input
-                    type="datetime-local"
-                    name="tanggal_penjualan"
-                    id="tanggal_penjualan"
-                    class="form-control input-tegas"
-                    value="{{ old(
-                        'tanggal_penjualan',
-                        now()->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')
-                    ) }}"
-                    required
+                <button
+                    type="button"
+                    class="btn btn-outline-danger w-100 btn-reset"
+                    onclick="hapusBarang(this)"
+                    title="Reset barang"
                 >
-
-                <small class="text-muted">
-                    Waktu Indonesia Barat (WIB)
-                </small>
+                    Reset
+                </button>
 
             </div>
 
@@ -123,243 +278,95 @@
 
     </div>
 
-</div>
 
+    <div class="alert alert-light border mt-3 mb-0">
 
+        <small class="text-muted">
 
-{{-- =========================================================
-     BARANG YANG DIBELI
-========================================================= --}}
+            <strong>Perhitungan:</strong>
 
-<div class="card shadow-sm mb-4">
+            Total PCS =
+            (Koli × PCS per Koli) + PCS tambahan.
 
-    <div class="card-body">
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-
-            <div>
-
-                <h5 class="section-title mb-1">
-                    Barang yang Dibeli
-                </h5>
-
-                <small class="text-muted">
-                    Masukkan jumlah koli atau PCS yang dijual
-                </small>
-
-            </div>
-
-            <button
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                onclick="tambahBarang()"
-            >
-                + Tambah Barang
-            </button>
-
-        </div>
-
-
-        <div id="barang-container">
-
-            <div class="barang-row row g-2 mb-3 align-items-end">
-
-                {{-- BARANG --}}
-
-                <div class="col-lg-5 col-md-12">
-
-                    <label class="form-label fw-semibold">
-                        Barang
-                    </label>
-
-                    <select
-                        name="barang_id[]"
-                        class="form-select barang-select input-tegas"
-                        required
-                    >
-
-                        <option value="">
-                            -- Pilih Barang --
-                        </option>
-
-                        @foreach($barangs as $barang)
-
-                            <option
-                                value="{{ $barang->id }}"
-                                data-harga="{{ $barang->barangMasuks->sortByDesc('tanggal_input')->first()?->harga_jual_pcs ?? 0 }}"
-                                data-koli="{{ $barang->pcs_per_koli }}"
-                            >
-
-                                {{ $barang->nama_barang }}
-
-                            </option>
-
-                        @endforeach
-
-                    </select>
-
-                </div>
-
-
-                {{-- KOLI --}}
-
-                <div class="col-lg-2 col-md-4">
-
-                    <label class="form-label fw-semibold">
-                        Koli
-                    </label>
-
-                    <input
-                        type="number"
-                        name="jumlah_koli[]"
-                        class="form-control jumlah-koli input-tegas angka-input"
-                        value="0"
-                        min="0"
-                    >
-
-                </div>
-
-
-                {{-- PCS --}}
-
-                <div class="col-lg-2 col-md-4">
-
-                    <label class="form-label fw-semibold">
-                        PCS
-                    </label>
-
-                    <input
-                        type="number"
-                        name="jumlah_pcs[]"
-                        class="form-control jumlah-pcs input-tegas angka-input"
-                        value="0"
-                        min="0"
-                    >
-
-                </div>
-
-
-                {{-- HARGA PCS --}}
-
-                <div class="col-lg-2 col-md-4">
-
-                    <label class="form-label fw-semibold">
-                        Harga / PCS
-                    </label>
-
-                    <input
-                        type="text"
-                        class="form-control harga-display input-tegas harga-readonly"
-                        value="Rp 0"
-                        readonly
-                    >
-
-                </div>
-
-
-                {{-- RESET --}}
-
-                <div class="col-lg-1 col-md-12">
-
-                    <button
-                        type="button"
-                        class="btn btn-outline-danger w-100 btn-reset"
-                        onclick="hapusBarang(this)"
-                        title="Reset barang"
-                    >
-                        Reset
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="alert alert-light border mt-3 mb-0">
-
-            <small class="text-muted">
-
-                <strong>Perhitungan:</strong>
-
-                Total PCS =
-                (Koli × PCS per Koli) + PCS tambahan.
-
-            </small>
-
-        </div>
+        </small>
 
     </div>
 
 </div>
 
 
+</div>
 
 {{-- =========================================================
-     RINGKASAN PEMBAYARAN
+RINGKASAN PEMBAYARAN
 ========================================================= --}}
 
 <div class="card shadow-sm mb-4 payment-card">
 
-    <div class="card-body p-4">
+<div class="card-body p-4">
 
-        <div class="payment-header mb-4">
+    <div class="payment-header mb-4">
 
-            <h5 class="section-title mb-1">
-                💰 Ringkasan Pembayaran
-            </h5>
+        <h5 class="section-title mb-1">
+            💰 Ringkasan Pembayaran
+        </h5>
 
-            <small class="text-muted">
-                Periksa total pembayaran sebelum menyimpan nota.
-            </small>
+        <small class="text-muted">
+            Periksa total pembayaran sebelum menyimpan nota.
+        </small>
+
+    </div>
+
+
+    <div class="payment-summary">
+
+
+        {{-- SUBTOTAL --}}
+
+        <div class="payment-row">
+
+            <div class="payment-label">
+                Subtotal
+            </div>
+
+            <strong
+                id="subtotal-display"
+                class="payment-value"
+            >
+                Rp 0
+            </strong>
 
         </div>
 
 
-        <div class="payment-summary">
 
+        {{-- DISKON NOMINAL --}}
 
-            {{-- SUBTOTAL --}}
+        <div class="payment-row">
 
-            <div class="payment-row">
+            <div class="payment-label-box">
 
-                <div class="payment-label">
-                    Subtotal
-                </div>
-
-                <strong
-                    id="subtotal-display"
-                    class="payment-value"
+                <label
+                    for="diskon"
+                    class="payment-label fw-semibold mb-1"
                 >
-                    Rp 0
-                </strong>
+                    Diskon
+                </label>
+
+                <small class="text-muted d-block">
+                    Masukkan nominal potongan diskon dalam Rupiah.
+                </small>
 
             </div>
 
 
+            <div class="diskon-input">
 
-            {{-- DISKON --}}
+                <div class="input-group">
 
-            <div class="payment-row">
-
-                <div class="payment-label-box">
-
-                    <label
-                        for="diskon"
-                        class="payment-label fw-semibold mb-1"
-                    >
-                        Diskon
-                    </label>
-
-                    <small class="text-muted d-block">
-                        Masukkan diskon antara 0% sampai 100%.
-                    </small>
-
-                </div>
-
-
-                <div class="diskon-input">
+                    <span class="input-group-text">
+                        Rp
+                    </span>
 
                     <input
                         type="number"
@@ -368,208 +375,200 @@
                         class="form-control input-tegas text-end"
                         value="{{ old('diskon', 0) }}"
                         min="0"
-                        max="100"
-                        step="0.01"
+                        step="1"
+                        placeholder="0"
                     >
 
-                    <span class="diskon-percent">
-                        %
-                    </span>
-
                 </div>
 
             </div>
-
-
-
-            {{-- POTONGAN DISKON --}}
-
-            <div class="payment-row">
-
-                <div class="payment-label text-muted">
-                    Potongan Diskon
-                </div>
-
-                <span
-                    class="payment-value text-danger"
-                    id="diskon-display"
-                >
-                    - Rp 0
-                </span>
-
-            </div>
-
-
-
-            {{-- TOTAL --}}
-
-            <div class="payment-total-box">
-
-                <div>
-
-                    <div class="payment-total-label">
-                        TOTAL YANG HARUS DIBAYAR
-                    </div>
-
-                    <small class="text-muted">
-                        Setelah potongan diskon
-                    </small>
-
-                </div>
-
-                <strong
-                    class="payment-total-value"
-                    id="total-display"
-                >
-                    Rp 0
-                </strong>
-
-            </div>
-
-
-
-            {{-- PEMBAYARAN CUSTOMER --}}
-
-            <div class="payment-section">
-
-                <div class="payment-section-title">
-                    Pembayaran Customer
-                </div>
-
-
-                {{-- BAYAR CASH --}}
-
-                <div class="payment-field">
-
-                    <label
-                        for="bayar_cash"
-                        class="form-label fw-semibold"
-                    >
-                        Bayar Cash
-                    </label>
-
-                    <div class="input-group input-tegas-group">
-
-                        <span class="input-group-text">
-                            Rp
-                        </span>
-
-                        <input
-                            type="number"
-                            name="bayar_cash"
-                            id="bayar_cash"
-                            class="form-control input-tegas"
-                            value="{{ old('bayar_cash', 0) }}"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                        >
-
-                    </div>
-
-                    <small class="text-muted">
-                        Masukkan jumlah uang yang dibayarkan customer.
-                    </small>
-
-                </div>
-
-
-
-                {{-- HUTANG --}}
-
-                <div class="payment-field hutang-field">
-
-                    <label
-                        for="hutang"
-                        class="form-label fw-semibold"
-                    >
-                        Hutang
-                    </label>
-
-                    <div class="input-group input-tegas-group">
-
-                        <span class="input-group-text">
-                            Rp
-                        </span>
-
-                        <input
-                            type="number"
-                            name="hutang"
-                            id="hutang"
-                            class="form-control input-tegas"
-                            value="0"
-                            readonly
-                        >
-
-                    </div>
-
-                    <small
-                        class="text-muted"
-                        id="hutang-keterangan"
-                    >
-                        Tidak ada hutang.
-                    </small>
-
-                </div>
-
-            </div>
-
-
-
-            {{-- STATUS PEMBAYARAN --}}
-
-            <div
-                id="status-pembayaran"
-                class="alert alert-success payment-status mb-0"
-            >
-                ✓ Pembayaran lunas.
-            </div>
-
 
         </div>
+
+
+
+        {{-- POTONGAN DISKON --}}
+
+        <div class="payment-row">
+
+            <div class="payment-label text-muted">
+                Potongan Diskon
+            </div>
+
+            <span
+                class="payment-value text-danger"
+                id="diskon-display"
+            >
+                - Rp 0
+            </span>
+
+        </div>
+
+
+
+        {{-- TOTAL --}}
+
+        <div class="payment-total-box">
+
+            <div>
+
+                <div class="payment-total-label">
+                    TOTAL YANG HARUS DIBAYAR
+                </div>
+
+                <small class="text-muted">
+                    Setelah potongan diskon
+                </small>
+
+            </div>
+
+            <strong
+                class="payment-total-value"
+                id="total-display"
+            >
+                Rp 0
+            </strong>
+
+        </div>
+
+
+
+        {{-- PEMBAYARAN CUSTOMER --}}
+
+        <div class="payment-section">
+
+            <div class="payment-section-title">
+                Pembayaran Customer
+            </div>
+
+
+            {{-- BAYAR CASH --}}
+
+            <div class="payment-field">
+
+                <label
+                    for="bayar_cash"
+                    class="form-label fw-semibold"
+                >
+                    Bayar Cash
+                </label>
+
+                <div class="input-group input-tegas-group">
+
+                    <span class="input-group-text">
+                        Rp
+                    </span>
+
+                    <input
+                        type="number"
+                        name="bayar_cash"
+                        id="bayar_cash"
+                        class="form-control input-tegas"
+                        value="{{ old('bayar_cash', 0) }}"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <small class="text-muted">
+                    Masukkan jumlah uang yang dibayarkan customer.
+                </small>
+
+            </div>
+
+
+
+            {{-- HUTANG --}}
+
+            <div class="payment-field hutang-field">
+
+                <label
+                    for="hutang"
+                    class="form-label fw-semibold"
+                >
+                    Hutang
+                </label>
+
+                <div class="input-group input-tegas-group">
+
+                    <span class="input-group-text">
+                        Rp
+                    </span>
+
+                    <input
+                        type="number"
+                        name="hutang"
+                        id="hutang"
+                        class="form-control input-tegas"
+                        value="0"
+                        readonly
+                    >
+
+                </div>
+
+                <small
+                    class="text-muted"
+                    id="hutang-keterangan"
+                >
+                    Tidak ada hutang.
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        {{-- STATUS PEMBAYARAN --}}
+
+        <div
+            id="status-pembayaran"
+            class="alert alert-success payment-status mb-0"
+        >
+            ✓ Pembayaran lunas.
+        </div>
+
 
     </div>
 
 </div>
 
 
+</div>
 
 {{-- =========================================================
-     BUTTON
+BUTTON
 ========================================================= --}}
 
 <div class="d-flex justify-content-end gap-2 mb-4">
 
-    <a
-        href="{{ route('penjualan.index') }}"
-        class="btn btn-outline-secondary px-4"
-    >
-        Batal
-    </a>
 
-    <button
-        type="submit"
-        class="btn btn-primary px-4"
-    >
-        💾 Simpan & Buat Nota
-    </button>
+<a
+    href="{{ route('penjualan.index') }}"
+    class="btn btn-outline-secondary px-4"
+>
+    Batal
+</a>
+
+<button
+    type="submit"
+    class="btn btn-primary px-4"
+>
+    💾 Simpan & Buat Nota
+</button>
+
 
 </div>
 
-
 </form>
 
-
-
 {{-- =========================================================
-     STYLE
+STYLE
 ========================================================= --}}
 
 <style>
-
-/* =========================================================
-   INPUT LEBIH JELAS
-========================================================= */
 
 .input-tegas {
 
@@ -593,16 +592,12 @@
 }
 
 
-/* INPUT HOVER */
-
 .input-tegas:hover {
 
     border-color: #94a3b8 !important;
 
 }
 
-
-/* INPUT SAAT DIKLIK */
 
 .input-tegas:focus {
 
@@ -616,8 +611,6 @@
 }
 
 
-/* SELECT */
-
 select.input-tegas {
 
     cursor: pointer;
@@ -627,8 +620,6 @@ select.input-tegas {
 }
 
 
-/* INPUT ANGKA */
-
 .angka-input {
 
     text-align: center;
@@ -637,8 +628,6 @@ select.input-tegas {
 
 }
 
-
-/* INPUT READONLY */
 
 .harga-readonly {
 
@@ -651,10 +640,6 @@ select.input-tegas {
 }
 
 
-/* =========================================================
-   LABEL
-========================================================= */
-
 .form-label {
 
     color: #334155;
@@ -664,10 +649,6 @@ select.input-tegas {
 }
 
 
-/* =========================================================
-   SECTION TITLE
-========================================================= */
-
 .section-title {
 
     color: #0d47a1;
@@ -676,10 +657,6 @@ select.input-tegas {
 
 }
 
-
-/* =========================================================
-   PAYMENT CARD
-========================================================= */
 
 .payment-card {
 
@@ -699,20 +676,12 @@ select.input-tegas {
 }
 
 
-/* =========================================================
-   PAYMENT SUMMARY
-========================================================= */
-
 .payment-summary {
 
     width: 100%;
 
 }
 
-
-/* =========================================================
-   PAYMENT ROW
-========================================================= */
 
 .payment-row {
 
@@ -767,12 +736,10 @@ select.input-tegas {
 
 
 /* =========================================================
-   DISKON
+   DISKON NOMINAL
 ========================================================= */
 
 .diskon-input {
-
-    position: relative;
 
     width: 260px;
 
@@ -781,32 +748,35 @@ select.input-tegas {
 }
 
 
-.diskon-input input {
+.diskon-input .input-group {
 
     width: 100%;
-
-    height: 44px;
-
-    padding-right: 40px;
 
 }
 
 
-.diskon-percent {
+.diskon-input .input-group-text {
 
-    position: absolute;
+    height: 44px;
 
-    right: 13px;
+    background-color: #f1f5f9;
 
-    top: 50%;
+    border: 2px solid #cbd5e1;
 
-    transform: translateY(-50%);
+    border-right: 0;
 
-    color: #6c757d;
+    font-weight: 700;
 
-    pointer-events: none;
+    color: #334155;
 
-    font-weight: 600;
+}
+
+
+.diskon-input input {
+
+    height: 44px;
+
+    border-left: 0 !important;
 
 }
 
@@ -866,10 +836,6 @@ select.input-tegas {
 }
 
 
-/* =========================================================
-   PAYMENT SECTION
-========================================================= */
-
 .payment-section {
 
     width: 100%;
@@ -903,10 +869,6 @@ select.input-tegas {
 
 }
 
-
-/* =========================================================
-   PAYMENT FIELD
-========================================================= */
 
 .payment-field {
 
@@ -1012,10 +974,6 @@ select.input-tegas {
 }
 
 
-/* =========================================================
-   STATUS PEMBAYARAN
-========================================================= */
-
 .payment-status {
 
     width: 100%;
@@ -1028,10 +986,6 @@ select.input-tegas {
 
 }
 
-
-/* =========================================================
-   BARANG
-========================================================= */
 
 .barang-row {
 
@@ -1063,10 +1017,6 @@ select.input-tegas {
 
 }
 
-
-/* =========================================================
-   TOMBOL
-========================================================= */
 
 .btn-primary {
 
@@ -1204,10 +1154,8 @@ select.input-tegas {
 
 </style>
 
-
-
 {{-- =========================================================
-     JAVASCRIPT
+JAVASCRIPT
 ========================================================= --}}
 
 <script>
@@ -1302,7 +1250,7 @@ function hitungTotal()
 
     /*
     |--------------------------------------------------------------------------
-    | DISKON
+    | DISKON NOMINAL
     |--------------------------------------------------------------------------
     */
 
@@ -1313,23 +1261,28 @@ function hitungTotal()
 
 
     if (diskon < 0) {
+
         diskon = 0;
+
+        document.getElementById('diskon').value = 0;
+
     }
 
 
-    if (diskon > 100) {
-        diskon = 100;
+    if (diskon > subtotal) {
+
+        diskon = subtotal;
+
+        document.getElementById('diskon').value =
+            Math.round(subtotal);
+
     }
-
-
-    const jumlahDiskon =
-        subtotal * (diskon / 100);
 
 
     const total =
         Math.max(
             0,
-            subtotal - jumlahDiskon
+            subtotal - diskon
         );
 
 
@@ -1342,7 +1295,7 @@ function hitungTotal()
     document.getElementById(
         'diskon-display'
     ).textContent =
-        '- ' + formatRupiah(jumlahDiskon);
+        '- ' + formatRupiah(diskon);
 
 
     document.getElementById(
