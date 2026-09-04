@@ -30,18 +30,25 @@ class PenjualanController extends Controller
      * Form membuat penjualan / nota
      */
     public function create()
-    {
-        $barangs = Barang::whereHas('barangMasuks')
-            ->with('barangMasuks')
-            ->orderBy('nama_barang')
-            ->get();
+{
+    $barangs = Barang::whereHas('barangMasuks')
+        ->with('barangMasuks')
+        ->orderBy('nama_barang')
+        ->get();
 
-        return view(
-            'penjualan.create',
-            compact('barangs')
-        );
+    foreach ($barangs as $barang) {
+
+        $stok = $this->getStokBarang($barang->id);
+
+        $barang->stok_koli = $stok['koli'];
+        $barang->stok_pcs = $stok['pcs'];
     }
 
+    return view(
+        'penjualan.create',
+        compact('barangs')
+    );
+}
 
     /**
      * Mengecek stok barang

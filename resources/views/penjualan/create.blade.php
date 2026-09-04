@@ -4,1622 +4,1518 @@
 
 @section('content')
 
-<div class="mb-4">
+    <div class="mb-4">
 
 
-<h3 class="fw-bold mb-1">
-    🧾 Buat Nota
-</h3>
+        <h3 class="fw-bold mb-1">
+            🧾 Buat Nota
+        </h3>
 
-<p class="text-muted mb-0">
-    Masukkan data penjualan customer
-</p>
-
-
-</div>
-
-{{-- =========================================================
-PESAN ERROR
-========================================================= --}}
-
-@if(session('error'))
+        <p class="text-muted mb-0">
+            Masukkan data penjualan customer
+        </p>
 
 
-<div class="alert alert-danger">
-    {{ session('error') }}
-</div>
+    </div>
+
+    {{-- =========================================================
+    PESAN ERROR
+    ========================================================= --}}
+
+    @if(session('error'))
 
 
-@endif
-
-@if($errors->any())
-
-
-<div class="alert alert-danger">
-
-    <ul class="mb-0">
-
-        @foreach($errors->all() as $error)
-
-            <li>{{ $error }}</li>
-
-        @endforeach
-
-    </ul>
-
-</div>
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
 
 
-@endif
+    @endif
 
-<form
-    action="{{ route('penjualan.store') }}"
-    method="POST"
-    id="form-penjualan"
->
-
-@csrf
-
-{{-- =========================================================
-INFORMASI CUSTOMER
-========================================================= --}}
-
-<div class="card shadow-sm mb-4">
+    @if($errors->any())
 
 
-<div class="card-body">
+        <div class="alert alert-danger">
 
-    <h5 class="section-title mb-3">
-        Informasi Customer
-    </h5>
+            <ul class="mb-0">
 
-    <div class="row g-3">
+                @foreach($errors->all() as $error)
 
-        {{-- NAMA CUSTOMER --}}
+                    <li>{{ $error }}</li>
 
-        <div class="col-md-6">
+                @endforeach
 
-            <label class="form-label fw-semibold">
-                Nama Customer
-            </label>
-
-            <input
-                type="text"
-                name="nama_customer"
-                class="form-control input-tegas"
-                value="{{ old('nama_customer') }}"
-                placeholder="Contoh: Toko Jaya"
-                required
-            >
+            </ul>
 
         </div>
 
 
-        {{-- TANGGAL --}}
+    @endif
 
-        <div class="col-md-6">
+    <form action="{{ route('penjualan.store') }}" method="POST" id="form-penjualan">
 
-            <label class="form-label fw-semibold">
-                Tanggal & Jam Penjualan
-            </label>
+        @csrf
 
-            <input
-                type="datetime-local"
-                name="tanggal_penjualan"
-                id="tanggal_penjualan"
-                class="form-control input-tegas"
-                value="{{ old(
-                    'tanggal_penjualan',
-                    now()->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')
-                ) }}"
-                required
-            >
+        {{-- =========================================================
+        INFORMASI CUSTOMER
+        ========================================================= --}}
 
-            <small class="text-muted">
-                Waktu Indonesia Barat (WIB)
-            </small>
+        <div class="card shadow-sm mb-4">
 
-        </div>
 
-    </div>
+            <div class="card-body">
 
-</div>
+                <h5 class="section-title mb-3">
+                    Informasi Customer
+                </h5>
 
+                <div class="row g-3">
 
-</div>
+                    {{-- NAMA CUSTOMER --}}
 
-{{-- =========================================================
-BARANG YANG DIBELI
-========================================================= --}}
+                    <div class="col-md-6">
 
-<div class="card shadow-sm mb-4">
+                        <label class="form-label fw-semibold">
+                            Nama Customer
+                        </label>
 
+                        <input type="text" name="nama_customer" class="form-control input-tegas"
+                            value="{{ old('nama_customer') }}" placeholder="Contoh: Toko Jaya" required>
 
-<div class="card-body">
+                    </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <div>
+                    {{-- TANGGAL --}}
 
-            <h5 class="section-title mb-1">
-                Barang yang Dibeli
-            </h5>
+                    <div class="col-md-6">
 
-            <small class="text-muted">
-                Masukkan jumlah koli atau PCS yang dijual
-            </small>
+                        <label class="form-label fw-semibold">
+                            Tanggal & Jam Penjualan
+                        </label>
 
-        </div>
+                        <input type="datetime-local" name="tanggal_penjualan" id="tanggal_penjualan"
+                            class="form-control input-tegas" value="{{ old(
+        'tanggal_penjualan',
+        now()->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')
+    ) }}" required>
 
-        <button
-            type="button"
-            class="btn btn-outline-primary btn-sm"
-            onclick="tambahBarang()"
-        >
-            + Tambah Barang
-        </button>
+                        <small class="text-muted">
+                            Waktu Indonesia Barat (WIB)
+                        </small>
 
-    </div>
-
-
-    <div id="barang-container">
-
-        <div class="barang-row row g-2 mb-3 align-items-end">
-
-            {{-- BARANG --}}
-
-            <div class="col-lg-5 col-md-12">
-
-                <label class="form-label fw-semibold">
-                    Barang
-                </label>
-
-                <select
-                    name="barang_id[]"
-                    class="form-select barang-select input-tegas"
-                    required
-                >
-
-                    <option value="">
-                        -- Pilih Barang --
-                    </option>
-
-                    @foreach($barangs as $barang)
-
-                        <option
-                            value="{{ $barang->id }}"
-                            data-harga="{{ $barang->barangMasuks->sortByDesc('tanggal_input')->first()?->harga_jual_pcs ?? 0 }}"
-                            data-koli="{{ $barang->pcs_per_koli }}"
-                        >
-
-                            {{ $barang->nama_barang }}
-
-                        </option>
-
-                    @endforeach
-
-                </select>
-
-            </div>
-
-
-            {{-- KOLI --}}
-
-            <div class="col-lg-2 col-md-4">
-
-                <label class="form-label fw-semibold">
-                    Koli
-                </label>
-
-                <input
-                    type="number"
-                    name="jumlah_koli[]"
-                    class="form-control jumlah-koli input-tegas angka-input"
-                    value="0"
-                    min="0"
-                >
-
-            </div>
-
-
-            {{-- PCS --}}
-
-            <div class="col-lg-2 col-md-4">
-
-                <label class="form-label fw-semibold">
-                    PCS
-                </label>
-
-                <input
-                    type="number"
-                    name="jumlah_pcs[]"
-                    class="form-control jumlah-pcs input-tegas angka-input"
-                    value="0"
-                    min="0"
-                >
-
-            </div>
-
-
-            {{-- HARGA PCS --}}
-
-            <div class="col-lg-2 col-md-4">
-
-                <label class="form-label fw-semibold">
-                    Harga / PCS
-                </label>
-
-                <input
-                    type="text"
-                    class="form-control harga-display input-tegas harga-readonly"
-                    value="Rp 0"
-                    readonly
-                >
-
-            </div>
-
-
-            {{-- RESET --}}
-
-            <div class="col-lg-1 col-md-12">
-
-                <button
-                    type="button"
-                    class="btn btn-outline-danger w-100 btn-reset"
-                    onclick="hapusBarang(this)"
-                    title="Reset barang"
-                >
-                    Reset
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="alert alert-light border mt-3 mb-0">
-
-        <small class="text-muted">
-
-            <strong>Perhitungan:</strong>
-
-            Total PCS =
-            (Koli × PCS per Koli) + PCS tambahan.
-
-        </small>
-
-    </div>
-
-</div>
-
-
-</div>
-
-{{-- =========================================================
-RINGKASAN PEMBAYARAN
-========================================================= --}}
-
-<div class="card shadow-sm mb-4 payment-card">
-
-<div class="card-body p-4">
-
-    <div class="payment-header mb-4">
-
-        <h5 class="section-title mb-1">
-            💰 Ringkasan Pembayaran
-        </h5>
-
-        <small class="text-muted">
-            Periksa total pembayaran sebelum menyimpan nota.
-        </small>
-
-    </div>
-
-
-    <div class="payment-summary">
-
-
-        {{-- SUBTOTAL --}}
-
-        <div class="payment-row">
-
-            <div class="payment-label">
-                Subtotal
-            </div>
-
-            <strong
-                id="subtotal-display"
-                class="payment-value"
-            >
-                Rp 0
-            </strong>
-
-        </div>
-
-
-
-        {{-- DISKON NOMINAL --}}
-
-        <div class="payment-row">
-
-            <div class="payment-label-box">
-
-                <label
-                    for="diskon"
-                    class="payment-label fw-semibold mb-1"
-                >
-                    Diskon
-                </label>
-
-                <small class="text-muted d-block">
-                    Masukkan nominal potongan diskon dalam Rupiah.
-                </small>
-
-            </div>
-
-
-            <div class="diskon-input">
-
-                <div class="input-group">
-
-                    <span class="input-group-text">
-                        Rp
-                    </span>
-
-                    <input
-                        type="number"
-                        name="diskon"
-                        id="diskon"
-                        class="form-control input-tegas text-end"
-                        value="{{ old('diskon', 0) }}"
-                        min="0"
-                        step="1"
-                        placeholder="0"
-                    >
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
-
-
-
-        {{-- POTONGAN DISKON --}}
-
-        <div class="payment-row">
-
-            <div class="payment-label text-muted">
-                Potongan Diskon
-            </div>
-
-            <span
-                class="payment-value text-danger"
-                id="diskon-display"
-            >
-                - Rp 0
-            </span>
 
         </div>
 
+        {{-- =========================================================
+        BARANG YANG DIBELI
+        ========================================================= --}}
+
+        <div class="card shadow-sm mb-4">
 
 
-        {{-- TOTAL --}}
+            <div class="card-body">
 
-        <div class="payment-total-box">
+                <div class="d-flex justify-content-between align-items-center mb-3">
 
-            <div>
+                    <div>
 
-                <div class="payment-total-label">
-                    TOTAL YANG HARUS DIBAYAR
-                </div>
+                        <h5 class="section-title mb-1">
+                            Barang yang Dibeli
+                        </h5>
 
-                <small class="text-muted">
-                    Setelah potongan diskon
-                </small>
+                        <small class="text-muted">
+                            Masukkan jumlah koli atau PCS yang dijual
+                        </small>
 
-            </div>
+                    </div>
 
-            <strong
-                class="payment-total-value"
-                id="total-display"
-            >
-                Rp 0
-            </strong>
-
-        </div>
-
-
-
-        {{-- PEMBAYARAN CUSTOMER --}}
-
-        <div class="payment-section">
-
-            <div class="payment-section-title">
-                Pembayaran Customer
-            </div>
-
-
-            {{-- BAYAR CASH --}}
-
-            <div class="payment-field">
-
-                <label
-                    for="bayar_cash"
-                    class="form-label fw-semibold"
-                >
-                    Bayar Cash
-                </label>
-
-                <div class="input-group input-tegas-group">
-
-                    <span class="input-group-text">
-                        Rp
-                    </span>
-
-                    <input
-                        type="number"
-                        name="bayar_cash"
-                        id="bayar_cash"
-                        class="form-control input-tegas"
-                        value="{{ old('bayar_cash', 0) }}"
-                        min="0"
-                        step="1"
-                        placeholder="0"
-                    >
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="tambahBarang()">
+                        + Tambah Barang
+                    </button>
 
                 </div>
 
-                <small class="text-muted">
-                    Masukkan jumlah uang yang dibayarkan customer.
-                </small>
 
-            </div>
+                <div id="barang-container">
+
+                    <div class="barang-row row g-2 mb-3 align-items-end">
+
+                        {{-- BARANG --}}
+
+                        <div class="col-lg-5 col-md-12">
+
+                            <label class="form-label fw-semibold">
+                                Barang
+                            </label>
+
+                            <select name="barang_id[]" class="form-select barang-select input-tegas" required>
+
+                                <option value="">
+                                    -- Pilih Barang --
+                                </option>
+
+                                @foreach($barangs as $barang)
+
+                                    <option value="{{ $barang->id }}"
+                                        data-harga="{{ $barang->barangMasuks->sortByDesc('tanggal_input')->first()?->harga_jual_pcs ?? 0 }}"
+                                        data-koli="{{ $barang->pcs_per_koli }}" data-stok-koli="{{ $barang->stok_koli }}"
+                                        data-stok-pcs="{{ $barang->stok_pcs }}">
+
+                                        {{ $barang->nama_barang }}
+                                        — Stok: {{ $barang->stok_koli }} koli / {{ $barang->stok_pcs }} pcs
+
+                                    </option>
+
+                                @endforeach
+
+                            </select>
+
+                        </div>
 
 
+                        {{-- KOLI --}}
 
-            {{-- HUTANG --}}
+                        <div class="col-lg-2 col-md-4">
 
-            <div class="payment-field hutang-field">
+                            <label class="form-label fw-semibold">
+                                Koli
+                            </label>
 
-                <label
-                    for="hutang"
-                    class="form-label fw-semibold"
-                >
-                    Hutang
-                </label>
+                            <input type="number" name="jumlah_koli[]"
+                                class="form-control jumlah-koli input-tegas angka-input" value="0" min="0">
 
-                <div class="input-group input-tegas-group">
+                        </div>
 
-                    <span class="input-group-text">
-                        Rp
-                    </span>
 
-                    <input
-                        type="number"
-                        name="hutang"
-                        id="hutang"
-                        class="form-control input-tegas"
-                        value="0"
-                        readonly
-                    >
+                        {{-- PCS --}}
+
+                        <div class="col-lg-2 col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                PCS
+                            </label>
+
+                            <input type="number" name="jumlah_pcs[]" class="form-control jumlah-pcs input-tegas angka-input"
+                                value="0" min="0">
+
+                        </div>
+
+
+                        {{-- HARGA PCS --}}
+
+                        <div class="col-lg-2 col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                Harga / PCS
+                            </label>
+
+                            <input type="text" class="form-control harga-display input-tegas harga-readonly" value="Rp 0"
+                                readonly>
+
+                        </div>
+
+
+                        {{-- RESET --}}
+
+                        <div class="col-lg-1 col-md-12">
+
+                            <button type="button" class="btn btn-outline-danger w-100 btn-reset" onclick="hapusBarang(this)"
+                                title="Reset barang">
+                                Reset
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <small
-                    class="text-muted"
-                    id="hutang-keterangan"
-                >
-                    Tidak ada hutang.
-                </small>
+
+                <div class="alert alert-light border mt-3 mb-0">
+
+                    <small class="text-muted">
+
+                        <strong>Perhitungan:</strong>
+
+                        Total PCS =
+                        (Koli × PCS per Koli) + PCS tambahan.
+
+                    </small>
+
+                </div>
 
             </div>
 
+
         </div>
 
+        {{-- =========================================================
+        RINGKASAN PEMBAYARAN
+        ========================================================= --}}
+
+        <div class="card shadow-sm mb-4 payment-card">
+
+            <div class="card-body p-4">
+
+                <div class="payment-header mb-4">
+
+                    <h5 class="section-title mb-1">
+                        💰 Ringkasan Pembayaran
+                    </h5>
+
+                    <small class="text-muted">
+                        Periksa total pembayaran sebelum menyimpan nota.
+                    </small>
+
+                </div>
 
 
-        {{-- STATUS PEMBAYARAN --}}
+                <div class="payment-summary">
 
-        <div
-            id="status-pembayaran"
-            class="alert alert-success payment-status mb-0"
-        >
-            ✓ Pembayaran lunas.
+
+                    {{-- SUBTOTAL --}}
+
+                    <div class="payment-row">
+
+                        <div class="payment-label">
+                            Subtotal
+                        </div>
+
+                        <strong id="subtotal-display" class="payment-value">
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+
+                    {{-- DISKON NOMINAL --}}
+
+                    <div class="payment-row">
+
+                        <div class="payment-label-box">
+
+                            <label for="diskon" class="payment-label fw-semibold mb-1">
+                                Diskon
+                            </label>
+
+                            <small class="text-muted d-block">
+                                Masukkan nominal potongan diskon dalam Rupiah.
+                            </small>
+
+                        </div>
+
+
+                        <div class="diskon-input">
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    Rp
+                                </span>
+
+                                <input type="number" name="diskon" id="diskon" class="form-control input-tegas text-end"
+                                    value="{{ old('diskon', 0) }}" min="0" step="1" placeholder="0">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    {{-- POTONGAN DISKON --}}
+
+                    <div class="payment-row">
+
+                        <div class="payment-label text-muted">
+                            Potongan Diskon
+                        </div>
+
+                        <span class="payment-value text-danger" id="diskon-display">
+                            - Rp 0
+                        </span>
+
+                    </div>
+
+
+
+                    {{-- TOTAL --}}
+
+                    <div class="payment-total-box">
+
+                        <div>
+
+                            <div class="payment-total-label">
+                                TOTAL YANG HARUS DIBAYAR
+                            </div>
+
+                            <small class="text-muted">
+                                Setelah potongan diskon
+                            </small>
+
+                        </div>
+
+                        <strong class="payment-total-value" id="total-display">
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+
+                    {{-- PEMBAYARAN CUSTOMER --}}
+
+                    <div class="payment-section">
+
+                        <div class="payment-section-title">
+                            Pembayaran Customer
+                        </div>
+
+
+                        {{-- BAYAR CASH --}}
+
+                        <div class="payment-field">
+
+                            <label for="bayar_cash" class="form-label fw-semibold">
+                                Bayar Cash
+                            </label>
+
+                            <div class="input-group input-tegas-group">
+
+                                <span class="input-group-text">
+                                    Rp
+                                </span>
+
+                                <input type="number" name="bayar_cash" id="bayar_cash" class="form-control input-tegas"
+                                    value="{{ old('bayar_cash', 0) }}" min="0" step="1" placeholder="0">
+
+                            </div>
+
+                            <small class="text-muted">
+                                Masukkan jumlah uang yang dibayarkan customer.
+                            </small>
+
+                        </div>
+
+
+
+                        {{-- HUTANG --}}
+
+                        <div class="payment-field hutang-field">
+
+                            <label for="hutang" class="form-label fw-semibold">
+                                Hutang
+                            </label>
+
+                            <div class="input-group input-tegas-group">
+
+                                <span class="input-group-text">
+                                    Rp
+                                </span>
+
+                                <input type="number" name="hutang" id="hutang" class="form-control input-tegas" value="0"
+                                    readonly>
+
+                            </div>
+
+                            <small class="text-muted" id="hutang-keterangan">
+                                Tidak ada hutang.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    {{-- STATUS PEMBAYARAN --}}
+
+                    <div id="status-pembayaran" class="alert alert-success payment-status mb-0">
+                        ✓ Pembayaran lunas.
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
         </div>
 
+        {{-- =========================================================
+        BUTTON
+        ========================================================= --}}
 
-    </div>
+        <div class="d-flex justify-content-end gap-2 mb-4">
 
-</div>
 
+            <a href="{{ route('penjualan.index') }}" class="btn btn-outline-secondary px-4">
+                Batal
+            </a>
 
-</div>
+            <button type="submit" class="btn btn-primary px-4">
+                💾 Simpan & Buat Nota
+            </button>
 
-{{-- =========================================================
-BUTTON
-========================================================= --}}
 
-<div class="d-flex justify-content-end gap-2 mb-4">
+        </div>
 
+    </form>
 
-<a
-    href="{{ route('penjualan.index') }}"
-    class="btn btn-outline-secondary px-4"
->
-    Batal
-</a>
+    {{-- =========================================================
+    STYLE
+    ========================================================= --}}
 
-<button
-    type="submit"
-    class="btn btn-primary px-4"
->
-    💾 Simpan & Buat Nota
-</button>
+    <style>
+        .input-tegas {
 
+            min-height: 44px;
 
-</div>
+            border: 2px solid #cbd5e1 !important;
 
-</form>
+            border-radius: 8px;
 
-{{-- =========================================================
-STYLE
-========================================================= --}}
+            background-color: #ffffff;
 
-<style>
+            color: #1e293b;
 
-.input-tegas {
+            font-size: 14px;
 
-    min-height: 44px;
+            transition:
+                border-color 0.15s ease,
+                box-shadow 0.15s ease,
+                background-color 0.15s ease;
 
-    border: 2px solid #cbd5e1 !important;
+        }
 
-    border-radius: 8px;
 
-    background-color: #ffffff;
+        .input-tegas:hover {
 
-    color: #1e293b;
+            border-color: #94a3b8 !important;
 
-    font-size: 14px;
+        }
 
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        background-color 0.15s ease;
 
-}
+        .input-tegas:focus {
 
+            border-color: #0d6efd !important;
 
-.input-tegas:hover {
+            box-shadow:
+                0 0 0 3px rgba(13, 110, 253, 0.12) !important;
 
-    border-color: #94a3b8 !important;
+            outline: none;
 
-}
+        }
 
 
-.input-tegas:focus {
+        select.input-tegas {
 
-    border-color: #0d6efd !important;
+            cursor: pointer;
 
-    box-shadow:
-        0 0 0 3px rgba(13, 110, 253, 0.12) !important;
+            padding-left: 12px;
 
-    outline: none;
+        }
 
-}
 
+        .angka-input {
 
-select.input-tegas {
+            text-align: center;
 
-    cursor: pointer;
+            font-weight: 600;
 
-    padding-left: 12px;
+        }
 
-}
 
+        .harga-readonly {
 
-.angka-input {
+            background-color: #f8fafc !important;
 
-    text-align: center;
+            color: #334155 !important;
 
-    font-weight: 600;
+            font-weight: 600;
 
-}
+        }
 
 
-.harga-readonly {
+        .form-label {
 
-    background-color: #f8fafc !important;
+            color: #334155;
 
-    color: #334155 !important;
+            margin-bottom: 7px;
 
-    font-weight: 600;
+        }
 
-}
 
+        .section-title {
 
-.form-label {
+            color: #0d47a1;
 
-    color: #334155;
+            font-weight: 700;
 
-    margin-bottom: 7px;
+        }
 
-}
 
+        .payment-card {
 
-.section-title {
+            border: 0;
 
-    color: #0d47a1;
+            border-radius: 12px;
 
-    font-weight: 700;
+        }
 
-}
 
+        .payment-header {
 
-.payment-card {
+            padding-bottom: 15px;
 
-    border: 0;
+            border-bottom: 1px solid #eeeeee;
 
-    border-radius: 12px;
+        }
 
-}
 
+        .payment-summary {
 
-.payment-header {
+            width: 100%;
 
-    padding-bottom: 15px;
+        }
 
-    border-bottom: 1px solid #eeeeee;
 
-}
+        .payment-row {
 
+            display: grid;
 
-.payment-summary {
+            grid-template-columns: 1fr 260px;
 
-    width: 100%;
+            align-items: center;
 
-}
+            gap: 30px;
 
+            width: 100%;
 
-.payment-row {
+            min-height: 62px;
 
-    display: grid;
+            padding: 14px 0;
 
-    grid-template-columns: 1fr 260px;
+            border-bottom: 1px solid #eeeeee;
 
-    align-items: center;
+        }
 
-    gap: 30px;
 
-    width: 100%;
+        .payment-label-box {
 
-    min-height: 62px;
+            min-width: 0;
 
-    padding: 14px 0;
+        }
 
-    border-bottom: 1px solid #eeeeee;
 
-}
+        .payment-label {
 
+            color: #475569;
 
-.payment-label-box {
+            font-size: 14px;
 
-    min-width: 0;
+        }
 
-}
 
+        .payment-value {
 
-.payment-label {
+            display: block;
 
-    color: #475569;
+            width: 100%;
 
-    font-size: 14px;
+            text-align: right;
 
-}
+            font-size: 15px;
 
+            white-space: nowrap;
 
-.payment-value {
+        }
 
-    display: block;
 
-    width: 100%;
+        /* =========================================================
+       DISKON NOMINAL
+    ========================================================= */
 
-    text-align: right;
+        .diskon-input {
 
-    font-size: 15px;
+            width: 260px;
 
-    white-space: nowrap;
+            justify-self: end;
 
-}
+        }
 
 
-/* =========================================================
-   DISKON NOMINAL
-========================================================= */
+        .diskon-input .input-group {
 
-.diskon-input {
+            width: 100%;
 
-    width: 260px;
+        }
 
-    justify-self: end;
 
-}
+        .diskon-input .input-group-text {
 
+            height: 44px;
 
-.diskon-input .input-group {
+            background-color: #f1f5f9;
 
-    width: 100%;
+            border: 2px solid #cbd5e1;
 
-}
+            border-right: 0;
 
+            font-weight: 700;
 
-.diskon-input .input-group-text {
+            color: #334155;
 
-    height: 44px;
+        }
 
-    background-color: #f1f5f9;
 
-    border: 2px solid #cbd5e1;
+        .diskon-input input {
 
-    border-right: 0;
+            height: 44px;
 
-    font-weight: 700;
+            border-left: 0 !important;
 
-    color: #334155;
+        }
 
-}
 
+        /* =========================================================
+       TOTAL
+    ========================================================= */
 
-.diskon-input input {
+        .payment-total-box {
 
-    height: 44px;
+            display: grid;
 
-    border-left: 0 !important;
+            grid-template-columns: 1fr 260px;
 
-}
+            align-items: center;
 
+            gap: 30px;
 
-/* =========================================================
-   TOTAL
-========================================================= */
+            width: 100%;
 
-.payment-total-box {
+            margin-top: 20px;
 
-    display: grid;
+            padding: 20px 22px;
 
-    grid-template-columns: 1fr 260px;
+            background: #f8fafc;
 
-    align-items: center;
+            border: 1px solid #cbd5e1;
 
-    gap: 30px;
+            border-radius: 10px;
 
-    width: 100%;
+        }
 
-    margin-top: 20px;
 
-    padding: 20px 22px;
+        .payment-total-label {
 
-    background: #f8fafc;
+            font-weight: 700;
 
-    border: 1px solid #cbd5e1;
+            font-size: 14px;
 
-    border-radius: 10px;
+            color: #334155;
 
-}
+        }
 
 
-.payment-total-label {
+        .payment-total-value {
 
-    font-weight: 700;
+            width: 100%;
 
-    font-size: 14px;
+            text-align: right;
 
-    color: #334155;
+            color: #0d6efd;
 
-}
+            font-size: 21px;
 
+            white-space: nowrap;
 
-.payment-total-value {
+        }
 
-    width: 100%;
 
-    text-align: right;
+        .payment-section {
 
-    color: #0d6efd;
+            width: 100%;
 
-    font-size: 21px;
+            margin-top: 24px;
 
-    white-space: nowrap;
+            padding: 22px;
 
-}
+            background: #ffffff;
 
+            border: 2px solid #dbe3ec;
 
-.payment-section {
+            border-radius: 10px;
 
-    width: 100%;
+        }
 
-    margin-top: 24px;
 
-    padding: 22px;
+        .payment-section-title {
 
-    background: #ffffff;
+            font-weight: 700;
 
-    border: 2px solid #dbe3ec;
+            font-size: 15px;
 
-    border-radius: 10px;
+            color: #334155;
 
-}
+            padding-bottom: 13px;
 
+            margin-bottom: 20px;
 
-.payment-section-title {
+            border-bottom: 1px solid #eeeeee;
 
-    font-weight: 700;
+        }
 
-    font-size: 15px;
 
-    color: #334155;
+        .payment-field {
 
-    padding-bottom: 13px;
+            width: 100%;
 
-    margin-bottom: 20px;
+        }
 
-    border-bottom: 1px solid #eeeeee;
 
-}
+        .payment-field+.payment-field {
 
+            margin-top: 22px;
 
-.payment-field {
+        }
 
-    width: 100%;
 
-}
+        .payment-field .form-label {
 
+            display: block;
 
-.payment-field + .payment-field {
+            margin-bottom: 8px;
 
-    margin-top: 22px;
+        }
 
-}
 
+        .payment-field .input-group {
 
-.payment-field .form-label {
+            width: 100%;
 
-    display: block;
+        }
 
-    margin-bottom: 8px;
 
-}
+        .input-tegas-group {
 
+            border-radius: 8px;
 
-.payment-field .input-group {
+        }
 
-    width: 100%;
 
-}
+        .input-tegas-group .input-group-text {
 
+            width: 55px;
 
-.input-tegas-group {
+            min-width: 55px;
 
-    border-radius: 8px;
+            justify-content: center;
 
-}
+            background: #f1f5f9;
 
+            border: 2px solid #cbd5e1;
 
-.input-tegas-group .input-group-text {
+            border-right: 0;
 
-    width: 55px;
+            font-weight: 700;
 
-    min-width: 55px;
+            color: #334155;
 
-    justify-content: center;
+        }
 
-    background: #f1f5f9;
 
-    border: 2px solid #cbd5e1;
+        .input-tegas-group .input-tegas {
 
-    border-right: 0;
+            border-left: 0 !important;
 
-    font-weight: 700;
+        }
 
-    color: #334155;
 
-}
+        .input-tegas-group:focus-within .input-group-text {
 
+            border-color: #0d6efd;
 
-.input-tegas-group .input-tegas {
+        }
 
-    border-left: 0 !important;
 
-}
+        #bayar_cash,
+        #hutang {
 
+            height: 44px;
 
-.input-tegas-group:focus-within .input-group-text {
+        }
 
-    border-color: #0d6efd;
 
-}
+        #bayar_cash {
 
+            text-align: right;
 
-#bayar_cash,
-#hutang {
+            font-size: 15px;
 
-    height: 44px;
+            font-weight: 600;
 
-}
+        }
 
 
-#bayar_cash {
+        #hutang {
 
-    text-align: right;
+            background-color: #f8fafc !important;
 
-    font-size: 15px;
+            font-weight: 700;
 
-    font-weight: 600;
+            text-align: right;
 
-}
+            cursor: not-allowed;
 
+        }
 
-#hutang {
 
-    background-color: #f8fafc !important;
+        .payment-status {
 
-    font-weight: 700;
+            width: 100%;
 
-    text-align: right;
+            margin-top: 18px;
 
-    cursor: not-allowed;
+            padding: 13px 16px;
 
-}
+            font-size: 14px;
 
+        }
 
-.payment-status {
 
-    width: 100%;
+        .barang-row {
 
-    margin-top: 18px;
+            border: 1px solid #e2e8f0;
 
-    padding: 13px 16px;
+            border-radius: 10px;
 
-    font-size: 14px;
+            padding: 15px 10px;
 
-}
+            margin-left: 0;
 
+            margin-right: 0;
 
-.barang-row {
+            background: #ffffff;
 
-    border: 1px solid #e2e8f0;
+        }
 
-    border-radius: 10px;
 
-    padding: 15px 10px;
+        .barang-row:hover {
 
-    margin-left: 0;
+            border-color: #cbd5e1;
 
-    margin-right: 0;
+        }
 
-    background: #ffffff;
 
-}
+        .btn-reset {
 
+            min-height: 44px;
 
-.barang-row:hover {
+        }
 
-    border-color: #cbd5e1;
 
-}
+        .btn-primary {
 
+            font-weight: 600;
 
-.btn-reset {
+        }
 
-    min-height: 44px;
 
-}
+        .btn-outline-primary {
 
+            font-weight: 600;
 
-.btn-primary {
+        }
 
-    font-weight: 600;
 
-}
+        /* =========================================================
+       TABLET
+    ========================================================= */
 
+        @media (max-width: 991px) {
 
-.btn-outline-primary {
+            .payment-row {
 
-    font-weight: 600;
+                grid-template-columns: 1fr 220px;
 
-}
-
-
-/* =========================================================
-   TABLET
-========================================================= */
-
-@media (max-width: 991px) {
-
-    .payment-row {
-
-        grid-template-columns: 1fr 220px;
-
-        gap: 20px;
-
-    }
-
-
-    .payment-total-box {
-
-        grid-template-columns: 1fr 220px;
-
-        gap: 20px;
-
-    }
-
-
-    .diskon-input {
-
-        width: 220px;
-
-    }
-
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 576px) {
-
-    .payment-card .card-body {
-
-        padding: 18px !important;
-
-    }
-
-
-    .payment-row {
-
-        display: flex;
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-        gap: 9px;
-
-        min-height: auto;
-
-    }
-
-
-    .payment-value {
-
-        width: 100%;
-
-        text-align: left;
-
-    }
-
-
-    .diskon-input {
-
-        width: 100%;
-
-        justify-self: auto;
-
-    }
-
-
-    .payment-total-box {
-
-        display: flex;
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-        gap: 10px;
-
-        padding: 17px;
-
-    }
-
-
-    .payment-total-value {
-
-        width: 100%;
-
-        text-align: left;
-
-        font-size: 19px;
-
-    }
-
-
-    .payment-section {
-
-        padding: 17px;
-
-    }
-
-
-    .barang-row {
-
-        padding: 15px;
-
-    }
-
-}
-
-</style>
-
-{{-- =========================================================
-JAVASCRIPT
-========================================================= --}}
-
-<script>
-
-/*
-|--------------------------------------------------------------------------
-| FORMAT RUPIAH
-|--------------------------------------------------------------------------
-*/
-
-function formatRupiah(angka)
-{
-
-    angka = Number(angka) || 0;
-
-    return 'Rp ' +
-        angka.toLocaleString('id-ID');
-
-}
-
-
-
-/*
-|--------------------------------------------------------------------------
-| HITUNG TOTAL
-|--------------------------------------------------------------------------
-*/
-
-function hitungTotal()
-{
-
-    let subtotal = 0;
-
-
-    document
-        .querySelectorAll('.barang-row')
-        .forEach(row => {
-
-            const select =
-                row.querySelector('.barang-select');
-
-            const option =
-                select.options[select.selectedIndex];
-
-
-            const harga =
-                Number(
-                    option?.dataset.harga || 0
-                );
-
-
-            const koli =
-                Number(
-                    row.querySelector('.jumlah-koli').value || 0
-                );
-
-
-            const pcs =
-                Number(
-                    row.querySelector('.jumlah-pcs').value || 0
-                );
-
-
-            const pcsPerKoli =
-                Number(
-                    option?.dataset.koli || 1
-                );
-
-
-            const totalPcs =
-                (koli * pcsPerKoli) + pcs;
-
-
-            subtotal +=
-                totalPcs * harga;
-
-
-            const hargaDisplay =
-                row.querySelector('.harga-display');
-
-
-            if (hargaDisplay) {
-
-                hargaDisplay.value =
-                    formatRupiah(harga);
+                gap: 20px;
 
             }
 
-        });
 
+            .payment-total-box {
 
+                grid-template-columns: 1fr 220px;
 
-    /*
-    |--------------------------------------------------------------------------
-    | DISKON NOMINAL
-    |--------------------------------------------------------------------------
-    */
+                gap: 20px;
 
-    let diskon =
-        Number(
-            document.getElementById('diskon').value || 0
-        );
+            }
 
 
-    if (diskon < 0) {
+            .diskon-input {
 
-        diskon = 0;
+                width: 220px;
 
-        document.getElementById('diskon').value = 0;
+            }
 
-    }
+        }
 
 
-    if (diskon > subtotal) {
+        /* =========================================================
+       MOBILE
+    ========================================================= */
 
-        diskon = subtotal;
+        @media (max-width: 576px) {
 
-        document.getElementById('diskon').value =
-            Math.round(subtotal);
+            .payment-card .card-body {
 
-    }
+                padding: 18px !important;
 
+            }
 
-    const total =
-        Math.max(
-            0,
-            subtotal - diskon
-        );
 
+            .payment-row {
 
-    document.getElementById(
-        'subtotal-display'
-    ).textContent =
-        formatRupiah(subtotal);
+                display: flex;
 
+                flex-direction: column;
 
-    document.getElementById(
-        'diskon-display'
-    ).textContent =
-        '- ' + formatRupiah(diskon);
+                align-items: stretch;
 
+                gap: 9px;
 
-    document.getElementById(
-        'total-display'
-    ).textContent =
-        formatRupiah(total);
+                min-height: auto;
 
+            }
 
-    hitungPembayaran(total);
 
-}
+            .payment-value {
 
+                width: 100%;
 
+                text-align: left;
 
-/*
-|--------------------------------------------------------------------------
-| HITUNG PEMBAYARAN
-|--------------------------------------------------------------------------
-*/
+            }
 
-function hitungPembayaran(total)
-{
 
-    const bayarCashInput =
-        document.getElementById('bayar_cash');
+            .diskon-input {
 
-    const hutangInput =
-        document.getElementById('hutang');
+                width: 100%;
 
-    const statusPembayaran =
-        document.getElementById('status-pembayaran');
+                justify-self: auto;
 
-    const hutangKeterangan =
-        document.getElementById('hutang-keterangan');
+            }
 
 
-    let bayarCash =
-        Number(
-            bayarCashInput.value || 0
-        );
+            .payment-total-box {
 
+                display: flex;
 
-    if (bayarCash < 0) {
+                flex-direction: column;
 
-        bayarCash = 0;
+                align-items: stretch;
 
-        bayarCashInput.value = 0;
+                gap: 10px;
 
-    }
+                padding: 17px;
 
+            }
 
-    if (bayarCash > total) {
 
-        bayarCash = total;
+            .payment-total-value {
 
-        bayarCashInput.value = total;
+                width: 100%;
 
-    }
+                text-align: left;
 
+                font-size: 19px;
 
-    const hutang =
-        Math.max(
-            0,
-            total - bayarCash
-        );
+            }
 
 
-    hutangInput.value =
-        Math.round(hutang);
+            .payment-section {
 
+                padding: 17px;
 
+            }
 
-    /*
-    |--------------------------------------------------------------------------
-    | STATUS
-    |--------------------------------------------------------------------------
-    */
 
-    if (total <= 0) {
+            .barang-row {
 
-        statusPembayaran.className =
-            'alert alert-secondary payment-status mb-0';
+                padding: 15px;
 
-        statusPembayaran.textContent =
-            'Belum ada barang yang dipilih.';
+            }
 
-        hutangKeterangan.textContent =
-            'Belum ada total pembayaran.';
+        }
+    </style>
 
-    }
+    {{-- =========================================================
+    JAVASCRIPT
+    ========================================================= --}}
 
-    else if (hutang <= 0) {
+    <script>
 
-        statusPembayaran.className =
-            'alert alert-success payment-status mb-0';
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT RUPIAH
+        |--------------------------------------------------------------------------
+        */
 
-        statusPembayaran.textContent =
-            '✓ Pembayaran lunas.';
+        function formatRupiah(angka) {
 
-        hutangKeterangan.textContent =
-            'Tidak ada hutang.';
+            angka = Number(angka) || 0;
 
-    }
+            return 'Rp ' +
+                angka.toLocaleString('id-ID');
 
-    else {
+        }
 
-        statusPembayaran.className =
-            'alert alert-warning payment-status mb-0';
 
-        statusPembayaran.textContent =
-            '⚠️ Pembayaran belum lunas. Customer masih memiliki hutang ' +
-            formatRupiah(hutang) +
-            '.';
 
-        hutangKeterangan.textContent =
-            'Sisa hutang customer: ' +
-            formatRupiah(hutang);
+        /*
+        |--------------------------------------------------------------------------
+        | HITUNG TOTAL
+        |--------------------------------------------------------------------------
+        */
 
-    }
+        function hitungTotal() {
 
-}
+            let subtotal = 0;
 
 
+            document
+                .querySelectorAll('.barang-row')
+                .forEach(row => {
 
-/*
-|--------------------------------------------------------------------------
-| TAMBAH BARANG
-|--------------------------------------------------------------------------
-*/
+                    const select =
+                        row.querySelector('.barang-select');
 
-function tambahBarang()
-{
+                    const option =
+                        select.options[select.selectedIndex];
 
-    const container =
-        document.getElementById('barang-container');
 
-    const firstRow =
-        document.querySelector('.barang-row');
+                    const harga =
+                        Number(
+                            option?.dataset.harga || 0
+                        );
 
 
-    const newRow =
-        firstRow.cloneNode(true);
+                    const koli =
+                        Number(
+                            row.querySelector('.jumlah-koli').value || 0
+                        );
 
 
-    newRow.querySelector('.barang-select').value = '';
+                    const pcs =
+                        Number(
+                            row.querySelector('.jumlah-pcs').value || 0
+                        );
 
-    newRow.querySelector('.jumlah-koli').value = 0;
 
-    newRow.querySelector('.jumlah-pcs').value = 0;
+                    const pcsPerKoli =
+                        Number(
+                            option?.dataset.koli || 1
+                        );
 
-    newRow.querySelector('.harga-display').value = 'Rp 0';
 
+                    const totalPcs =
+                        (koli * pcsPerKoli) + pcs;
 
-    container.appendChild(newRow);
 
+                    subtotal +=
+                        totalPcs * harga;
 
-    hitungTotal();
 
-}
+                    const hargaDisplay =
+                        row.querySelector('.harga-display');
 
 
+                    if (hargaDisplay) {
 
-/*
-|--------------------------------------------------------------------------
-| RESET / HAPUS BARANG
-|--------------------------------------------------------------------------
-*/
+                        hargaDisplay.value =
+                            formatRupiah(harga);
 
-function hapusBarang(button)
-{
+                    }
 
-    const rows =
-        document.querySelectorAll('.barang-row');
+                });
 
 
-    if (rows.length <= 1) {
 
-        const row =
-            button.closest('.barang-row');
+            /*
+            |--------------------------------------------------------------------------
+            | DISKON NOMINAL
+            |--------------------------------------------------------------------------
+            */
 
-
-        row.querySelector('.barang-select').value = '';
-
-        row.querySelector('.jumlah-koli').value = 0;
-
-        row.querySelector('.jumlah-pcs').value = 0;
-
-        row.querySelector('.harga-display').value = 'Rp 0';
-
-
-        hitungTotal();
-
-        return;
-
-    }
-
-
-    button
-        .closest('.barang-row')
-        .remove();
-
-
-    hitungTotal();
-
-}
-
-
-
-/*
-|--------------------------------------------------------------------------
-| PERUBAHAN BARANG
-|--------------------------------------------------------------------------
-*/
-
-document.addEventListener(
-    'change',
-    function(event)
-    {
-
-        if (
-            event.target.classList.contains(
-                'barang-select'
-            )
-        ) {
-
-            const select =
-                event.target;
-
-
-            const option =
-                select.options[
-                    select.selectedIndex
-                ];
-
-
-            const harga =
+            let diskon =
                 Number(
-                    option?.dataset.harga || 0
+                    document.getElementById('diskon').value || 0
                 );
 
 
-            const row =
-                select.closest(
-                    '.barang-row'
+            if (diskon < 0) {
+
+                diskon = 0;
+
+                document.getElementById('diskon').value = 0;
+
+            }
+
+
+            if (diskon > subtotal) {
+
+                diskon = subtotal;
+
+                document.getElementById('diskon').value =
+                    Math.round(subtotal);
+
+            }
+
+
+            const total =
+                Math.max(
+                    0,
+                    subtotal - diskon
                 );
 
 
-            const display =
-                row.querySelector(
-                    '.harga-display'
+            document.getElementById(
+                'subtotal-display'
+            ).textContent =
+                formatRupiah(subtotal);
+
+
+            document.getElementById(
+                'diskon-display'
+            ).textContent =
+                '- ' + formatRupiah(diskon);
+
+
+            document.getElementById(
+                'total-display'
+            ).textContent =
+                formatRupiah(total);
+
+
+            hitungPembayaran(total);
+
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HITUNG PEMBAYARAN
+        |--------------------------------------------------------------------------
+        */
+
+        function hitungPembayaran(total) {
+
+            const bayarCashInput =
+                document.getElementById('bayar_cash');
+
+            const hutangInput =
+                document.getElementById('hutang');
+
+            const statusPembayaran =
+                document.getElementById('status-pembayaran');
+
+            const hutangKeterangan =
+                document.getElementById('hutang-keterangan');
+
+
+            let bayarCash =
+                Number(
+                    bayarCashInput.value || 0
                 );
 
 
-            display.value =
-                formatRupiah(harga);
+            if (bayarCash < 0) {
+
+                bayarCash = 0;
+
+                bayarCashInput.value = 0;
+
+            }
+
+
+            if (bayarCash > total) {
+
+                bayarCash = total;
+
+                bayarCashInput.value = total;
+
+            }
+
+
+            const hutang =
+                Math.max(
+                    0,
+                    total - bayarCash
+                );
+
+
+            hutangInput.value =
+                Math.round(hutang);
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS
+            |--------------------------------------------------------------------------
+            */
+
+            if (total <= 0) {
+
+                statusPembayaran.className =
+                    'alert alert-secondary payment-status mb-0';
+
+                statusPembayaran.textContent =
+                    'Belum ada barang yang dipilih.';
+
+                hutangKeterangan.textContent =
+                    'Belum ada total pembayaran.';
+
+            }
+
+            else if (hutang <= 0) {
+
+                statusPembayaran.className =
+                    'alert alert-success payment-status mb-0';
+
+                statusPembayaran.textContent =
+                    '✓ Pembayaran lunas.';
+
+                hutangKeterangan.textContent =
+                    'Tidak ada hutang.';
+
+            }
+
+            else {
+
+                statusPembayaran.className =
+                    'alert alert-warning payment-status mb-0';
+
+                statusPembayaran.textContent =
+                    '⚠️ Pembayaran belum lunas. Customer masih memiliki hutang ' +
+                    formatRupiah(hutang) +
+                    '.';
+
+                hutangKeterangan.textContent =
+                    'Sisa hutang customer: ' +
+                    formatRupiah(hutang);
+
+            }
+
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TAMBAH BARANG
+        |--------------------------------------------------------------------------
+        */
+
+        function tambahBarang() {
+
+            const container =
+                document.getElementById('barang-container');
+
+            const firstRow =
+                document.querySelector('.barang-row');
+
+
+            const newRow =
+                firstRow.cloneNode(true);
+
+
+            newRow.querySelector('.barang-select').value = '';
+
+            newRow.querySelector('.jumlah-koli').value = 0;
+
+            newRow.querySelector('.jumlah-pcs').value = 0;
+
+            newRow.querySelector('.harga-display').value = 'Rp 0';
+
+
+            container.appendChild(newRow);
 
 
             hitungTotal();
 
         }
 
-    }
-);
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | RESET / HAPUS BARANG
+        |--------------------------------------------------------------------------
+        */
 
-/*
-|--------------------------------------------------------------------------
-| INPUT JUMLAH / DISKON / CASH
-|--------------------------------------------------------------------------
-*/
+        function hapusBarang(button) {
 
-document.addEventListener(
-    'input',
-    function(event)
-    {
+            const rows =
+                document.querySelectorAll('.barang-row');
 
-        if (
 
-            event.target.classList.contains(
-                'jumlah-koli'
-            )
+            if (rows.length <= 1) {
 
-            ||
+                const row =
+                    button.closest('.barang-row');
 
-            event.target.classList.contains(
-                'jumlah-pcs'
-            )
 
-            ||
+                row.querySelector('.barang-select').value = '';
 
-            event.target.id === 'diskon'
+                row.querySelector('.jumlah-koli').value = 0;
 
-            ||
+                row.querySelector('.jumlah-pcs').value = 0;
 
-            event.target.id === 'bayar_cash'
+                row.querySelector('.harga-display').value = 'Rp 0';
 
-        ) {
+
+                hitungTotal();
+
+                return;
+
+            }
+
+
+            button
+                .closest('.barang-row')
+                .remove();
+
 
             hitungTotal();
 
         }
 
-    }
-);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERUBAHAN BARANG
+        |--------------------------------------------------------------------------
+        */
+
+        document.addEventListener(
+            'change',
+            function (event) {
+
+                if (
+                    event.target.classList.contains(
+                        'barang-select'
+                    )
+                ) {
+
+                    const select =
+                        event.target;
+
+
+                    const option =
+                        select.options[
+                        select.selectedIndex
+                        ];
+
+
+                    const harga =
+                        Number(
+                            option?.dataset.harga || 0
+                        );
+
+
+                    const row =
+                        select.closest(
+                            '.barang-row'
+                        );
+
+
+                    const display =
+                        row.querySelector(
+                            '.harga-display'
+                        );
+
+
+                    display.value =
+                        formatRupiah(harga);
+
+
+                    hitungTotal();
+
+                }
+
+            }
+        );
 
 
 
-/*
-|--------------------------------------------------------------------------
-| HALAMAN SELESAI DIMUAT
-|--------------------------------------------------------------------------
-*/
+        /*
+        |--------------------------------------------------------------------------
+        | INPUT JUMLAH / DISKON / CASH
+        |--------------------------------------------------------------------------
+        */
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function()
-    {
+        document.addEventListener(
+            'input',
+            function (event) {
 
-        hitungTotal();
+                if (
 
-    }
-);
+                    event.target.classList.contains(
+                        'jumlah-koli'
+                    )
 
-</script>
+                    ||
+
+                    event.target.classList.contains(
+                        'jumlah-pcs'
+                    )
+
+                    ||
+
+                    event.target.id === 'diskon'
+
+                    ||
+
+                    event.target.id === 'bayar_cash'
+
+                ) {
+
+                    hitungTotal();
+
+                }
+
+            }
+        );
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HALAMAN SELESAI DIMUAT
+        |--------------------------------------------------------------------------
+        */
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
+
+                hitungTotal();
+
+            }
+        );
+
+    </script>
 
 @endsection
