@@ -957,7 +957,7 @@
             <div class="form-header">
 
                 <h2 class="form-title">
-                    👋 Login ke Sistem
+                     Login ke Sistem
                 </h2>
 
                 <p class="form-subtitle">

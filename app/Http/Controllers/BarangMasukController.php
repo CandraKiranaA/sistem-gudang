@@ -56,7 +56,7 @@ class BarangMasukController extends Controller
         }
 
         $barangMasuks = $query
-            ->paginate(15)
+            ->paginate(30)
             ->withQueryString();
 
         return view(

@@ -42,7 +42,7 @@ class BarangController extends Controller
 
         $barangs = $query
             ->latest()
-            ->paginate(10)
+            ->paginate(50)
             ->withQueryString();
 
         return view(
@@ -72,45 +72,44 @@ class BarangController extends Controller
      * =========================================================
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
+{
+    $validated = $request->validate([
 
-            'nama_barang' => [
-                'required',
-                'string',
-                'max:255'
-            ],
+        'nama_barang' => [
+            'required',
+            'string',
+            'max:255'
+        ],
 
-            'satuan' => [
-                'required',
-                'string',
-                'max:50'
-            ],
+        'satuan' => [
+            'required',
+            'string',
+            'max:50'
+        ],
 
-            'jumlah_koli' => [
-                'required',
-                'integer',
-                'min:1'
-            ],
+        'jumlah_koli' => [
+            'required',
+            'integer',
+            'min:0'
+        ],
 
-            'pcs_per_koli' => [
-                'required',
-                'integer',
-                'min:1'
-            ],
+        'pcs_per_koli' => [
+            'required',
+            'integer',
+            'min:1'
+        ],
 
-        ]);
+    ]);
 
-        Barang::create($validated);
+    Barang::create($validated);
 
-        return redirect()
-            ->route('barangs.index')
-            ->with(
-                'success',
-                'Barang berhasil ditambahkan.'
-            );
-    }
-
+    return redirect()
+        ->route('barangs.index')
+        ->with(
+            'success',
+            'Barang berhasil ditambahkan.'
+        );
+}
 
     /**
      * =========================================================
@@ -132,49 +131,47 @@ class BarangController extends Controller
      * =========================================================
      */
     public function update(
-        Request $request,
-        Barang $barang
-    ) {
+    Request $request,
+    Barang $barang
+) {
 
-        $validated = $request->validate([
+    $validated = $request->validate([
 
-            'nama_barang' => [
-                'required',
-                'string',
-                'max:255'
-            ],
+        'nama_barang' => [
+            'required',
+            'string',
+            'max:255'
+        ],
 
-            'satuan' => [
-                'required',
-                'string',
-                'max:50'
-            ],
+        'satuan' => [
+            'required',
+            'string',
+            'max:50'
+        ],
 
-            'jumlah_koli' => [
-                'required',
-                'integer',
-                'min:1'
-            ],
+        'jumlah_koli' => [
+            'required',
+            'integer',
+            'min:0'
+        ],
 
-            'pcs_per_koli' => [
-                'required',
-                'integer',
-                'min:1'
-            ],
+        'pcs_per_koli' => [
+            'required',
+            'integer',
+            'min:1'
+        ],
 
-        ]);
+    ]);
 
-        $barang->update($validated);
+    $barang->update($validated);
 
-        return redirect()
-            ->route('barangs.index')
-            ->with(
-                'success',
-                'Barang berhasil diperbarui.'
-            );
-    }
-
-
+    return redirect()
+        ->route('barangs.index')
+        ->with(
+            'success',
+            'Barang berhasil diperbarui.'
+        );
+}
     /**
      * =========================================================
      * HAPUS SATU BARANG

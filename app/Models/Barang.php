@@ -12,12 +12,11 @@ class Barang extends Model
     protected $table = 'barangs';
 
     protected $fillable = [
-        'nama_barang',
-        'satuan',
-        'jumlah_koli',
-        'pcs_per_koli',
-    ];
-
+    'nama_barang',
+    'satuan',
+    'jumlah_koli',
+    'pcs_per_koli',
+];
     protected $casts = [
         'jumlah_koli' => 'integer',
         'pcs_per_koli' => 'integer',

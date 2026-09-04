@@ -4,19 +4,36 @@
 
 @section('content')
 
-    <div class="mb-4">
+<div class="penjualan-page">
 
+    {{-- =========================================================
+    HEADER
+    ========================================================= --}}
 
-        <h3 class="fw-bold mb-1">
-            🧾 Buat Nota
-        </h3>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
-        <p class="text-muted mb-0">
-            Masukkan data penjualan customer
-        </p>
+        <div class="d-flex align-items-center gap-3">
 
+            <div class="page-icon">
+                🧾
+            </div>
+
+            <div>
+
+                <h3 class="page-title fw-bold mb-1">
+                    Buat Nota
+                </h3>
+
+                <p class="page-subtitle mb-0">
+                    Masukkan data penjualan customer
+                </p>
+
+            </div>
+
+        </div>
 
     </div>
+
 
     {{-- =========================================================
     PESAN ERROR
@@ -24,18 +41,16 @@
 
     @if(session('error'))
 
-
-        <div class="alert alert-danger">
+        <div class="alert alert-danger custom-alert">
             {{ session('error') }}
         </div>
 
-
     @endif
+
 
     @if($errors->any())
 
-
-        <div class="alert alert-danger">
+        <div class="alert alert-danger custom-alert">
 
             <ul class="mb-0">
 
@@ -49,25 +64,46 @@
 
         </div>
 
-
     @endif
+
 
     <form action="{{ route('penjualan.store') }}" method="POST" id="form-penjualan">
 
         @csrf
 
+
         {{-- =========================================================
         INFORMASI CUSTOMER
         ========================================================= --}}
 
-        <div class="card shadow-sm mb-4">
+        <div class="card nota-card mb-4">
+
+            <div class="card-header nota-card-header">
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <div class="section-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <h5 class="section-title mb-0">
+                            Informasi Customer
+                        </h5>
+
+                        <small class="section-subtitle">
+                            Informasi customer dan waktu transaksi
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
-            <div class="card-body">
-
-                <h5 class="section-title mb-3">
-                    Informasi Customer
-                </h5>
+            <div class="card-body p-4">
 
                 <div class="row g-3">
 
@@ -79,8 +115,14 @@
                             Nama Customer
                         </label>
 
-                        <input type="text" name="nama_customer" class="form-control input-tegas"
-                            value="{{ old('nama_customer') }}" placeholder="Contoh: Toko Jaya" required>
+                        <input
+                            type="text"
+                            name="nama_customer"
+                            class="form-control input-tegas"
+                            value="{{ old('nama_customer') }}"
+                            placeholder="Contoh: Toko Jaya"
+                            required
+                        >
 
                     </div>
 
@@ -93,13 +135,19 @@
                             Tanggal & Jam Penjualan
                         </label>
 
-                        <input type="datetime-local" name="tanggal_penjualan" id="tanggal_penjualan"
-                            class="form-control input-tegas" value="{{ old(
-        'tanggal_penjualan',
-        now()->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')
-    ) }}" required>
+                        <input
+                            type="datetime-local"
+                            name="tanggal_penjualan"
+                            id="tanggal_penjualan"
+                            class="form-control input-tegas"
+                            value="{{ old(
+                                'tanggal_penjualan',
+                                now()->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')
+                            ) }}"
+                            required
+                        >
 
-                        <small class="text-muted">
+                        <small class="form-help">
                             Waktu Indonesia Barat (WIB)
                         </small>
 
@@ -109,38 +157,54 @@
 
             </div>
 
-
         </div>
+
 
         {{-- =========================================================
         BARANG YANG DIBELI
         ========================================================= --}}
 
-        <div class="card shadow-sm mb-4">
+        <div class="card nota-card mb-4">
 
+            <div class="card-header nota-card-header">
 
-            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
 
-                    <div>
+                        <div class="section-icon">
+                            📦
+                        </div>
 
-                        <h5 class="section-title mb-1">
-                            Barang yang Dibeli
-                        </h5>
+                        <div>
 
-                        <small class="text-muted">
-                            Masukkan jumlah koli atau PCS yang dijual
-                        </small>
+                            <h5 class="section-title mb-0">
+                                Barang yang Dibeli
+                            </h5>
+
+                            <small class="section-subtitle">
+                                Masukkan jumlah koli atau PCS yang dijual
+                            </small>
+
+                        </div>
 
                     </div>
 
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="tambahBarang()">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-gold btn-sm"
+                        onclick="tambahBarang()"
+                    >
                         + Tambah Barang
                     </button>
 
                 </div>
 
+            </div>
+
+
+            <div class="card-body p-4">
 
                 <div id="barang-container">
 
@@ -154,7 +218,11 @@
                                 Barang
                             </label>
 
-                            <select name="barang_id[]" class="form-select barang-select input-tegas" required>
+                            <select
+                                name="barang_id[]"
+                                class="form-select barang-select input-tegas"
+                                required
+                            >
 
                                 <option value="">
                                     -- Pilih Barang --
@@ -162,10 +230,13 @@
 
                                 @foreach($barangs as $barang)
 
-                                    <option value="{{ $barang->id }}"
+                                    <option
+                                        value="{{ $barang->id }}"
                                         data-harga="{{ $barang->barangMasuks->sortByDesc('tanggal_input')->first()?->harga_jual_pcs ?? 0 }}"
-                                        data-koli="{{ $barang->pcs_per_koli }}" data-stok-koli="{{ $barang->stok_koli }}"
-                                        data-stok-pcs="{{ $barang->stok_pcs }}">
+                                        data-koli="{{ $barang->pcs_per_koli }}"
+                                        data-stok-koli="{{ $barang->stok_koli }}"
+                                        data-stok-pcs="{{ $barang->stok_pcs }}"
+                                    >
 
                                         {{ $barang->nama_barang }}
                                         — Stok: {{ $barang->stok_koli }} koli / {{ $barang->stok_pcs }} pcs
@@ -187,8 +258,13 @@
                                 Koli
                             </label>
 
-                            <input type="number" name="jumlah_koli[]"
-                                class="form-control jumlah-koli input-tegas angka-input" value="0" min="0">
+                            <input
+                                type="number"
+                                name="jumlah_koli[]"
+                                class="form-control jumlah-koli input-tegas angka-input"
+                                value="0"
+                                min="0"
+                            >
 
                         </div>
 
@@ -201,8 +277,13 @@
                                 PCS
                             </label>
 
-                            <input type="number" name="jumlah_pcs[]" class="form-control jumlah-pcs input-tegas angka-input"
-                                value="0" min="0">
+                            <input
+                                type="number"
+                                name="jumlah_pcs[]"
+                                class="form-control jumlah-pcs input-tegas angka-input"
+                                value="0"
+                                min="0"
+                            >
 
                         </div>
 
@@ -215,8 +296,12 @@
                                 Harga / PCS
                             </label>
 
-                            <input type="text" class="form-control harga-display input-tegas harga-readonly" value="Rp 0"
-                                readonly>
+                            <input
+                                type="text"
+                                class="form-control harga-display input-tegas harga-readonly"
+                                value="Rp 0"
+                                readonly
+                            >
 
                         </div>
 
@@ -225,8 +310,12 @@
 
                         <div class="col-lg-1 col-md-12">
 
-                            <button type="button" class="btn btn-outline-danger w-100 btn-reset" onclick="hapusBarang(this)"
-                                title="Reset barang">
+                            <button
+                                type="button"
+                                class="btn btn-outline-danger w-100 btn-reset"
+                                onclick="hapusBarang(this)"
+                                title="Reset barang"
+                            >
                                 Reset
                             </button>
 
@@ -237,9 +326,9 @@
                 </div>
 
 
-                <div class="alert alert-light border mt-3 mb-0">
+                <div class="calculation-alert mt-3 mb-0">
 
-                    <small class="text-muted">
+                    <small>
 
                         <strong>Perhitungan:</strong>
 
@@ -252,29 +341,41 @@
 
             </div>
 
-
         </div>
+
 
         {{-- =========================================================
         RINGKASAN PEMBAYARAN
         ========================================================= --}}
 
-        <div class="card shadow-sm mb-4 payment-card">
+        <div class="card nota-card mb-4 payment-card">
 
-            <div class="card-body p-4">
+            <div class="card-header nota-card-header">
 
-                <div class="payment-header mb-4">
+                <div class="d-flex align-items-center gap-2">
 
-                    <h5 class="section-title mb-1">
-                        💰 Ringkasan Pembayaran
-                    </h5>
+                    <div class="section-icon">
+                        💰
+                    </div>
 
-                    <small class="text-muted">
-                        Periksa total pembayaran sebelum menyimpan nota.
-                    </small>
+                    <div>
+
+                        <h5 class="section-title mb-0">
+                            Ringkasan Pembayaran
+                        </h5>
+
+                        <small class="section-subtitle">
+                            Periksa total pembayaran sebelum menyimpan nota.
+                        </small>
+
+                    </div>
 
                 </div>
 
+            </div>
+
+
+            <div class="card-body p-4">
 
                 <div class="payment-summary">
 
@@ -294,7 +395,6 @@
                     </div>
 
 
-
                     {{-- DISKON NOMINAL --}}
 
                     <div class="payment-row">
@@ -305,7 +405,7 @@
                                 Diskon
                             </label>
 
-                            <small class="text-muted d-block">
+                            <small class="form-help d-block">
                                 Masukkan nominal potongan diskon dalam Rupiah.
                             </small>
 
@@ -320,15 +420,22 @@
                                     Rp
                                 </span>
 
-                                <input type="number" name="diskon" id="diskon" class="form-control input-tegas text-end"
-                                    value="{{ old('diskon', 0) }}" min="0" step="1" placeholder="0">
+                                <input
+                                    type="number"
+                                    name="diskon"
+                                    id="diskon"
+                                    class="form-control input-tegas text-end"
+                                    value="{{ old('diskon', 0) }}"
+                                    min="0"
+                                    step="1"
+                                    placeholder="0"
+                                >
 
                             </div>
 
                         </div>
 
                     </div>
-
 
 
                     {{-- POTONGAN DISKON --}}
@@ -339,12 +446,14 @@
                             Potongan Diskon
                         </div>
 
-                        <span class="payment-value text-danger" id="diskon-display">
+                        <span
+                            class="payment-value text-danger"
+                            id="diskon-display"
+                        >
                             - Rp 0
                         </span>
 
                     </div>
-
 
 
                     {{-- TOTAL --}}
@@ -357,18 +466,20 @@
                                 TOTAL YANG HARUS DIBAYAR
                             </div>
 
-                            <small class="text-muted">
+                            <small class="form-help">
                                 Setelah potongan diskon
                             </small>
 
                         </div>
 
-                        <strong class="payment-total-value" id="total-display">
+                        <strong
+                            class="payment-total-value"
+                            id="total-display"
+                        >
                             Rp 0
                         </strong>
 
                     </div>
-
 
 
                     {{-- PEMBAYARAN CUSTOMER --}}
@@ -384,7 +495,10 @@
 
                         <div class="payment-field">
 
-                            <label for="bayar_cash" class="form-label fw-semibold">
+                            <label
+                                for="bayar_cash"
+                                class="form-label fw-semibold"
+                            >
                                 Bayar Cash
                             </label>
 
@@ -394,24 +508,34 @@
                                     Rp
                                 </span>
 
-                                <input type="number" name="bayar_cash" id="bayar_cash" class="form-control input-tegas"
-                                    value="{{ old('bayar_cash', 0) }}" min="0" step="1" placeholder="0">
+                                <input
+                                    type="number"
+                                    name="bayar_cash"
+                                    id="bayar_cash"
+                                    class="form-control input-tegas"
+                                    value="{{ old('bayar_cash', 0) }}"
+                                    min="0"
+                                    step="1"
+                                    placeholder="0"
+                                >
 
                             </div>
 
-                            <small class="text-muted">
+                            <small class="form-help">
                                 Masukkan jumlah uang yang dibayarkan customer.
                             </small>
 
                         </div>
 
 
-
                         {{-- HUTANG --}}
 
                         <div class="payment-field hutang-field">
 
-                            <label for="hutang" class="form-label fw-semibold">
+                            <label
+                                for="hutang"
+                                class="form-label fw-semibold"
+                            >
                                 Hutang
                             </label>
 
@@ -421,12 +545,21 @@
                                     Rp
                                 </span>
 
-                                <input type="number" name="hutang" id="hutang" class="form-control input-tegas" value="0"
-                                    readonly>
+                                <input
+                                    type="number"
+                                    name="hutang"
+                                    id="hutang"
+                                    class="form-control input-tegas"
+                                    value="0"
+                                    readonly
+                                >
 
                             </div>
 
-                            <small class="text-muted" id="hutang-keterangan">
+                            <small
+                                class="form-help"
+                                id="hutang-keterangan"
+                            >
                                 Tidak ada hutang.
                             </small>
 
@@ -435,10 +568,12 @@
                     </div>
 
 
-
                     {{-- STATUS PEMBAYARAN --}}
 
-                    <div id="status-pembayaran" class="alert alert-success payment-status mb-0">
+                    <div
+                        id="status-pembayaran"
+                        class="alert alert-success payment-status mb-0"
+                    >
                         ✓ Pembayaran lunas.
                     </div>
 
@@ -447,8 +582,8 @@
 
             </div>
 
-
         </div>
+
 
         {{-- =========================================================
         BUTTON
@@ -456,63 +591,191 @@
 
         <div class="d-flex justify-content-end gap-2 mb-4">
 
-
-            <a href="{{ route('penjualan.index') }}" class="btn btn-outline-secondary px-4">
+            <a
+                href="{{ route('penjualan.index') }}"
+                class="btn btn-secondary-custom px-4"
+            >
                 Batal
             </a>
 
-            <button type="submit" class="btn btn-primary px-4">
+            <button
+                type="submit"
+                class="btn btn-gold px-4"
+            >
                 💾 Simpan & Buat Nota
             </button>
-
 
         </div>
 
     </form>
+
 
     {{-- =========================================================
     STYLE
     ========================================================= --}}
 
     <style>
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .penjualan-page {
+            color: #374151;
+        }
+
+
+        .page-title {
+            color: #374151;
+            letter-spacing: -0.3px;
+        }
+
+
+        .page-subtitle {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+
+        .page-icon {
+            width: 46px;
+            height: 46px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: linear-gradient(
+                135deg,
+                #fffbea,
+                #fffdf7
+            );
+
+            border: 1px solid #f0e4ae;
+
+            box-shadow:
+                0 4px 12px rgba(212, 167, 0, .08);
+
+            font-size: 21px;
+        }
+
+
+        /* =========================================================
+           CARD
+        ========================================================= */
+
+        .nota-card {
+            border: 1px solid #e8e9ec !important;
+            border-radius: 16px !important;
+            background: #ffffff;
+
+            box-shadow:
+                0 5px 18px rgba(17, 24, 39, .055) !important;
+
+            overflow: hidden;
+        }
+
+
+        .nota-card-header {
+            background: linear-gradient(
+                135deg,
+                #fffbea,
+                #fffdf7
+            );
+
+            border-bottom: 1px solid #eee7c9 !important;
+
+            padding: 17px 20px;
+        }
+
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background: #ffffff;
+
+            border: 1px solid #f0e4ae;
+
+            box-shadow:
+                0 3px 8px rgba(212, 167, 0, .07);
+
+            font-size: 17px;
+        }
+
+
+        .section-title {
+            color: #6f5a00;
+            font-weight: 700;
+        }
+
+
+        .section-subtitle {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           FORM
+        ========================================================= */
+
+        .form-label {
+            color: #374151;
+            margin-bottom: 7px;
+        }
+
+
+        .form-help {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+
         .input-tegas {
 
             min-height: 44px;
 
-            border: 2px solid #cbd5e1 !important;
+            border: 1px solid #dfe2e7 !important;
 
-            border-radius: 8px;
+            border-radius: 10px;
 
             background-color: #ffffff;
 
-            color: #1e293b;
+            color: #374151;
 
             font-size: 14px;
 
             transition:
-                border-color 0.15s ease,
-                box-shadow 0.15s ease,
-                background-color 0.15s ease;
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background-color .2s ease;
 
+            box-shadow: none;
         }
 
 
         .input-tegas:hover {
-
-            border-color: #94a3b8 !important;
-
+            border-color: #d4c47c !important;
         }
 
 
         .input-tegas:focus {
 
-            border-color: #0d6efd !important;
+            border-color: #d9bc42 !important;
 
             box-shadow:
-                0 0 0 3px rgba(13, 110, 253, 0.12) !important;
+                0 0 0 3px rgba(212, 167, 0, .10) !important;
 
             outline: none;
-
         }
 
 
@@ -521,7 +784,6 @@
             cursor: pointer;
 
             padding-left: 12px;
-
         }
 
 
@@ -530,61 +792,205 @@
             text-align: center;
 
             font-weight: 600;
-
         }
 
 
         .harga-readonly {
 
-            background-color: #f8fafc !important;
+            background-color: #f9fafb !important;
 
-            color: #334155 !important;
+            color: #6b7280 !important;
 
             font-weight: 600;
 
+            cursor: default;
         }
 
 
-        .form-label {
+        /* =========================================================
+           BUTTON
+        ========================================================= */
 
-            color: #334155;
+        .btn-outline-gold {
 
-            margin-bottom: 7px;
+            border: 1px solid #d9bc42;
 
+            color: #a18200;
+
+            background: #fffdf7;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+            transition: all .2s ease;
         }
 
 
-        .section-title {
+        .btn-outline-gold:hover {
 
-            color: #0d47a1;
+            background: #fffbea;
 
-            font-weight: 700;
+            border-color: #cbaa27;
 
+            color: #8b7000;
+
+            transform: translateY(-1px);
         }
 
 
-        .payment-card {
+        .btn-gold {
 
-            border: 0;
+            border: 1px solid #d4a700;
+
+            background: linear-gradient(
+                135deg,
+                #d9b52e,
+                #c99f00
+            );
+
+            color: #ffffff;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+            box-shadow:
+                0 4px 10px rgba(212, 167, 0, .16);
+
+            transition: all .2s ease;
+        }
+
+
+        .btn-gold:hover {
+
+            background: linear-gradient(
+                135deg,
+                #cdaa22,
+                #b99000
+            );
+
+            color: #ffffff;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 6px 14px rgba(212, 167, 0, .20);
+        }
+
+
+        .btn-secondary-custom {
+
+            background: #f9fafb;
+
+            border: 1px solid #e5e7eb;
+
+            color: #6b7280;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+            transition: all .2s ease;
+        }
+
+
+        .btn-secondary-custom:hover {
+
+            background: #f3f4f6;
+
+            border-color: #d1d5db;
+
+            color: #4b5563;
+        }
+
+
+        .btn-reset {
+
+            min-height: 44px;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+            border-color: #e5b8b8;
+
+            color: #b45353;
+
+            background: #fffafa;
+
+            transition: all .2s ease;
+        }
+
+
+        .btn-reset:hover {
+
+            background: #fff3f3;
+
+            border-color: #d99a9a;
+
+            color: #a33d3d;
+        }
+
+
+        /* =========================================================
+           BARANG
+        ========================================================= */
+
+        .barang-row {
+
+            border: 1px solid #e8e9ec;
 
             border-radius: 12px;
 
+            padding: 15px 10px;
+
+            margin-left: 0;
+
+            margin-right: 0;
+
+            background: #ffffff;
+
+            transition: all .2s ease;
         }
 
 
-        .payment-header {
+        .barang-row:hover {
 
-            padding-bottom: 15px;
+            border-color: #dfcf7d;
 
-            border-bottom: 1px solid #eeeeee;
+            background: #fffef9;
 
+            box-shadow:
+                0 3px 10px rgba(17, 24, 39, .035);
+        }
+
+
+        .calculation-alert {
+
+            padding: 12px 15px;
+
+            background: #fffbea;
+
+            border: 1px solid #f0e4ae;
+
+            border-radius: 10px;
+
+            color: #806900;
+        }
+
+
+        /* =========================================================
+           PAYMENT
+        ========================================================= */
+
+        .payment-card .card-body {
+            background: #ffffff;
         }
 
 
         .payment-summary {
-
             width: 100%;
-
         }
 
 
@@ -605,23 +1011,19 @@
             padding: 14px 0;
 
             border-bottom: 1px solid #eeeeee;
-
         }
 
 
         .payment-label-box {
-
             min-width: 0;
-
         }
 
 
         .payment-label {
 
-            color: #475569;
+            color: #4b5563;
 
             font-size: 14px;
-
         }
 
 
@@ -637,26 +1039,24 @@
 
             white-space: nowrap;
 
+            color: #374151;
         }
 
 
         /* =========================================================
-       DISKON NOMINAL
-    ========================================================= */
+           DISKON
+        ========================================================= */
 
         .diskon-input {
 
             width: 260px;
 
             justify-self: end;
-
         }
 
 
         .diskon-input .input-group {
-
             width: 100%;
-
         }
 
 
@@ -664,16 +1064,17 @@
 
             height: 44px;
 
-            background-color: #f1f5f9;
+            background: #f9fafb;
 
-            border: 2px solid #cbd5e1;
+            border: 1px solid #dfe2e7;
 
             border-right: 0;
 
             font-weight: 700;
 
-            color: #334155;
+            color: #6b7280;
 
+            border-radius: 10px 0 0 10px;
         }
 
 
@@ -683,12 +1084,13 @@
 
             border-left: 0 !important;
 
+            border-radius: 0 10px 10px 0;
         }
 
 
         /* =========================================================
-       TOTAL
-    ========================================================= */
+           TOTAL
+        ========================================================= */
 
         .payment-total-box {
 
@@ -706,12 +1108,15 @@
 
             padding: 20px 22px;
 
-            background: #f8fafc;
+            background: linear-gradient(
+                135deg,
+                #fffbea,
+                #fffdf7
+            );
 
-            border: 1px solid #cbd5e1;
+            border: 1px solid #eadb91;
 
-            border-radius: 10px;
-
+            border-radius: 12px;
         }
 
 
@@ -721,8 +1126,7 @@
 
             font-size: 14px;
 
-            color: #334155;
-
+            color: #6f5a00;
         }
 
 
@@ -732,14 +1136,17 @@
 
             text-align: right;
 
-            color: #0d6efd;
+            color: #a18200;
 
             font-size: 21px;
 
             white-space: nowrap;
-
         }
 
+
+        /* =========================================================
+           PAYMENT SECTION
+        ========================================================= */
 
         .payment-section {
 
@@ -751,10 +1158,9 @@
 
             background: #ffffff;
 
-            border: 2px solid #dbe3ec;
+            border: 1px solid #e5e7eb;
 
-            border-radius: 10px;
-
+            border-radius: 12px;
         }
 
 
@@ -764,28 +1170,23 @@
 
             font-size: 15px;
 
-            color: #334155;
+            color: #4b5563;
 
             padding-bottom: 13px;
 
             margin-bottom: 20px;
 
             border-bottom: 1px solid #eeeeee;
-
         }
 
 
         .payment-field {
-
             width: 100%;
-
         }
 
 
-        .payment-field+.payment-field {
-
+        .payment-field + .payment-field {
             margin-top: 22px;
-
         }
 
 
@@ -794,21 +1195,16 @@
             display: block;
 
             margin-bottom: 8px;
-
         }
 
 
         .payment-field .input-group {
-
             width: 100%;
-
         }
 
 
         .input-tegas-group {
-
-            border-radius: 8px;
-
+            border-radius: 10px;
         }
 
 
@@ -820,16 +1216,17 @@
 
             justify-content: center;
 
-            background: #f1f5f9;
+            background: #f9fafb;
 
-            border: 2px solid #cbd5e1;
+            border: 1px solid #dfe2e7;
 
             border-right: 0;
 
             font-weight: 700;
 
-            color: #334155;
+            color: #6b7280;
 
+            border-radius: 10px 0 0 10px;
         }
 
 
@@ -837,21 +1234,23 @@
 
             border-left: 0 !important;
 
+            border-radius: 0 10px 10px 0;
         }
 
 
         .input-tegas-group:focus-within .input-group-text {
 
-            border-color: #0d6efd;
+            border-color: #d9bc42;
 
+            background: #fffbea;
+
+            color: #8b7000;
         }
 
 
         #bayar_cash,
         #hutang {
-
             height: 44px;
-
         }
 
 
@@ -862,22 +1261,24 @@
             font-size: 15px;
 
             font-weight: 600;
-
         }
 
 
         #hutang {
 
-            background-color: #f8fafc !important;
+            background-color: #f9fafb !important;
 
             font-weight: 700;
 
             text-align: right;
 
             cursor: not-allowed;
-
         }
 
+
+        /* =========================================================
+           STATUS
+        ========================================================= */
 
         .payment-status {
 
@@ -889,57 +1290,29 @@
 
             font-size: 14px;
 
-        }
-
-
-        .barang-row {
-
-            border: 1px solid #e2e8f0;
-
             border-radius: 10px;
 
-            padding: 15px 10px;
-
-            margin-left: 0;
-
-            margin-right: 0;
-
-            background: #ffffff;
-
-        }
-
-
-        .barang-row:hover {
-
-            border-color: #cbd5e1;
-
-        }
-
-
-        .btn-reset {
-
-            min-height: 44px;
-
-        }
-
-
-        .btn-primary {
-
-            font-weight: 600;
-
-        }
-
-
-        .btn-outline-primary {
-
-            font-weight: 600;
-
+            border-width: 1px;
         }
 
 
         /* =========================================================
-       TABLET
-    ========================================================= */
+           ALERT
+        ========================================================= */
+
+        .custom-alert {
+
+            border-radius: 10px;
+
+            border-width: 1px;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           TABLET
+        ========================================================= */
 
         @media (max-width: 991px) {
 
@@ -948,7 +1321,6 @@
                 grid-template-columns: 1fr 220px;
 
                 gap: 20px;
-
             }
 
 
@@ -957,29 +1329,38 @@
                 grid-template-columns: 1fr 220px;
 
                 gap: 20px;
-
             }
 
 
             .diskon-input {
 
                 width: 220px;
-
             }
 
         }
 
 
         /* =========================================================
-       MOBILE
-    ========================================================= */
+           MOBILE
+        ========================================================= */
 
         @media (max-width: 576px) {
 
-            .payment-card .card-body {
+            .nota-card .card-body {
 
                 padding: 18px !important;
+            }
 
+
+            .nota-card-header {
+
+                padding: 15px 16px;
+            }
+
+
+            .page-title {
+
+                font-size: 21px;
             }
 
 
@@ -994,7 +1375,6 @@
                 gap: 9px;
 
                 min-height: auto;
-
             }
 
 
@@ -1003,7 +1383,6 @@
                 width: 100%;
 
                 text-align: left;
-
             }
 
 
@@ -1012,7 +1391,6 @@
                 width: 100%;
 
                 justify-self: auto;
-
             }
 
 
@@ -1027,7 +1405,6 @@
                 gap: 10px;
 
                 padding: 17px;
-
             }
 
 
@@ -1038,25 +1415,34 @@
                 text-align: left;
 
                 font-size: 19px;
-
             }
 
 
             .payment-section {
 
                 padding: 17px;
-
             }
 
 
             .barang-row {
 
                 padding: 15px;
+            }
 
+
+            .page-icon {
+
+                width: 42px;
+
+                height: 42px;
+
+                font-size: 19px;
             }
 
         }
+
     </style>
+
 
     {{-- =========================================================
     JAVASCRIPT
@@ -1425,7 +1811,7 @@
 
                     const option =
                         select.options[
-                        select.selectedIndex
+                            select.selectedIndex
                         ];
 
 
@@ -1517,5 +1903,7 @@
         );
 
     </script>
+
+</div>
 
 @endsection
