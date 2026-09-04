@@ -58,7 +58,7 @@
             <div class="text-center mb-4">
 
                 <h2 class="fw-bold mb-1">
-                    Perabot Heri Grosir
+                    PERABOT HERI GROSIR
                 </h2>
 
                 <p class="mb-0 text-muted">
