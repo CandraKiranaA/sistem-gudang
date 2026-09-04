@@ -11,11 +11,13 @@
         @yield('title', 'Sistem Gudang')
     </title>
 
+
     {{-- Bootstrap --}}
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
+
 
     <style>
 
@@ -71,6 +73,7 @@
 
         .sidebar-content {
             flex: 1;
+
             overflow-y: auto;
             overflow-x: hidden;
 
@@ -85,33 +88,131 @@
         .sidebar .brand {
 
             display: flex;
+
             align-items: center;
 
-            min-height: 70px;
+            min-height: 82px;
 
-            padding: 18px 20px;
+            margin: 10px 10px 8px 10px;
+
+            padding: 12px 14px;
+
+            background: linear-gradient(
+                135deg,
+                #fffbea 0%,
+                #fffdf5 100%
+            );
+
+            border: 1px solid #f3e8b0;
+
+            border-radius: 14px;
 
             color: #111827;
 
-            font-size: 19px;
-            font-weight: 700;
+            overflow: hidden;
 
-            white-space: nowrap;
-
-            overflow: visible;
-
-            letter-spacing: -0.2px;
+            position: relative;
         }
 
 
-        .brand-icon {
-            margin-right: 8px;
-            flex-shrink: 0;
+        /* Garis aksen kiri */
+
+        .sidebar .brand::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+
+            top: 12px;
+
+            bottom: 12px;
+
+            width: 4px;
+
+            background-color: #d4a700;
+
+            border-radius: 0 5px 5px 0;
+        }
+
+
+        /* =========================================================
+           BRAND ICON
+        ========================================================= */
+
+        .brand-icon-box {
+
+            width: 42px;
+
+            min-width: 42px;
+
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-right: 11px;
+
+            background-color: #ffffff;
+
+            border: 1px solid #f0df8a;
+
+            border-radius: 11px;
+
+            font-size: 22px;
+
+            box-shadow:
+                0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+
+        /* =========================================================
+           BRAND CONTENT
+        ========================================================= */
+
+        .brand-content {
+
+            min-width: 0;
+
+            line-height: 1.15;
         }
 
 
         .brand-text {
+
+            display: block;
+
             white-space: nowrap;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            letter-spacing: -0.2px;
+
+            color: #1f2937;
+        }
+
+
+        .brand-subtitle {
+
+            display: block;
+
+            margin-top: 5px;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.08em;
+
+            text-transform: uppercase;
+
+            color: #a18200;
         }
 
 
@@ -380,7 +481,8 @@
 
 
         /* =========================================================
-           TABLE SUPAYA TIDAK MERUSAK LAYOUT
+           TABLE
+           SUPAYA TIDAK MERUSAK LAYOUT
         ========================================================= */
 
         .table-responsive {
@@ -430,6 +532,7 @@
                 min-width: 220px;
             }
 
+
             .sidebar .brand {
 
                 font-size: 18px;
@@ -439,10 +542,12 @@
                 padding-right: 16px;
             }
 
+
             .content {
 
                 padding: 22px;
             }
+
         }
 
 
@@ -510,6 +615,7 @@
 
 <body>
 
+
 <div class="app-wrapper">
 
 
@@ -533,13 +639,22 @@
 
             <div class="brand">
 
-                <span class="brand-icon">
-                    📦
-                </span>
+                <div class="brand-icon-box">
+                    🏪
+                </div>
 
-                <span class="brand-text">
-                    Sistem Gudang
-                </span>
+
+                <div class="brand-content">
+
+                    <span class="brand-text">
+                        Perabot Heri Grosir
+                    </span>
+
+                    <span class="brand-subtitle">
+                        Sistem Gudang
+                    </span>
+
+                </div>
 
             </div>
 
@@ -580,6 +695,7 @@
 
 
             <div class="sidebar-menu">
+
 
                 {{-- DATA BARANG --}}
 
@@ -756,6 +872,7 @@
 
                         </div>
 
+
                         <small class="text-muted">
                             Admin Gudang
                         </small>
@@ -847,7 +964,9 @@
      BOOTSTRAP JS
 ========================================================= --}}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
 
 
 </body>

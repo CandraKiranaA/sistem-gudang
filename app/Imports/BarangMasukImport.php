@@ -12,28 +12,18 @@ use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class BarangMasukImport implements ToCollection, WithHeadingRow
 {
+    /**
+     * =========================================================
+     * IMPORT BARANG MASUK DARI EXCEL
+     * =========================================================
+     */
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
 
             /*
             |--------------------------------------------------------------------------
-            | Lewati baris kosong
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                empty($row['nama_barang']) &&
-                empty($row['tanggal_input']) &&
-                empty($row['jumlah_koli'])
-            ) {
-                continue;
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Nama Barang
+            | NORMALISASI DATA BARIS
             |--------------------------------------------------------------------------
             */
 
@@ -41,84 +31,137 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
                 (string) ($row['nama_barang'] ?? '')
             );
 
+            $tanggalInput = $row['tanggal_input'] ?? null;
+
+            $jumlahKoliExcel = $row['jumlah_koli'] ?? null;
+
+            /*
+            |--------------------------------------------------------------------------
+            | LEWATI BARIS KOSONG
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $namaBarang === '' &&
+                empty($tanggalInput) &&
+                empty($jumlahKoliExcel)
+            ) {
+                continue;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | NAMA BARANG WAJIB ADA
+            |--------------------------------------------------------------------------
+            */
+
             if ($namaBarang === '') {
                 continue;
             }
 
-
             /*
             |--------------------------------------------------------------------------
-            | Cari Barang di Master Barang
+            | CARI BARANG YANG SUDAH ADA
             |--------------------------------------------------------------------------
+            |
+            | PENTING:
+            | Jangan membuat Barang baru di sini.
+            |
+            | Kalau nama barang sudah ada, gunakan ID barang yang sudah ada.
+            |
             */
 
-            $barang = Barang::where(
-                'nama_barang',
-                $namaBarang
-            )->first();
+            $barang = Barang::query()
+                ->whereRaw(
+                    'LOWER(TRIM(nama_barang)) = ?',
+                    [mb_strtolower($namaBarang)]
+                )
+                ->orderBy('id', 'asc')
+                ->first();
 
             /*
-             * Jika nama barang tidak ditemukan,
-             * baris dilewati.
-             */
+            |--------------------------------------------------------------------------
+            | JIKA BARANG TIDAK DITEMUKAN
+            |--------------------------------------------------------------------------
+            |
+            | Import Barang Masuk hanya memasukkan transaksi barang masuk.
+            | Jadi kalau barang belum ada di Master Barang, baris dilewati.
+            |
+            */
 
             if (!$barang) {
                 continue;
             }
 
-
             /*
             |--------------------------------------------------------------------------
-            | Jumlah Koli
+            | PCS PER KOLI
             |--------------------------------------------------------------------------
-            */
-
-            $jumlahKoli = (int) (
-                $row['jumlah_koli'] ?? 0
-            );
-
-            if ($jumlahKoli < 1) {
-                continue;
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | PCS
-            |--------------------------------------------------------------------------
-            |
-            | Menggunakan pcs_per_koli dari MASTER BARANG.
-            |
-            | Contoh:
-            | pcs_per_koli = 20
-            | jumlah_koli = 2
-            |
-            | hasil:
-            | 2 x 20 = 40 PCS
-            |
             */
 
             $pcsPerKoli = (int) (
                 $barang->pcs_per_koli ?? 1
             );
 
-            $jumlahPcs = $jumlahKoli * $pcsPerKoli;
-
+            if ($pcsPerKoli < 1) {
+                $pcsPerKoli = 1;
+            }
 
             /*
             |--------------------------------------------------------------------------
-            | Tanggal Excel
+            | JUMLAH KOLI
             |--------------------------------------------------------------------------
             */
 
-            $tanggalInput = $this->parseTanggalExcel(
-                $row['tanggal_input'] ?? null
+            $jumlahKoli = (int) (
+                $jumlahKoliExcel ?? 0
             );
 
+            if ($jumlahKoli < 1) {
+                continue;
+            }
 
             /*
             |--------------------------------------------------------------------------
-            | Edisi
+            | JUMLAH PCS
+            |--------------------------------------------------------------------------
+            |
+            | Kalau Excel memiliki jumlah_pcs dan nilainya valid,
+            | gunakan nilai Excel.
+            |
+            | Kalau kosong/0:
+            |
+            | PCS = KOLI × PCS PER KOLI
+            |
+            */
+
+            $jumlahPcsExcel = $row['jumlah_pcs'] ?? null;
+
+            if (
+                $jumlahPcsExcel !== null &&
+                $jumlahPcsExcel !== '' &&
+                (int) $jumlahPcsExcel > 0
+            ) {
+                $jumlahPcs = (int) $jumlahPcsExcel;
+            } else {
+                $jumlahPcs =
+                    $jumlahKoli *
+                    $pcsPerKoli;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | TANGGAL INPUT
+            |--------------------------------------------------------------------------
+            */
+
+            $tanggal = $this->parseTanggal(
+                $tanggalInput
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | EDISI
             |--------------------------------------------------------------------------
             */
 
@@ -130,10 +173,30 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
                 $edisi = null;
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | HARGA
+            |--------------------------------------------------------------------------
+            */
+
+            $hargaBeliKoli =
+                $this->parseNumber(
+                    $row['harga_beli_koli'] ?? 0
+                );
+
+            $hargaJualKoli =
+                $this->parseNumber(
+                    $row['harga_jual_koli'] ?? 0
+                );
+
+            $hargaJualPcs =
+                $this->parseNumber(
+                    $row['harga_jual_pcs'] ?? 0
+                );
 
             /*
             |--------------------------------------------------------------------------
-            | Simpan
+            | SIMPAN BARANG MASUK
             |--------------------------------------------------------------------------
             */
 
@@ -143,7 +206,7 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
                     $barang->id,
 
                 'tanggal_input' =>
-                    $tanggalInput,
+                    $tanggal,
 
                 'edisi' =>
                     $edisi,
@@ -155,33 +218,31 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
                     $jumlahPcs,
 
                 'harga_beli_koli' =>
-                    $this->parseNumber(
-                        $row['harga_beli_koli'] ?? 0
-                    ),
+                    $hargaBeliKoli,
 
                 'harga_jual_koli' =>
-                    $this->parseNumber(
-                        $row['harga_jual_koli'] ?? 0
-                    ),
+                    $hargaJualKoli,
 
                 'harga_jual_pcs' =>
-                    $this->parseNumber(
-                        $row['harga_jual_pcs'] ?? 0
-                    ),
-
+                    $hargaJualPcs,
             ]);
         }
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | PARSE TANGGAL EXCEL
-    |--------------------------------------------------------------------------
-    */
-
-    private function parseTanggalExcel($value)
+    /**
+     * =========================================================
+     * PARSE TANGGAL EXCEL
+     * =========================================================
+     */
+    private function parseTanggal($value)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | KOSONG
+        |--------------------------------------------------------------------------
+        */
+
         if (
             $value === null ||
             $value === ''
@@ -189,60 +250,49 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
             return now();
         }
 
-        try {
+        /*
+        |--------------------------------------------------------------------------
+        | JIKA MERUPAKAN ANGKA SERIAL EXCEL
+        |--------------------------------------------------------------------------
+        */
 
-            /*
-             * Excel menyimpan tanggal sebagai angka serial.
-             */
+        if (
+            is_numeric($value) &&
+            (float) $value > 0
+        ) {
+            try {
 
-            if (is_numeric($value)) {
-
-                return Carbon::instance(
-                    ExcelDate::excelToDateTimeObject(
-                        $value
-                    )
-                );
-            }
-
-
-            /*
-             * Jika sudah berupa DateTime
-             */
-
-            if ($value instanceof \DateTimeInterface) {
-
-                return Carbon::instance(
+                return ExcelDate::excelToDateTimeObject(
                     $value
                 );
+
+            } catch (\Throwable $e) {
+                // lanjut ke parser biasa
             }
+        }
 
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT TANGGAL BIASA
+        |--------------------------------------------------------------------------
+        */
 
-            /*
-             * Jika berupa string
-             */
+        try {
 
-            return Carbon::parse(
-                trim((string) $value)
-            );
+            return Carbon::parse($value);
 
         } catch (\Throwable $e) {
-
-            /*
-             * Jika tanggal tidak valid,
-             * gunakan tanggal sekarang.
-             */
 
             return now();
         }
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | PARSE ANGKA / HARGA
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * =========================================================
+     * PARSE ANGKA / HARGA
+     * =========================================================
+     */
     private function parseNumber($value)
     {
         if (
@@ -252,60 +302,45 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
             return 0;
         }
 
-
         /*
-         * Kalau Excel sudah memberikan angka,
-         * langsung gunakan.
-         */
+        |--------------------------------------------------------------------------
+        | JIKA SUDAH NUMERIC
+        |--------------------------------------------------------------------------
+        */
 
         if (is_numeric($value)) {
             return (float) $value;
         }
 
-
         /*
-         * Bersihkan format Rupiah.
-         */
+        |--------------------------------------------------------------------------
+        | BERSIHKAN FORMAT RP / TITIK / KOMA
+        |--------------------------------------------------------------------------
+        */
 
-        $value = trim((string) $value);
+        $value = trim(
+            (string) $value
+        );
 
-        $value = str_replace(
-            ['Rp', 'rp', ' '],
+        $value = str_ireplace(
+            ['Rp', 'IDR', ' '],
             '',
             $value
         );
 
-
         /*
-         * Format Indonesia:
-         *
-         * 70.000
-         * 1.200.000
-         */
+        |--------------------------------------------------------------------------
+        | FORMAT INDONESIA
+        |
+        | Contoh:
+        | 70.000
+        | 70.000,50
+        |--------------------------------------------------------------------------
+        */
 
         if (
-            str_contains($value, '.') &&
-            !str_contains($value, ',')
-        ) {
-
-            $value = str_replace(
-                '.',
-                '',
-                $value
-            );
-
-        }
-
-
-        /*
-         * Format:
-         *
-         * 70.000,50
-         */
-
-        elseif (
-            str_contains($value, '.') &&
-            str_contains($value, ',')
+            str_contains($value, ',') &&
+            str_contains($value, '.')
         ) {
 
             $value = str_replace(
@@ -320,16 +355,7 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
                 $value
             );
 
-        }
-
-
-        /*
-         * Format:
-         *
-         * 70000,50
-         */
-
-        elseif (
+        } elseif (
             str_contains($value, ',')
         ) {
 
@@ -339,7 +365,6 @@ class BarangMasukImport implements ToCollection, WithHeadingRow
                 $value
             );
         }
-
 
         return (float) $value;
     }
