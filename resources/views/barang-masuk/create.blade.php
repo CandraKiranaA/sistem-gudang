@@ -411,184 +411,160 @@
 
             <div class="card-body form-card-body">
 
-                <div class="row g-4">
+     <div class="row g-4">
+
+    {{-- TANGGAL INPUT --}}
+    <div class="col-md-4">
+
+        <label class="form-label fw-semibold">
+            Tanggal Input
+        </label>
+
+        <input
+            type="date"
+            name="tanggal_input"
+            class="form-control"
+            value="{{ old(
+                'tanggal_input',
+                date('Y-m-d')
+            ) }}"
+            required
+        >
+
+    </div>
 
 
-                    {{-- TANGGAL INPUT --}}
-                    <div class="col-md-4">
+    {{-- NAMA BARANG --}}
+    <div class="col-md-8">
 
-                        <label class="form-label fw-semibold">
-                            Tanggal Input
-                        </label>
+        <label class="form-label fw-semibold">
+            Nama Barang
+        </label>
 
-                        <input
-                            type="date"
-                            name="tanggal_input"
-                            class="form-control"
-                            value="{{ old(
-                                'tanggal_input',
-                                date('Y-m-d')
-                            ) }}"
-                            required
-                        >
+        <select
+            name="barang_id"
+            id="barang_id"
+            class="form-select"
+            required
+        >
 
-                    </div>
+            <option value="">
+                -- Pilih Barang --
+            </option>
 
+            @forelse($barangs as $barang)
 
-                    {{-- NAMA BARANG --}}
-                    <div class="col-md-8">
+                <option
+                    value="{{ $barang->id }}"
+                    data-satuan="{{ $barang->satuan }}"
+                    {{ old('barang_id') == $barang->id
+                        ? 'selected'
+                        : '' }}
+                >
+                    {{ $barang->nama_barang }}
+                </option>
 
-                        <label class="form-label fw-semibold">
-                            Nama Barang
-                        </label>
+            @empty
 
-                        <select
-                            name="barang_id"
-                            id="barang_id"
-                            class="form-select"
-                            required
-                        >
+                <option
+                    value=""
+                    disabled
+                >
+                    Belum ada data barang
+                </option>
 
-                            <option value="">
-                                -- Pilih Barang --
-                            </option>
+            @endforelse
 
-                            @forelse($barangs as $barang)
-
-                                <option
-                                    value="{{ $barang->id }}"
-                                    data-satuan="{{ $barang->satuan }}"
-                                    {{ old('barang_id') == $barang->id
-                                        ? 'selected'
-                                        : '' }}
-                                >
-                                    {{ $barang->nama_barang }}
-                                </option>
-
-                            @empty
-
-                                <option
-                                    value=""
-                                    disabled
-                                >
-                                    Belum ada data barang
-                                </option>
-
-                            @endforelse
-
-                        </select>
+        </select>
 
 
-                        @if($barangs->isEmpty())
+        @if($barangs->isEmpty())
 
-                            <small class="form-text-danger">
-                                Belum ada master barang.
-                                Silakan tambahkan barang terlebih dahulu
-                                melalui menu Data Barang.
-                            </small>
+            <small class="form-text-danger">
+                Belum ada master barang.
+                Silakan tambahkan barang terlebih dahulu
+                melalui menu Data Barang.
+            </small>
 
-                        @else
+        @else
 
-                            <small class="form-text-custom">
-                                Data barang diambil dari Master Barang.
-                            </small>
+            <small class="form-text-custom">
+                Data barang diambil dari Master Barang.
+            </small>
 
-                        @endif
+        @endif
 
-                    </div>
-
-
-                    {{-- EDISI --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Edisi
-                        </label>
-
-                        <input
-                            type="text"
-                            name="edisi"
-                            class="form-control"
-                            maxlength="100"
-                            value="{{ old('edisi') }}"
-                            placeholder="Masukkan edisi barang"
-                        >
-
-                        <small class="form-text-custom">
-                            Edisi bersifat opsional.
-                        </small>
-
-                    </div>
+    </div>
 
 
-                    {{-- SATUAN --}}
-                    <div class="col-md-6">
+    {{-- SATUAN --}}
+    <div class="col-md-6">
 
-                        <label class="form-label fw-semibold">
-                            Satuan
-                        </label>
+        <label class="form-label fw-semibold">
+            Satuan
+        </label>
 
-                        <input
-                            type="text"
-                            id="satuan"
-                            class="form-control bg-light"
-                            value=""
-                            readonly
-                        >
+        <input
+            type="text"
+            id="satuan"
+            class="form-control bg-light"
+            value=""
+            readonly
+        >
 
-                        <small class="form-text-custom">
-                            Diambil otomatis dari Master Barang.
-                        </small>
+        <small class="form-text-custom">
+            Diambil otomatis dari Master Barang.
+        </small>
 
-                    </div>
-
-
-                    {{-- JUMLAH KOLI --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Jumlah Koli
-                        </label>
-
-                        <input
-                            type="number"
-                            name="jumlah_koli"
-                            id="jumlah_koli"
-                            class="form-control"
-                            min="1"
-                            value="{{ old('jumlah_koli', 1) }}"
-                            required
-                        >
-
-                        <small class="form-text-custom">
-                            Masukkan jumlah koli barang yang masuk.
-                        </small>
-
-                    </div>
+    </div>
 
 
-                    {{-- JUMLAH PCS --}}
-                    <div class="col-md-6">
+    {{-- JUMLAH KOLI --}}
+    <div class="col-md-6">
 
-                        <label class="form-label fw-semibold">
-                            Jumlah PCS
-                        </label>
+        <label class="form-label fw-semibold">
+            Jumlah Koli
+        </label>
 
-                        <input
-                            type="number"
-                            id="jumlah_pcs"
-                            class="form-control pcs-field fw-bold"
-                            value="{{ old('jumlah_koli', 1) * 2 }}"
-                            readonly
-                        >
+        <input
+            type="number"
+            name="jumlah_koli"
+            id="jumlah_koli"
+            class="form-control"
+            min="1"
+            value="{{ old('jumlah_koli', 1) }}"
+            required
+        >
 
-                        <small class="form-text-custom">
-                            Otomatis dihitung 2 PCS × jumlah koli.
-                        </small>
+        <small class="form-text-custom">
+            Masukkan jumlah koli barang yang masuk.
+        </small>
 
-                    </div>
+    </div>
 
-                </div>
+
+    {{-- JUMLAH PCS --}}
+    <div class="col-md-6">
+
+        <label class="form-label fw-semibold">
+            Jumlah PCS
+        </label>
+
+        <input
+            type="number"
+            id="jumlah_pcs"
+            class="form-control pcs-field fw-bold"
+            value="{{ old('jumlah_koli', 1) * 2 }}"
+            readonly
+        >
+
+        <small class="form-text-custom">
+            Otomatis dihitung 2 PCS × jumlah koli.
+        </small>
+
+    </div>
+
+</div>
 
             </div>
 

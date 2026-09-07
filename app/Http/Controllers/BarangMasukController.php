@@ -85,12 +85,31 @@ class BarangMasukController extends Controller
 
     /**
      * Simpan barang masuk
+     *
+     * EDISI OTOMATIS:
+     * - Barang pertama kali masuk = Edisi 1
+     * - Barang yang sama masuk lagi = Edisi 2
+     * - Berikutnya = Edisi 3, dst.
      */
     public function store(BarangMasukRequest $request)
     {
         $barang = Barang::findOrFail(
             $request->barang_id
         );
+
+        /*
+         * Ambil edisi terakhir berdasarkan barang_id.
+         *
+         * Contoh:
+         * barang_id 1 sudah punya edisi 1 dan 2
+         * maka edisi berikutnya = 3
+         */
+        $edisiTerakhir = BarangMasuk::where(
+            'barang_id',
+            $request->barang_id
+        )->max('edisi');
+
+        $edisi = ($edisiTerakhir ?? 0) + 1;
 
         /*
          * Hitung jumlah PCS.
@@ -110,8 +129,11 @@ class BarangMasukController extends Controller
             'barang_id' =>
                 $request->barang_id,
 
+            /*
+             * EDISI TIDAK LAGI DIAMBIL DARI FORM
+             */
             'edisi' =>
-                $request->edisi,
+                $edisi,
 
             'jumlah_koli' =>
                 $request->jumlah_koli,
@@ -187,6 +209,37 @@ class BarangMasukController extends Controller
         );
 
         /*
+         * Cek apakah barang_id berubah.
+         */
+        if ($barangMasuk->barang_id != $request->barang_id) {
+
+            /*
+             * Kalau barang diganti, ambil edisi terakhir
+             * dari barang yang baru.
+             */
+            $edisiTerakhir = BarangMasuk::where(
+                'barang_id',
+                $request->barang_id
+            )
+                ->where(
+                    'id',
+                    '!=',
+                    $barangMasuk->id
+                )
+                ->max('edisi');
+
+            $edisi = ($edisiTerakhir ?? 0) + 1;
+
+        } else {
+
+            /*
+             * Kalau barang masih sama,
+             * pertahankan edisi yang lama.
+             */
+            $edisi = $barangMasuk->edisi;
+        }
+
+        /*
          * Hitung ulang jumlah PCS.
          *
          * Contoh:
@@ -204,8 +257,11 @@ class BarangMasukController extends Controller
             'barang_id' =>
                 $request->barang_id,
 
+            /*
+             * Edisi otomatis.
+             */
             'edisi' =>
-                $request->edisi,
+                $edisi,
 
             'jumlah_koli' =>
                 $request->jumlah_koli,
@@ -250,17 +306,20 @@ class BarangMasukController extends Controller
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | BULK DELETE
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * =========================================================
-     * BULK DELETE
-     * =========================================================
-     *
      * Menghapus beberapa data barang masuk sekaligus
      */
     public function bulkDelete(Request $request)
     {
         // Validasi ID yang dikirim dari checkbox
         $request->validate([
+
             'ids' => [
                 'required',
                 'array',
@@ -300,7 +359,6 @@ class BarangMasukController extends Controller
             $ids
         )->delete();
 
-        // Kembali ke halaman barang masuk
         return redirect()
             ->route('barang-masuk.index')
             ->with(
@@ -316,7 +374,6 @@ class BarangMasukController extends Controller
     | IMPORT EXCEL
     |--------------------------------------------------------------------------
     */
-
 
     /**
      * Menampilkan halaman import Excel
@@ -387,7 +444,6 @@ class BarangMasukController extends Controller
     | EXPORT EXCEL
     |--------------------------------------------------------------------------
     */
-
 
     /**
      * Export data barang masuk ke Excel
